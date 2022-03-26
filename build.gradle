@@ -1,0 +1,78 @@
+buildscript {
+    ext {
+        // region Versions
+
+        compose_version = '1.1.1'
+        def nav_version = "2.4.1"
+        def lifecycle_version = "2.5.0-alpha03"
+        def hilt_version = "1.0.0-alpha01"
+
+        // endregion
+        // region Android X libraries
+
+        androidx_core_lib = 'androidx.core:core-ktx:1.7.0'
+
+        // ... > Activity
+        activity_compose_lib = 'androidx.activity:activity-compose:1.4.0'
+
+        // ... > Navigation
+        navigation_copose = "androidx.navigation:navigation-compose:$nav_version"
+
+        // ... > Compose
+        compose_ui_lib = "androidx.compose.ui:ui:$compose_version"
+        compose_ui_preview_lib = "androidx.compose.ui:ui-tooling-preview:$compose_version"
+        copose_ui_tooling_debug = "androidx.compose.ui:ui-tooling:$compose_version"
+        compose_material_lib = "androidx.compose.material:material:$compose_version"
+
+        // ... > Lifecycle
+        lifecycle_runtime_lib = "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+        lifecycle_livedata_lib = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+        lifecycle_viewmodel_lib = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+        lifecycle_viewmodel_compose_lib = "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+
+        // ... > Hilt
+        hilt_lifecycle_viewmodel_lib = "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_version"
+        hilt_compiler = "androidx.hilt:hilt-compiler:$hilt_version"
+
+        // endregion
+        // region Jetbrains libraries
+
+        kotlin_std_lib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
+        kotlinx_coroutines_lib = 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
+
+        // endregion
+        // region Reactive X libraries
+
+        rxandroid_lib = 'io.reactivex.rxjava2:rxandroid:2.1.1'
+        rxjava_lib = 'io.reactivex.rxjava2:rxjava:2.2.21'
+
+        // endregion
+        // region Others libraries
+
+        // Coil
+        coil_copose_lib = "io.coil-kt:coil-compose:2.0.0-rc02"
+
+        // endregion
+        // region Test libraries
+
+        // Junit
+        junit_lib = 'junit:junit:4.13.2'
+        junit_androidx_lib = 'androidx.test.ext:junit:1.1.3'
+        junit_compose_lib = "androidx.compose.ui:ui-test-junit4:$compose_version"
+
+        // Espresso
+        espresso_lib = 'androidx.test.espresso:espresso-core:3.4.0'
+
+        // endregion
+    }
+}
+
+plugins {
+    id 'com.android.application' version '7.1.2' apply false
+    id 'com.android.library' version '7.1.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
