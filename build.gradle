@@ -4,8 +4,13 @@ buildscript {
 
         compose_version = '1.1.1'
         def nav_version = "2.4.1"
-        def lifecycle_version = "2.5.0-alpha03"
-        def hilt_version = "1.0.0-alpha01"
+        def compose_runtime_version = '1.2.0-alpha06'
+        def lifecycle_version = '2.5.0-alpha04'
+        def hilt_version = '1.0.0-alpha03'
+        def hilt_compiler_version = '1.0.0'
+        def dagger_hilt = '2.41'
+        def okhttp_interceptor_version = '5.0.0-alpha.6'
+        def retrofit_version = '2.9.0'
 
         // endregion
         // region Android X libraries
@@ -16,13 +21,21 @@ buildscript {
         activity_compose_lib = 'androidx.activity:activity-compose:1.4.0'
 
         // ... > Navigation
-        navigation_copose = "androidx.navigation:navigation-compose:$nav_version"
+        navigation_copose_lib = "androidx.navigation:navigation-compose:$nav_version"
 
         // ... > Compose
+        // ... > ... > UI
         compose_ui_lib = "androidx.compose.ui:ui:$compose_version"
         compose_ui_preview_lib = "androidx.compose.ui:ui-tooling-preview:$compose_version"
-        copose_ui_tooling_debug = "androidx.compose.ui:ui-tooling:$compose_version"
+        compose_ui_tooling_debug = "androidx.compose.ui:ui-tooling:$compose_version"
+        // ... > ... > Material
         compose_material_lib = "androidx.compose.material:material:$compose_version"
+        compose_material3_lib = 'androidx.compose.material3:material3:1.0.0-alpha08'
+        compose_material_icons_lib = "androidx.compose.material:material-icons-extended:$compose_version"
+        // ... > ... > Runtime
+        compose_runtime_lib = "androidx.compose.runtime:runtime:$compose_runtime_version"
+        compose_livedata_lib = "androidx.compose.runtime:runtime-livedata:$compose_runtime_version"
+        compose_rxjava_lib = "androidx.compose.runtime:runtime-rxjava2:$compose_runtime_version"
 
         // ... > Lifecycle
         lifecycle_runtime_lib = "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
@@ -32,19 +45,41 @@ buildscript {
 
         // ... > Hilt
         hilt_lifecycle_viewmodel_lib = "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_version"
-        hilt_compiler = "androidx.hilt:hilt-compiler:$hilt_version"
+        hilt_compiler = "androidx.hilt:hilt-compiler:$hilt_compiler_version"
+        hilt_nav_compose_lib = "androidx.hilt:hilt-navigation-compose:$hilt_compiler_version"
+
+        // endregion
+        // region Google libraries
+
+        // ... > Material
+        material_lib = 'com.google.android.material:material:1.6.0-alpha03'
+
+        // ... > Dagger Hilt
+        dagger_hilt_lib = "com.google.dagger:hilt-android:$dagger_hilt"
+        dagger_hilt_compiler = "com.google.dagger:hilt-android-compiler:$dagger_hilt"
 
         // endregion
         // region Jetbrains libraries
 
         kotlin_std_lib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
-        kotlinx_coroutines_lib = 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
+        kotlinx_coroutines_lib = 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
 
         // endregion
         // region Reactive X libraries
 
+        // ... > Rx Java
         rxandroid_lib = 'io.reactivex.rxjava2:rxandroid:2.1.1'
         rxjava_lib = 'io.reactivex.rxjava2:rxjava:2.2.21'
+
+        // endregion
+        // region SquareUp libraries
+
+        // ... > OkHttp
+        okhttp_interceptor_lib = "com.squareup.okhttp3:logging-interceptor:$okhttp_interceptor_version"
+
+        // ... > Retrofit
+        retrofit_gson_lib = "com.squareup.retrofit2:converter-gson:$retrofit_version"
+        retrofit_rxjava_lib = "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 
         // endregion
         // region Others libraries
@@ -65,7 +100,10 @@ buildscript {
 
         // endregion
     }
-}
+    dependencies {
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.40.5'
+    }
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 plugins {
     id 'com.android.application' version '7.1.2' apply false

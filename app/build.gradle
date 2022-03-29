@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -57,11 +59,20 @@ dependencies {
     implementation(kotlinx_coroutines_lib)
 
     implementation(activity_compose_lib)
+    implementation(navigation_copose_lib)
 
     implementation(compose_ui_lib)
-    implementation(compose_material_lib)
     implementation(compose_ui_preview_lib)
-    debugImplementation(copose_ui_tooling_debug)
+    debugImplementation(compose_ui_tooling_debug)
+
+    implementation(compose_runtime_lib)
+    implementation(compose_livedata_lib)
+    implementation(compose_rxjava_lib)
+
+    implementation(compose_material3_lib)
+    implementation(compose_material_icons_lib)
+
+    implementation(material_lib)
 
     implementation(lifecycle_runtime_lib)
     implementation(lifecycle_livedata_lib)
@@ -69,7 +80,10 @@ dependencies {
     implementation(lifecycle_viewmodel_compose_lib)
 
     implementation(hilt_lifecycle_viewmodel_lib)
+    implementation(hilt_nav_compose_lib)
     kapt(hilt_compiler)
+    implementation(dagger_hilt_lib)
+    kapt(dagger_hilt_compiler)
 
     implementation(rxandroid_lib)
     implementation(rxjava_lib)

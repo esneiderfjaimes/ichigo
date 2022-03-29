@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -15,7 +16,14 @@ dependencies {
     implementation(androidx_core_lib)
 
     implementation(hilt_lifecycle_viewmodel_lib)
+    implementation(hilt_nav_compose_lib)
     kapt(hilt_compiler)
+    implementation(dagger_hilt_lib)
+    kapt(dagger_hilt_compiler)
+
+    implementation(okhttp_interceptor_lib)
+    implementation(retrofit_gson_lib)
+    implementation(retrofit_rxjava_lib)
 
     implementation(rxandroid_lib)
     implementation(rxjava_lib)
