@@ -5,14 +5,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.red.code015.domain.SummonerSummary
 import com.red.code015.screens.Destination
 import com.red.code015.usecases.SummonerByNameUserCase
 import com.red.code015.utils.SettingsPref
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,48 +23,41 @@ class HomeViewModel @Inject constructor(
     application: Application,
 ) : AndroidViewModel(application) {
 
-    val nav = MutableLiveData<Destination>()
+    private val pref: SharedPreferences =
+        application.getSharedPreferences(SettingsPref.NAME, Context.MODE_PRIVATE)
+    private val disposable = CompositeDisposable()
 
     private val _event = MutableLiveData<State>()
     val event = _event
-
-    private val disposable = CompositeDisposable()
-    private val _mySummoner = MutableLiveData<SummonerSummary?>()
+    val nav = MutableLiveData<Destination>()
 
     init {
-        val pref: SharedPreferences =
-            application.getSharedPreferences(SettingsPref.NAME, Context.MODE_PRIVATE)
-        val nameSummoner = pref.getString(SettingsPref.KEY_SUMMONER, null)
-        if (nameSummoner != null) {
-            summonerByNameUserCase.invoke(nameSummoner)
-                .doOnSubscribe {
-                    _event.value = State.Loading
-                }
-                .subscribe(
-                    {
-                        _event.postValue(State.SummonerFound(it))
-                    }, {
-                        // TO DO: Show error
-                        _event.postValue(State.SummonerNotFound(it, nameSummoner))
-                    }
-                ).let { disposable.add(it) }
-        } else {
-            _event.postValue(State.UnregisteredSummoner)
-        }
+        pref.getString(SettingsPref.KEY_SUMMONER, null)?.let { summonerName ->
+            summonerByName(summonerName)
+        } ?: _event.postValue(State.UnregisteredSummoner)
     }
 
-    fun summonerByName(name: String): MutableLiveData<SummonerSummary?> {
-        summonerByNameUserCase.invoke(name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    _mySummoner.postValue(it)
-                }, {
-                    // TO DO: Show error
+    private fun summonerByName(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            summonerByNameUserCase.invoke(name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .doOnSubscribe {
+                    viewModelScope.launch(Dispatchers.Main) {
+                        _event.value = State.Loading
+                    }
                 }
-            ).let { disposable.add(it) }
-        return _mySummoner
+                .subscribe({
+                    viewModelScope.launch(Dispatchers.Main) {
+                        _event.postValue(State.SummonerFound(it))
+                    }
+                }, {
+                    viewModelScope.launch(Dispatchers.Main) {
+                        it.printStackTrace()
+                        _event.postValue(State.SummonerNotFound(it, name))
+                    }
+                }).let { disposable.add(it) }
+        }
     }
 
     override fun onCleared() {
@@ -79,7 +74,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun removeSummoner() {
-        _mySummoner.postValue(null)
+        with(pref.edit()) {
+            remove(SettingsPref.KEY_SUMMONER)
+            apply()
+        }
+        _event.postValue(State.UnregisteredSummoner)
     }
 
     sealed class State {

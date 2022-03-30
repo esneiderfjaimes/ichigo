@@ -102,9 +102,13 @@ fun BoxScope.SummarySummonerState(
                         .align(Alignment.BottomCenter),
                     style = MaterialTheme.typography.bodySmall)
             }
-            Text(text = summonerSummary.name ?: "",
-                fontWeight = FontWeight.Black,
-                style = MaterialTheme.typography.titleLarge)
+            Column {
+                Text(text = summonerSummary.name,
+                    fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.titleLarge)
+                Text(text = "DS:${summonerSummary.dataSource}",
+                    style = MaterialTheme.typography.bodySmall)
+            }
         }
         Button(onClick = summonerDetail, Modifier.align(Alignment.CenterHorizontally)) {
             Text(text = "Summoner Detail")

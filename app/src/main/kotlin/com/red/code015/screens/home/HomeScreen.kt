@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.red.code015.domain.SummonerSummary
 import com.red.code015.screens.Destination
 import com.red.code015.screens.home.sections.SummonerSummarySection
 
@@ -53,24 +52,6 @@ fun BodyContent(innerPadding: PaddingValues, viewModel: HomeViewModel) {
     val event by viewModel.event.observeAsState()
     HomeHeader(innerPadding) {
         item { Spacer(Modifier.height(8.dp)) }
-
-        item {
-            SummonerSummarySection(state = HomeViewModel.State.Loading, viewModel)
-        }
-        item {
-            SummonerSummarySection(state = HomeViewModel.State.SummonerNotFound(
-                Throwable(),
-                "Red Iense"), viewModel)
-        }
-        item {
-            SummonerSummarySection(state = HomeViewModel.State.SummonerFound(
-                SummonerSummary("Like you do", 3592, 500)), viewModel)
-        }
-        item {
-            SummonerSummarySection(state = HomeViewModel.State.UnregisteredSummoner,
-                viewModel)
-        }
-
         item {
             SummonerSummarySection(state = event, viewModel)
         }

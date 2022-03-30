@@ -1,8 +1,8 @@
-package com.red.code015.data.api.di
+package com.red.code015.api.di
 
+import com.red.code015.api.SummonerRetrofitDataSource
+import com.red.code015.api.SummonersRequest
 import com.red.code015.data.RemoteSummonerDataSource
-import com.red.code015.data.api.SummonerRetrofitDataSource
-import com.red.code015.data.api.SummonersRequest
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

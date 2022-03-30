@@ -15,5 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "Ichigo"
 include ':app'
 include ':usecases'
+include ':framework:api'
+include ':framework:database'
 include ':data'
 include ':domain'

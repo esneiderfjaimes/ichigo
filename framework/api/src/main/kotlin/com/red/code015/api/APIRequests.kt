@@ -1,4 +1,4 @@
-package com.red.code015.data.api
+package com.red.code015.api
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

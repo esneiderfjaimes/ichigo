@@ -11,6 +11,7 @@ android {
 
 dependencies {
 
+    implementation project(":data")
     implementation project(":domain")
 
     implementation(androidx_core_lib)
@@ -20,6 +21,10 @@ dependencies {
     kapt(hilt_compiler)
     implementation(dagger_hilt_lib)
     kapt(dagger_hilt_compiler)
+
+    implementation(okhttp_interceptor_lib)
+    implementation(retrofit_gson_lib)
+    implementation(retrofit_rxjava_lib)
 
     implementation(rxandroid_lib)
     implementation(rxjava_lib)
