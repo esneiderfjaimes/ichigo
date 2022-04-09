@@ -1,33 +1,55 @@
 package com.red.code015.api.di
 
-import com.red.code015.api.SummonerRetrofitDataSource
-import com.red.code015.api.SummonersRequest
-import com.red.code015.data.RemoteSummonerDataSource
+import com.red.code015.api.retrofit.LoLRequest
+import com.red.code015.api.RiotGamesRetrofitDataSource
+import com.red.code015.api.retrofit.RiotRequest
+import com.red.code015.api.host.HostInterceptor
+import com.red.code015.api.host.Platform
+import com.red.code015.api.host.Region
+import com.red.code015.data.RemoteRiotGamesDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class APIModule {
 
+    // Host
+
     @Provides
     @Singleton
-    @Named("baseUrl")
-    fun baseUrlProvider(): String = "https://la1.api.riotgames.com/lol/summoner/v4/summoners/"
+    fun regionHostProvider(): HostInterceptor<Region> = HostInterceptor(Region.AMERICAS)
 
     @Provides
-    fun summonerRequestProvider(
-        @Named("baseUrl") baseUrl: String,
-    ) = SummonersRequest(baseUrl)
+    @Singleton
+    fun platformHostProvider(): HostInterceptor<Platform> = HostInterceptor(Platform.LA1)
+
+    // Requests
 
     @Provides
+    @Singleton
+    fun riotRequestProvider(host: HostInterceptor<Region>)
+            : RiotRequest = RiotRequest(host)
+
+    @Provides
+    @Singleton
+    fun lolRequestProvider(host: HostInterceptor<Platform>)
+            : LoLRequest = LoLRequest(host)
+
+    // Data Source
+
+    @Provides
+    @Singleton
     fun remoteSummonerDataSourceProvider(
-        summonersRequest: SummonersRequest,
-    ): RemoteSummonerDataSource = SummonerRetrofitDataSource(summonersRequest)
+        hostRegion: HostInterceptor<Region>,
+        hostPlatform: HostInterceptor<Platform>,
+        loLRequest: LoLRequest,
+        riotRequest: RiotRequest,
+    ): RemoteRiotGamesDataSource =
+        RiotGamesRetrofitDataSource(hostRegion, hostPlatform, loLRequest, riotRequest)
 
 }
 

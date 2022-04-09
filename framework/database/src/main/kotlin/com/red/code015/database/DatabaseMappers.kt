@@ -1,27 +1,31 @@
 package com.red.code015.database
 
+import com.red.code015.database.room.SummonerEntity
 import com.red.code015.domain.DataSource
-import com.red.code015.domain.SummonerSummary
+import com.red.code015.domain.Summoner
 
-fun SummonerEntity.toDomain() = SummonerSummary(
+fun SummonerEntity.toDomain() = Summoner(
     id,
     accountId,
     puuId,
     name,
     profileIconId,
-    revisionDate,
     level,
+    account,
+    leagues,
     lastCheckDate,
     DataSource.LOCAL
 )
 
-fun SummonerSummary.toEntity() = SummonerEntity(
+
+fun Summoner.toEntity() = SummonerEntity(
     id,
     accountId,
-    puuId,
-    name,
-    profileIconId,
-    revisionDate,
-    level,
-    lastCheckDate
+    id = puuId,
+    name = name,
+    profileIconId = profileIconId,
+    level = level,
+    account = account,
+    leagues = leagues,
+    lastCheckDate = lastCheckDate
 )

@@ -1,27 +1,44 @@
 package com.red.code015.database
 
 import com.red.code015.data.LocalSummonerDataSource
-import com.red.code015.domain.SummonerSummary
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.red.code015.database.room.IchigoDatabase
+import com.red.code015.domain.Summoner
 
 class SummonerRoomDataSource(
     database: IchigoDatabase,
 ) : LocalSummonerDataSource {
 
-    private val summonerDao by lazy { database.summonerDao() }
+    private val dao by lazy { database.summonerDao() }
 
-    override fun insertSummoner(summonerSummary: SummonerSummary) {
-        return summonerDao.insert(summonerSummary.toEntity())
+    // region Insert and update
+
+    override suspend fun insertSummoner(summoner: Summoner) {
+        dao.insert(summoner.toEntity())
     }
 
-    override fun getSummonerByName(name: String): Maybe<SummonerSummary> {
-        return summonerDao.byName(name)
-            .map { it.toDomain() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-    }
+    // endregion
+    // region Read
 
-    override suspend fun getLastCheckDateByName(name: String) = summonerDao.lastCheckDateByName(name)
+    // By Puu ID
+
+    override suspend fun getLastCheckDateByPuuID(puuID: String) = dao.lastCheckDateByPuuID(puuID)
+
+    override suspend fun summonerByPuuID(puuID: String) = dao.byPuuID(puuID).toDomain()
+
+    // By Name
+
+    override suspend fun getLastCheckDateByName(name: String) = dao.lastCheckDateByName(name)
+
+    override suspend fun summonerByName(name: String) = dao.byName(name).toDomain()
+
+    // By Riot ID
+
+    override suspend fun getLastCheckDateByRiotId(gameName: String, tagLine: String)
+            : Long? = dao.lastCheckDateByRiotId(gameName, tagLine)
+
+    override suspend fun summonerByRiotId(gameName: String, tagLine: String)
+            : Summoner = dao.byRiotID(gameName, tagLine).toDomain()
+
+    // endregion
+
 }

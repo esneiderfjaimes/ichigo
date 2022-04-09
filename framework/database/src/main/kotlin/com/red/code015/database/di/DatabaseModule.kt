@@ -2,7 +2,7 @@ package com.red.code015.database.di
 
 import android.content.Context
 import com.red.code015.data.LocalSummonerDataSource
-import com.red.code015.database.IchigoDatabase
+import com.red.code015.database.room.IchigoDatabase
 import com.red.code015.database.SummonerRoomDataSource
 import dagger.Module
 import dagger.Provides

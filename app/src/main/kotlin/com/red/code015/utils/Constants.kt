@@ -7,5 +7,5 @@ object SettingsPref {
 
 object Coil {
     fun urlProfileIcon(profileIconId: Int) =
-        "https://ddragon.leagueoflegends.com/cdn/12.5.1/img/profileicon/$profileIconId.png"
+        "https://ddragon.leagueoflegends.com/cdn/12.6.1/img/profileicon/$profileIconId.png"
 }

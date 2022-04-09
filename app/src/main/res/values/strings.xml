@@ -1,3 +1,31 @@
 <resources>
     <string name="app_name">Code 015</string>
+
+    <string name="search_by">search by</string>
+    <string name="summoner_name">summoner name</string>
+    <string name="riot_id">Riot ID</string>
+    <string name="tagline">Tag</string>
+
+    <string name="tier_iron">Iron %1$s</string>
+    <string name="tier_bronze">Bronze %1$s</string>
+    <string name="tier_silver">Silver %1$s</string>
+    <string name="tier_gold">Gold %1$s</string>
+    <string name="tier_platinum">Platinum %1$s</string>
+    <string name="tier_diamond">Diamond %1$s</string>
+    <string name="tier_master">Master</string>
+    <string name="tier_grand_master">Grand Master</string>
+    <string name="tier_challenger">Challenger</string>
+
+    <string name="region_KR">Korea</string>
+    <string name="region_NA1">North America</string>
+    <string name="region_LA1">Latin America North</string>
+    <string name="region_LA2">Latin America South</string>
+    <string name="region_BR1">Brazil</string>
+    <string name="region_EUN1">Europe West</string>
+    <string name="region_EUW1">Europe Nordic &amp; East</string>
+    <string name="region_JP1">Japan</string>
+    <string name="region_OC1">Oceania</string>
+    <string name="region_TR1">Turkey</string>
+    <string name="region_RU">Russia</string>
+
 </resources>

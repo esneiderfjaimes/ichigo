@@ -1,11 +1,15 @@
 package com.red.code015.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Colors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Shapes
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme as Material3Theme
 
 private val LightThemeColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -66,18 +70,42 @@ private val DarkThemeColors = darkColorScheme(
 )
 
 @Composable
-fun AppTheme(
+fun IchigoTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val colors = if (!useDarkTheme) {
+    val colorScheme = if (!useDarkTheme) {
         LightThemeColors
     } else {
         DarkThemeColors
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
+    Material3Theme(
+        colorScheme = colorScheme,
+        content = {
+            MaterialTheme(
+                colors = colorScheme.toColors(!useDarkTheme),
+                shapes = Shapes(
+                    small = RoundedCornerShape(50)
+                ),
+                content = content
+            )
+        }
     )
 }
+
+fun ColorScheme.toColors(isLight: Boolean) = Colors(
+    primary = primary,
+    primaryVariant = primaryContainer,
+    onPrimary = onPrimary,
+    secondary = secondary,
+    secondaryVariant = secondaryContainer,
+    onSecondary = onSecondary,
+    background = background,
+    onBackground = onBackground,
+    surface = surface,
+    onSurface = onSurface,
+    error = error,
+    onError = onError,
+    isLight = isLight
+)

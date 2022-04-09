@@ -1,10 +1,17 @@
 package com.red.code015.usecases
 
-import com.red.code015.data.SummonerRepository
-import com.red.code015.domain.SummonerSummary
-import io.reactivex.Maybe
+import com.red.code015.data.repositories.SummonerRepository
+import com.red.code015.data.repositories.ProfileRepository
 import javax.inject.Inject
 
-class SummonerByNameUserCase @Inject constructor(private val repository: SummonerRepository) {
-    suspend fun invoke(name: String): Maybe<SummonerSummary> = repository.getSummonerByName(name)
+class ProfileByRiotIDUserCase @Inject constructor(private val repository: ProfileRepository) {
+    fun invoke(gameName: String, tagline: String) = repository.byRiotID(gameName, tagline)
+}
+
+class ProfileBySummonerNameUserCase @Inject constructor(private val repository: ProfileRepository) {
+    fun invoke(name: String) = repository.bySummonerName(name)
+}
+
+class SummonerByPuuIDUserCase @Inject constructor(private val repository: SummonerRepository) {
+    fun invoke(id: String, forceFetch: Boolean = false) = repository.summonerByPuuID(id, forceFetch)
 }
