@@ -3,7 +3,7 @@ package com.red.code015.api
 const val TAG_LOGS = "RED.API"
 
 object APIConstants {
-    const val KEY = "RGAPI-fb36099d-3a51-49ed-9098-05dc5b4ae3f4"
+    const val KEY = "your key" // TODO(encrypt development key)
 }
 
 object LeagueAPIConstants {

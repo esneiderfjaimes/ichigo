@@ -1,11 +1,84 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-   // id 'org.jetbrains.kotlin.plugin.serialization'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
     id "com.google.protobuf" version "0.8.17"
+}
+
+dependencies {
+    // region Core
+
+    implementation project(":usecases")
+    implementation project(":data")
+    implementation project(":domain")
+    implementation project(":framework:api")
+    implementation project(":framework:database")
+
+    implementation(androidx_core_lib)
+    implementation(kotlin_std_lib)
+    implementation(kotlinx_coroutines_lib)
+
+    // endregion
+    // region Compose and UI
+
+    implementation(activity_compose_lib)
+    implementation(navigation_copose_lib)
+
+    implementation(compose_ui_lib)
+    implementation(compose_ui_preview_lib)
+    debugImplementation(compose_ui_tooling_debug)
+    debugImplementation(compose_ui_util_lib)
+
+    implementation(compose_runtime_lib)
+    implementation(compose_livedata_lib)
+    implementation(compose_rxjava_lib)
+
+    implementation(compose_material3_lib)
+    implementation(compose_material_lib)
+    implementation(compose_material_icons_lib)
+
+    implementation(material_lib)
+    implementation(swiperefresh_lib)
+
+    implementation(coil_copose_lib)
+
+    // endregion
+    // region Lifecycle, dependency injection and reactive programming
+
+    implementation(lifecycle_runtime_lib)
+    implementation(lifecycle_livedata_lib)
+    implementation(lifecycle_viewmodel_lib)
+    implementation(lifecycle_viewmodel_compose_lib)
+
+    implementation(hilt_lifecycle_viewmodel_lib)
+    implementation(hilt_nav_compose_lib)
+    kapt(hilt_compiler)
+    implementation(dagger_hilt_lib)
+    kapt(dagger_hilt_compiler)
+
+    implementation(rxandroid_lib)
+    implementation(rxjava_lib)
+
+    // endregion
+    // region Datastore TODO(switch to a new module)
+
+    implementation(gson_lib)
+
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "androidx.datastore:datastore-core:1.0.0"
+    implementation "com.google.protobuf:protobuf-javalite:3.18.0"
+
+    // endregion
+    // region Test dependencies
+
+    testImplementation(junit_lib)
+    androidTestImplementation(junit_androidx_lib)
+    androidTestImplementation(junit_compose_lib)
+    androidTestImplementation(espresso_lib)
+
+    // endregion
 }
 
 android {
@@ -55,9 +128,6 @@ protobuf {
         artifact = "com.google.protobuf:protoc:3.14.0"
     }
 
-    // Generates the java Protobuf-lite code for the Protobufs in this project. See
-    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
-    // for more information.
     generateProtoTasks {
         all().each { task ->
             task.builtins {
@@ -67,73 +137,4 @@ protobuf {
             }
         }
     }
-}
-
-dependencies {
-
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.19.0")
-
-    implementation(gson_lib)
-    implementation  "androidx.datastore:datastore-core:1.0.0"
-    implementation  "com.google.protobuf:protobuf-javalite:3.18.0"
-
-    implementation project(":usecases")
-    implementation project(":data")
-    implementation project(":domain")
-    implementation project(":framework:api")
-    implementation project(":framework:database")
-
-    implementation(androidx_core_lib)
-    implementation(kotlin_std_lib)
-    implementation(kotlinx_coroutines_lib)
-
-    implementation(activity_compose_lib)
-    implementation(navigation_copose_lib)
-
-    implementation(compose_ui_lib)
-     implementation(compose_ui_preview_lib)
-     debugImplementation(compose_ui_tooling_debug)
-
-
-
-    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
-    // When using Kotlin.
-    kapt 'androidx.hilt:hilt-compiler:1.0.0'
-
-    implementation(compose_runtime_lib)
-    implementation(compose_livedata_lib)
-    implementation(compose_rxjava_lib)
-
-    implementation(compose_material3_lib)
-    implementation(compose_material_icons_lib)
-
-    implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-util:1.1.1"
-    implementation(material_lib)
-
-    implementation(lifecycle_runtime_lib)
-    implementation(lifecycle_livedata_lib)
-    implementation(lifecycle_viewmodel_lib)
-    implementation(lifecycle_viewmodel_compose_lib)
-
-    implementation(hilt_lifecycle_viewmodel_lib)
-    implementation(hilt_nav_compose_lib)
-    kapt(hilt_compiler)
-    implementation(dagger_hilt_lib)
-    kapt(dagger_hilt_compiler)
-
-    implementation(rxandroid_lib)
-    implementation(rxjava_lib)
-
-    implementation(coil_copose_lib)
-
-    testImplementation(junit_lib)
-    androidTestImplementation(junit_androidx_lib)
-    androidTestImplementation(junit_compose_lib)
-    androidTestImplementation(espresso_lib)
-
-    implementation "androidx.datastore:datastore:1.0.0"
-   // implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
-    // implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
-
 }

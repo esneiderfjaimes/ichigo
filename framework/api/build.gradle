@@ -20,7 +20,7 @@ dependencies {
     implementation project(":domain")
 
     implementation(androidx_core_lib)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation(kotlinx_coroutines_lib)
 
     implementation(hilt_lifecycle_viewmodel_lib)
     implementation(hilt_nav_compose_lib)
@@ -28,12 +28,9 @@ dependencies {
     implementation(dagger_hilt_lib)
     kapt(dagger_hilt_compiler)
 
-    // define a BOM and its version
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
-
-    // define any required OkHttp artifacts without version
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation(platform(okhttp_bom))
+    implementation(okhttp_lib)
+    implementation(okhttp_interceptor_lib)
     implementation(retrofit_gson_lib)
     implementation(retrofit_rxjava_lib)
 
