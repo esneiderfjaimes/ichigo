@@ -5,23 +5,24 @@ import com.red.code015.domain.DataSource
 import com.red.code015.domain.Summoner
 
 fun SummonerEntity.toDomain() = Summoner(
-    id,
-    accountId,
-    puuId,
-    name,
-    profileIconId,
-    level,
-    account,
-    leagues,
-    lastCheckDate,
-    DataSource.LOCAL
+    id = id,
+    accountId = accountId,
+    puuId = puuId,
+    platformID = platformID,
+    name = name,
+    profileIconId = profileIconId,
+    level = level,
+    account = account,
+    leagues = leagues,
+    lastCheckDate = lastCheckDate,
+    dataSource = DataSource.LOCAL
 )
 
-
 fun Summoner.toEntity() = SummonerEntity(
-    id,
-    accountId,
+    accountId = id,
+    puuId = accountId,
     id = puuId,
+    platformID = platformID,
     name = name,
     profileIconId = profileIconId,
     level = level,

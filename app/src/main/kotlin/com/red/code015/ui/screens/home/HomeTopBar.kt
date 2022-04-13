@@ -43,7 +43,7 @@ fun HomeTopAppBar(
         },
         navigationIcon = {
             if (selectedProfile != null) {
-                var expanded by remember { mutableStateOf(true) }
+                var expanded by remember { mutableStateOf(false) }
                 val sizeSummonerIcon = 50.dp
                 RedIconButton(onClick = { expanded = true }, Modifier.size(sizeSummonerIcon)) {
                     SummonerIcon(selectedProfile.profileIconID, sizeSummonerIcon)

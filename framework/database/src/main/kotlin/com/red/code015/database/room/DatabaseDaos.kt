@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.red.code015.domain.PlatformID
 
 @Dao
 interface SummonerDao {
@@ -14,8 +15,9 @@ interface SummonerDao {
     @Query("SELECT last_check_date FROM summoner_table WHERE summoner_id = :puuid")
     suspend fun lastCheckDateByPuuID(puuid: String): Long?
 
-    @Query("SELECT last_check_date FROM summoner_table WHERE summoner_name = :name")
-    suspend fun lastCheckDateByName(name: String): Long?
+    @Query("SELECT last_check_date FROM summoner_table " +
+            "WHERE summoner_platform = :platformID AND upper(summoner_name) = upper(:name)")
+    suspend fun lastCheckDateByName(platformID: PlatformID, name: String): Long?
 
     @Query("SELECT last_check_date FROM summoner_table WHERE gameName = :gameName AND tagLine = :tagLine")
     suspend fun lastCheckDateByRiotId(gameName: String, tagLine: String): Long?
@@ -23,8 +25,8 @@ interface SummonerDao {
     @Query("SELECT * FROM summoner_table WHERE summoner_id = :puuid")
     suspend fun byPuuID(puuid: String): SummonerEntity
 
-    @Query("SELECT * FROM summoner_table WHERE summoner_name = :name")
-    suspend fun byName(name: String): SummonerEntity
+    @Query("SELECT * FROM summoner_table WHERE summoner_platform = :platformID AND upper(summoner_name) = upper(:name)")
+    suspend fun byName(platformID: PlatformID, name: String): SummonerEntity
 
     @Query("SELECT * FROM summoner_table WHERE gameName = :gameName AND tagLine = :tagLine")
     suspend fun byRiotID(gameName: String, tagLine: String): SummonerEntity

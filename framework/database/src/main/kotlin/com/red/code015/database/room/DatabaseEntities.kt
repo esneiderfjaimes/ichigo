@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.red.code015.domain.Account
 import com.red.code015.domain.League
+import com.red.code015.domain.PlatformID
 
 @Entity(tableName = "summoner_table")
 data class SummonerEntity(
@@ -13,6 +14,7 @@ data class SummonerEntity(
     @ColumnInfo(name = "account_id") val accountId: String,
     @ColumnInfo(name = "puu_id") val puuId: String,
     @ColumnInfo(name = "summoner_id") val id: String,
+    @ColumnInfo(name = "summoner_platform") val platformID: PlatformID,
     @ColumnInfo(name = "summoner_name") val name: String,
     @ColumnInfo(name = "summoner_profile_icon_id") val profileIconId: Int,
     @ColumnInfo(name = "summoner_level") val level: Int,

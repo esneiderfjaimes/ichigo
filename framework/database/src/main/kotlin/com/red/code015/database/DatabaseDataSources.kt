@@ -2,6 +2,7 @@ package com.red.code015.database
 
 import com.red.code015.data.LocalSummonerDataSource
 import com.red.code015.database.room.IchigoDatabase
+import com.red.code015.domain.PlatformID
 import com.red.code015.domain.Summoner
 
 class SummonerRoomDataSource(
@@ -27,9 +28,11 @@ class SummonerRoomDataSource(
 
     // By Name
 
-    override suspend fun getLastCheckDateByName(name: String) = dao.lastCheckDateByName(name)
+    override suspend fun getLastCheckDateByName(platformID: PlatformID, name: String) =
+        dao.lastCheckDateByName(platformID, name)
 
-    override suspend fun summonerByName(name: String) = dao.byName(name).toDomain()
+    override suspend fun summonerByName(platformID: PlatformID, name: String) =
+        dao.byName(platformID, name).toDomain()
 
     // By Riot ID
 

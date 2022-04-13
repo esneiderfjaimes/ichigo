@@ -6,6 +6,7 @@ data class Summoner(
     val id: String,
     val accountId: String,
     val puuId: String,
+    val platformID: PlatformID,
     val name: String,
     val profileIconId: Int,
     val level: Int,

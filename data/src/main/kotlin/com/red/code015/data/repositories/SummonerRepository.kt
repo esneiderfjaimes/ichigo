@@ -1,10 +1,13 @@
 package com.red.code015.data.repositories
 
 import android.util.Log
+import com.red.code015.data.ForbiddenException
 import com.red.code015.data.LocalSummonerDataSource
 import com.red.code015.data.RemoteRiotGamesDataSource
+import com.red.code015.data.Result
 import com.red.code015.data.util.TAG_LOGS
 import com.red.code015.data.util.requireRemoteFetch
+import com.red.code015.domain.PlatformID
 import com.red.code015.domain.Summoner
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -47,32 +50,90 @@ class SummonerRepository @Inject constructor(
         } else emit(local.summonerByPuuID(puuID))
     }
 
-
-    fun summonerByName(name: String): Flow<Summoner> = flow {
-        val lastCheckDate = local.getLastCheckDateByName(name)
-        if (requireRemoteFetch(lastCheckDate, forceFetch)) {
-            if (isContinue) {
-                while (true) {
-                    remoteFetch(name, lastCheckDate)
-                    delay(15000)
-                }
-            } else {
-                remoteFetch(name, lastCheckDate)
+    // TODO: Implement Result
+    fun summonerByName2(
+        platformID: PlatformID,
+        name: String,
+        forceFetch: Boolean,
+    ): Flow<Result<Summoner>> =
+        flow {
+            try {
+                val lastCheckDate = local.getLastCheckDateByName(platformID, name)
+                if (requireRemoteFetch(lastCheckDate, forceFetch)) {
+                    if (isContinue) {
+                        while (true) {
+                            remoteFetch2(platformID, name, lastCheckDate)
+                            delay(15000)
+                        }
+                    } else {
+                        remoteFetch2(platformID, name, lastCheckDate)
+                    }
+                } else emit(Result.Data(local.summonerByName(platformID, name)))
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+                throw exception
             }
-        } else emit(local.summonerByName(name))
-    }
+        }
 
     @OptIn(ExperimentalTypeInference::class)
     @BuilderInference
-    suspend fun FlowCollector<Summoner>.remoteFetch(name: String, lastCheckDate: Long?) {
+    suspend fun FlowCollector<Result<Summoner>>.remoteFetch2(
+        platformID: PlatformID,
+        name: String,
+        lastCheckDate: Long?,
+    ) {
+        try {
+            val summoner = remote.summonerByName(name)
+            emit(Result.Data(summoner))
+            local.insertSummoner(summoner)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (e !is UnknownHostException || lastCheckDate == null) throw e
+            emit(
+                Result.DataWithException(
+                    value = local.summonerByName(platformID, name),
+                    throwable = e
+                )
+            )
+        }
+    }
+
+    fun summonerByName(platformID: PlatformID, name: String, forceFetch: Boolean): Flow<Summoner> =
+        flow {
+            try {
+                val lastCheckDate = local.getLastCheckDateByName(platformID, name)
+                if (requireRemoteFetch(lastCheckDate, forceFetch)) {
+                    if (isContinue) {
+                        while (true) {
+                            remoteFetch(platformID, name, lastCheckDate)
+                            delay(15000)
+                        }
+                    } else {
+                        remoteFetch(platformID, name, lastCheckDate)
+                    }
+                } else emit(local.summonerByName(platformID, name))
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+                throw exception
+            }
+        }
+
+    @OptIn(ExperimentalTypeInference::class)
+    @BuilderInference
+    suspend fun FlowCollector<Summoner>.remoteFetch(
+        platformID: PlatformID,
+        name: String,
+        lastCheckDate: Long?,
+    ) {
         try {
             val summoner = remote.summonerByName(name)
             emit(summoner)
             local.insertSummoner(summoner)
         } catch (e: Exception) {
             e.printStackTrace()
-            if (e !is UnknownHostException || lastCheckDate == null) throw e
-            emit(local.summonerByName(name))
+            if (lastCheckDate != null && e is ForbiddenException)
+                emit(local.summonerByName(platformID, name))
+            throw e
         }
     }
 

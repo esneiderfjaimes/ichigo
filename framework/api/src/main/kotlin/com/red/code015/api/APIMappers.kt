@@ -16,6 +16,7 @@ fun SummonerResponseServer.toProfile(platformID: PlatformID) = Profile(
 
 object SummonerMapper {
     fun toDomain(
+        platformID: PlatformID,
         summoner: SummonerResponseServer,
         account: AccountResponseServer?,
         leagues: List<LeagueResponseServer>,
@@ -24,6 +25,7 @@ object SummonerMapper {
             id = id,
             accountId = accountId,
             puuId = puuId,
+            platformID = platformID,
             name = name,
             profileIconId = profileIconId,
             level = level,

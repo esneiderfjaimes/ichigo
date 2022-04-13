@@ -6,6 +6,10 @@
     <string name="riot_id">Riot ID</string>
     <string name="tagline">Tag</string>
 
+    <string name="queue_type_unknown">Unknown</string>
+    <string name="queue_type_ranked_solo">Ranked Solo/Duo</string>
+    <string name="queue_type_ranked_flex">Ranked Flex</string>
+
     <string name="tier_iron">Iron %1$s</string>
     <string name="tier_bronze">Bronze %1$s</string>
     <string name="tier_silver">Silver %1$s</string>

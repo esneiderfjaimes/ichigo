@@ -1,6 +1,9 @@
 package com.red.code015.data
 
-import com.red.code015.domain.*
+import com.red.code015.domain.PlatformID
+import com.red.code015.domain.Profile
+import com.red.code015.domain.RegionID
+import com.red.code015.domain.Summoner
 
 interface RemoteRiotGamesDataSource {
 
@@ -17,11 +20,15 @@ interface RemoteRiotGamesDataSource {
 }
 
 interface LocalSummonerDataSource {
+
     suspend fun insertSummoner(summoner: Summoner)
+
     suspend fun getLastCheckDateByPuuID(puuID: String): Long?
-    suspend fun getLastCheckDateByName(name: String): Long?
+    suspend fun getLastCheckDateByName(platformID: PlatformID, name: String): Long?
     suspend fun getLastCheckDateByRiotId(gameName: String, tagLine: String): Long?
+
     suspend fun summonerByPuuID(puuID: String): Summoner
-    suspend fun summonerByName(name: String): Summoner
+    suspend fun summonerByName(platformID: PlatformID, name: String): Summoner
     suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner
+
 }
