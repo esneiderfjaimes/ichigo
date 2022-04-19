@@ -21,16 +21,10 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.dataStore
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.red.code015.data.AppSettingsSerializer
-import com.red.code015.domain.PlatformID
-import com.red.code015.domain.Profile
-import com.red.code015.data.model.Platform
-import com.red.code015.data.model.Platforms
 
 /**
  * List of screens for [IchigoApp]
@@ -48,31 +42,13 @@ fun rememberIchigoAppState(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current,
 ) = remember(navController, context) {
-    IchigoAppState(navController, context, Platforms[1])
+    IchigoAppState(navController, context)
 }
 
 class IchigoAppState(
     val navController: NavHostController,
     context: Context,
-    var platform: Platform,
 ) {
-    private val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
-    private val settingsDataStore = context.dataStore
-    val appSettings = settingsDataStore.data
-
-    suspend fun setLanguage(platformID: PlatformID) {
-        settingsDataStore.updateData { it.copy(platformID = platformID) }
-    }
-
-    suspend fun addOrUpdateProfile(profile: Profile) {
-        settingsDataStore.updateData { it.copy(profiles = it.addOrUpdateProfile(profile)) }
-    }
-
-    suspend fun removeProfile(puuID: String) {
-        settingsDataStore.updateData {
-            it.removeProfile(puuID)
-        }
-    }
 
     fun navigateToSummoner(summonerName: String, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
@@ -92,7 +68,6 @@ class IchigoAppState(
             navController.navigate(Screen.Register.route)
         }
     }
-
 
 }
 

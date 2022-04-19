@@ -1,11 +1,12 @@
 package com.red.code015.api.di
 
-import com.red.code015.api.retrofit.LoLRequest
 import com.red.code015.api.RiotGamesRetrofitDataSource
-import com.red.code015.api.retrofit.RiotRequest
 import com.red.code015.api.host.HostInterceptor
 import com.red.code015.api.host.Platform
 import com.red.code015.api.host.Region
+import com.red.code015.api.retrofit.DataDragonRequest
+import com.red.code015.api.retrofit.LoLRequest
+import com.red.code015.api.retrofit.RiotRequest
 import com.red.code015.data.RemoteRiotGamesDataSource
 import dagger.Module
 import dagger.Provides
@@ -39,6 +40,11 @@ class APIModule {
     fun lolRequestProvider(host: HostInterceptor<Platform>)
             : LoLRequest = LoLRequest(host)
 
+    @Provides
+    @Singleton
+    fun dataDragonRequestProvider()
+            : DataDragonRequest = DataDragonRequest()
+
     // Data Source
 
     @Provides
@@ -48,8 +54,14 @@ class APIModule {
         hostPlatform: HostInterceptor<Platform>,
         loLRequest: LoLRequest,
         riotRequest: RiotRequest,
-    ): RemoteRiotGamesDataSource =
-        RiotGamesRetrofitDataSource(hostRegion, hostPlatform, loLRequest, riotRequest)
+        dataDragonRequest: DataDragonRequest,
+    ): RemoteRiotGamesDataSource = RiotGamesRetrofitDataSource(
+        hostRegion,
+        hostPlatform,
+        loLRequest,
+        riotRequest,
+        dataDragonRequest
+    )
 
 }
 

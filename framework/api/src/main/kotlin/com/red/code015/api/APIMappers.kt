@@ -1,6 +1,7 @@
 package com.red.code015.api
 
 import com.red.code015.api.retrofit.AccountResponseServer
+import com.red.code015.api.retrofit.ChampionResponseServer
 import com.red.code015.api.retrofit.LeagueResponseServer
 import com.red.code015.api.retrofit.SummonerResponseServer
 import com.red.code015.domain.*
@@ -31,7 +32,7 @@ object SummonerMapper {
             level = level,
             account = account?.toDomain(),
             leagues = leagues.toDomain(),
-            dataSource = DataSource.REMOTE
+            dataSource = DataSources.API
         )
     }
 }
@@ -71,3 +72,37 @@ fun String.toTier() = when (this) {
     LeagueAPIConstants.TierChallenger -> Tier.Challenger
     else -> Tier.Unknown
 }
+
+fun Map<String, ChampionResponseServer>.toList() =
+    map {
+        ChampListItem(id = it.value.id,
+            key = it.value.key,
+            name = it.value.name,
+            image = it.value.image,
+            tags = it.value.tags)
+    }
+
+fun Map<String, ChampionResponseServer>.toDomain(): Map<String, Champion> =
+    map { it.key to it.value.toDomain() }.toMap()
+
+fun ChampionResponseServer.toDomain() = Champion(
+    version = version,
+    id = id,
+    key = key,
+    name = name,
+    title = title,
+    image = image,
+    blurb = blurb,
+    info = info,
+    tags = tags,
+    partype = parType,
+    stats = stats,
+    skins = skins ?: emptyList(),
+    lore = lore,
+    allytips = allyTips ?: emptyList(),
+    enemytips = enemyTips ?: emptyList(),
+    spells = spells ?: emptyList(),
+    passive = passive,
+    recommended = recommended ?: emptyList()
+)
+

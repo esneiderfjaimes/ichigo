@@ -42,3 +42,13 @@ interface AccountService : RiotAPI {
     ): AccountResponseServer
 
 }
+
+interface DataDragonService : DataDragonAPI {
+
+    @GET("cdn/{version}/data/{lang}/champion.json")
+    suspend fun champions(
+        @Path("version") version: String,
+        @Path("lang") lang: String,
+    ): ChampionsResponseServer
+
+}

@@ -1,6 +1,7 @@
 package com.red.code015.api
 
-const val TAG_LOGS = "RED.API"
+const val TAG_LOGS = "RD:API"
+const val TAG = TAG_LOGS
 
 object APIConstants {
     const val KEY = "your key" // TODO(encrypt development key)

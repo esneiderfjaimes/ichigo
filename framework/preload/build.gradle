@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 30
+        targetSdk 32
+    }
+}
+
+dependencies {
+
+    implementation project(":data")
+    implementation project(":domain")
+
+    implementation(androidx_core_lib)
+
+    implementation(hilt_lifecycle_viewmodel_lib)
+    implementation(hilt_nav_compose_lib)
+    implementation 'androidx.test:core-ktx:1.4.0'
+    kapt(hilt_compiler)
+    implementation(dagger_hilt_lib)
+    kapt(dagger_hilt_compiler)
+
+    implementation(gson_lib)
+
+}

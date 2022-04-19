@@ -6,25 +6,18 @@ import com.red.code015.api.host.Platform
 import com.red.code015.api.host.Region
 import com.red.code015.api.host.toAPI
 import com.red.code015.api.retrofit.*
-import com.red.code015.data.ForbiddenException
 import com.red.code015.data.RemoteRiotGamesDataSource
-import com.red.code015.domain.PlatformID
-import com.red.code015.domain.Profile
-import com.red.code015.domain.RegionID
-import com.red.code015.domain.Summoner
+import com.red.code015.domain.*
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import retrofit2.HttpException
-import kotlin.system.measureTimeMillis
+import java.util.*
 
 class RiotGamesRetrofitDataSource(
     private val regionHost: HostInterceptor<Region>,
     private val platformHost: HostInterceptor<Platform>,
     private val loLRequest: LoLRequest,
     private val riotRequest: RiotRequest,
+    private val dataDragonRequest: DataDragonRequest,
 ) : RemoteRiotGamesDataSource {
-
-    private val platformID = platformHost.host.id
 
     companion object {
         const val tag = "$TAG_LOGS:RiotGames"
@@ -69,97 +62,90 @@ class RiotGamesRetrofitDataSource(
 
     override suspend fun profileBySummonerName(
         name: String,
-    ): Profile = coroutineScope {
-        var profile: Profile
-        val time = measureTimeMillis {
-            val summonerResp = loLRequest.service<SummonersService>().byName(name)
-            profile = summonerResp.toProfile(platformHost.host.id)
-        }
-        Log.d(tag, "profileBySummonerName: time:$time, profile:$profile")
-        return@coroutineScope profile
+    ): Profile = tryCoroutineScope("profileBySummonerName") {
+        val summonerResp = loLRequest.service<SummonersService>().byName(name)
+        summonerResp.toProfile(platformHost.host.id)
     }
 
     override suspend fun profileByRiotID(
         gameName: String,
         tagLine: String,
-    ): Profile = coroutineScope {
-        var profile: Profile
-        val time = measureTimeMillis {
-            val accountResp = riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
-            val summonerResp = loLRequest.service<SummonersService>().byPuuID(accountResp.puuid)
-            profile = summonerResp.toProfile(platformHost.host.id)
-        }
-        Log.d(tag, "profileByRiotID: time:$time, profile:$profile")
-        return@coroutineScope profile
+    ): Profile = tryCoroutineScope("profileByRiotID") {
+        val accountResp = riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
+        val summonerResp = loLRequest.service<SummonersService>().byPuuID(accountResp.puuid)
+        summonerResp.toProfile(platformHost.host.id)
     }
 
     // endregion
     // region Summoner
 
-    override suspend fun summonerByPuuID(puuID: String): Summoner = coroutineScope {
-        var summoner: Summoner
-        val time = measureTimeMillis {
-            val summonerResp = async { loLRequest.service<SummonersService>().byPuuID(puuID) }
-            val account = async { riotRequest.service<AccountService>().byPuuId(puuID) }
-            val leagues = loLRequest.service<LeagueService>().bySummoner(summonerResp.await().id)
-            summoner = SummonerMapper.toDomain(
-                platformID = platformID,
-                summoner = summonerResp.await(),
-                account = account.await(),
-                leagues = leagues
-            )
-        }
-        Log.d("RiotGamesRetrofit", "summonerByName: time:$time")
-        return@coroutineScope summoner
+    override suspend fun summonerByPuuID(
+        puuID: String,
+    ): Summoner = tryCoroutineScope("summonerByPuuID") {
+        val summonerResp = async { loLRequest.service<SummonersService>().byPuuID(puuID) }
+        val accountResp = async { riotRequest.service<AccountService>().byPuuId(puuID) }
+        val leaguesResp =
+            loLRequest.service<LeagueService>().bySummoner(summonerResp.await().id)
+        SummonerMapper.toDomain(
+            platformID = platformHost.host.id,
+            summoner = summonerResp.await(),
+            account = accountResp.await(),
+            leagues = leaguesResp
+        )
     }
 
-    override suspend fun summonerByName(name: String): Summoner = coroutineScope {
-        try {
-            var summoner: Summoner
-            val time = measureTimeMillis {
-                val summonerResp = loLRequest.service<SummonersService>().byName(name)
-                val account =
-                    async { riotRequest.service<AccountService>().byPuuId(summonerResp.puuId) }
-                val leagues =
-                    async { loLRequest.service<LeagueService>().bySummoner(summonerResp.id) }
-                summoner = SummonerMapper.toDomain(
-                    platformID = platformID,
-                    summoner = summonerResp,
-                    account = account.await(),
-                    leagues = leagues.await()
-                )
-            }
-            Log.d("RiotGamesRetrofit", "summonerByName: time:$time")
-            return@coroutineScope summoner
-        } catch (e: Exception) {
-            if (e is HttpException) {
-                if (e.code() == 403) {
-                    throw ForbiddenException(e.message())
-                }
-                Log.e(tag, "summonerByName: Exception:${e.message()}")
-            }
-            throw e
-        }
+    override suspend fun summonerByName(
+        name: String,
+    ): Summoner = tryCoroutineScope("summonerByName") {
+        val summonerResp = loLRequest.service<SummonersService>().byName(name)
+        val account =
+            async { riotRequest.service<AccountService>().byPuuId(summonerResp.puuId) }
+        val leagues =
+            async { loLRequest.service<LeagueService>().bySummoner(summonerResp.id) }
+
+        SummonerMapper.toDomain(
+            platformID = platformHost.host.id,
+            summoner = summonerResp,
+            account = account.await(),
+            leagues = leagues.await()
+        )
     }
 
-    override suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner =
-        coroutineScope {
-            var summoner: Summoner
-            val time = measureTimeMillis {
-                val account = riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
-                val summonerResp = loLRequest.getService<SummonersService>().byPuuID(account.puuid)
-                val leagues = loLRequest.getService<LeagueService>().bySummoner(summonerResp.id)
-                summoner = SummonerMapper.toDomain(
-                    platformID = platformID,
-                    summoner = summonerResp,
-                    account = account,
-                    leagues = leagues
-                )
-            }
-            Log.d("RiotGamesRetrofit", "summonerByName: time:$time")
-            return@coroutineScope summoner
-        }
+    override suspend fun summonerByRiotId(
+        gameName: String,
+        tagLine: String,
+    ): Summoner = tryCoroutineScope("summonerByRiotId") {
+        val accountResp: AccountResponseServer =
+            riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
+        val summonerResp: SummonerResponseServer =
+            loLRequest.getService<SummonersService>().byPuuID(accountResp.puuid)
+        val leaguesResp: List<LeagueResponseServer> =
+            loLRequest.getService<LeagueService>().bySummoner(summonerResp.id)
+
+        SummonerMapper.toDomain(
+            platformID = platformHost.host.id,
+            summoner = summonerResp,
+            account = accountResp,
+            leagues = leaguesResp
+        )
+    }
 
     // endregion
+    // region Data Dragon
 
+    override suspend fun encyclopediaChampion(
+        lang: String,
+    ): EncyclopediaChampion = tryCoroutineScope("encyclopediaChampion") {
+        val championsResp: ChampionsResponseServer =
+            dataDragonRequest.getService<DataDragonService>()
+                .champions(
+                    version = "12.7.1", // TODO: always use the latest version
+                    lang = lang
+                )
+        EncyclopediaChampion(version = championsResp.version,
+            data = championsResp.data.toList(),
+            dataSource = DataSource(DataSources.API, Date().time))
+    }
+
+    // endregion
 }

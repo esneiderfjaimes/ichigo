@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.red.code015.data.model.Platforms
 import com.red.code015.data.model.Platform
+import com.red.code015.data.model.Platforms
 import com.red.code015.ui.components.material_modifications.ModalBottomSheetLayout
 import com.red.code015.ui.components.material_modifications.ModalBottomSheetState
 import com.red.code015.ui.theme.IchigoTheme

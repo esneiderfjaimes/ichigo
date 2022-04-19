@@ -1,9 +1,6 @@
 package com.red.code015.data
 
-import com.red.code015.domain.PlatformID
-import com.red.code015.domain.Profile
-import com.red.code015.domain.RegionID
-import com.red.code015.domain.Summoner
+import com.red.code015.domain.*
 
 interface RemoteRiotGamesDataSource {
 
@@ -17,6 +14,7 @@ interface RemoteRiotGamesDataSource {
     suspend fun summonerByName(name: String): Summoner
     suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner
 
+    suspend fun encyclopediaChampion(lang: String): EncyclopediaChampion
 }
 
 interface LocalSummonerDataSource {
@@ -31,4 +29,9 @@ interface LocalSummonerDataSource {
     suspend fun summonerByName(platformID: PlatformID, name: String): Summoner
     suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner
 
+}
+
+interface PreloadDataSource {
+    suspend fun championsOriginal(lang: String): Map<String, Champion>
+    suspend fun encyclopediaChampion(lang: String): EncyclopediaChampion
 }

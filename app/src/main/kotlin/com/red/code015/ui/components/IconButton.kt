@@ -4,7 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +28,7 @@ fun RedIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(
         modifier =
@@ -45,7 +46,7 @@ fun RedIconButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        val contentColor =LocalContentColor.current
+        val contentColor = LocalContentColor.current
 
         CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
@@ -79,7 +80,7 @@ val LocalMinimumTouchTargetEnforcement: ProvidableCompositionLocal<Boolean> =
 private class MinimumTouchTargetModifier(val size: DpSize) : LayoutModifier {
     override fun MeasureScope.measure(
         measurable: Measurable,
-        constraints: Constraints
+        constraints: Constraints,
     ): MeasureResult {
 
         val placeable = measurable.measure(constraints)

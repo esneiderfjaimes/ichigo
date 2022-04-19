@@ -13,12 +13,8 @@ data class Summoner(
     val account: Account? = null,
     val leagues: List<League> = emptyList(),
     val lastCheckDate: Long = Date().time,
-    val dataSource: DataSource,
+    val dataSource: DataSources,
 )
-
-enum class DataSource {
-    REMOTE, LOCAL
-}
 
 data class Account(
     val gameName: String?,

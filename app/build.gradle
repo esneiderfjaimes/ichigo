@@ -15,6 +15,7 @@ dependencies {
     implementation project(":domain")
     implementation project(":framework:api")
     implementation project(":framework:database")
+    implementation project(":framework:preload")
 
     implementation(androidx_core_lib)
     implementation(kotlin_std_lib)
@@ -43,6 +44,12 @@ dependencies {
     implementation(swiperefresh_lib)
 
     implementation(coil_copose_lib)
+    implementation 'com.github.bumptech.glide:glide:4.13.1'
+
+    implementation "com.google.accompanist:accompanist-pager:0.24.6-alpha"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.24.6-alpha"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.6-alpha"
+    implementation "com.google.accompanist:accompanist-flowlayout:0.24.6-alpha"
 
     // endregion
     // region Lifecycle, dependency injection and reactive programming

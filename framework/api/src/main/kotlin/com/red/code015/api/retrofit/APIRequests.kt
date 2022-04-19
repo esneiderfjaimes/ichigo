@@ -1,15 +1,40 @@
 package com.red.code015.api.retrofit
 
 import android.util.Log
-import com.red.code015.api.retrofit.BaseRequest.BaseAPI
 import com.red.code015.api.host.HostInterceptor
 import com.red.code015.api.host.Platform
 import com.red.code015.api.host.Region
+import com.red.code015.api.retrofit.BaseRequest.BaseAPI
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+
+// TODO Multiple instances
+abstract class BaseRequest2<A : BaseAPI>(
+    // a single domain
+    private var baseUrl: String,
+) {
+
+    private val okHttpClient: OkHttpClient = HttpLoggingInterceptor().run {
+        level = HttpLoggingInterceptor.Level.BODY
+        OkHttpClient.Builder().addInterceptor(this).build()
+    }
+
+    inline fun <reified T : A> getService(): T =
+        buildRetrofit().run {
+            create(T::class.java)
+        }
+
+    fun buildRetrofit(): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(okHttpClient)
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+}
+
 
 abstract class BaseRequest<H : HostInterceptor.BaseHost, A : BaseAPI>(
     private var interceptor: HostInterceptor<H>,
@@ -51,6 +76,9 @@ abstract class BaseRequest<H : HostInterceptor.BaseHost, A : BaseAPI>(
             Log.d("okhttp.OkHttpClient", "buildRetrofit: $className, int ${interceptor.baseUrl}")
         }
 }
+
+interface DataDragonAPI : BaseAPI
+class DataDragonRequest : BaseRequest2<DataDragonAPI>("https://ddragon.leagueoflegends.com/")
 
 interface RiotAPI : BaseAPI
 class RiotRequest(host: HostInterceptor<Region>) : BaseRequest<Region, RiotAPI>(host)

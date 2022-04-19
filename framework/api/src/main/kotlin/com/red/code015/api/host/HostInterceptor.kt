@@ -305,7 +305,7 @@ class HostInterceptor<T : HostInterceptor.BaseHost> @JvmOverloads constructor(
                 !contentEncoding.equals("gzip", ignoreCase = true)
     }
 
-    companion object{
+    companion object {
         const val tag = "$TAG_LOGS:HostInterceptor"
     }
 }

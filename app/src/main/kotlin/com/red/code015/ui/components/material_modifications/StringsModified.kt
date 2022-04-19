@@ -1,13 +1,13 @@
 package com.red.code015.ui.components.material_modifications
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.R
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.runtime.Immutable
 
 @Composable
-internal  fun getString2(string: Strings): String {
+internal fun getString2(string: Strings): String {
     LocalConfiguration.current
     val resources = LocalContext.current.resources
     return when (string) {
@@ -20,8 +20,6 @@ internal  fun getString2(string: Strings): String {
     }
 }
 
-
-
 @Suppress("INLINE_CLASS_DEPRECATED")
 @Immutable
 internal inline class Strings private constructor(@Suppress("unused") private val value: Int) {
@@ -33,7 +31,3 @@ internal inline class Strings private constructor(@Suppress("unused") private va
         val ExposedDropdownMenu = Strings(4)
     }
 }
-
-/*
-@Composable
-internal expect fun getString(string: Strings): String*/

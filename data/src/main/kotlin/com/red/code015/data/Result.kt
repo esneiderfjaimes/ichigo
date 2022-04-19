@@ -7,4 +7,5 @@ sealed class Result<T> {
     object NoData : Result<Nothing>()
 }
 
-class ForbiddenException(message:String): Exception(message)
+class ForbiddenException(message: String) : Exception(message)
+class APIException(message: String) : Exception(message)

@@ -1,6 +1,7 @@
 package com.red.code015.api.retrofit
 
 import com.google.gson.annotations.SerializedName
+import com.red.code015.domain.*
 
 data class SummonerResponseServer(
     @SerializedName("id") val id: String,
@@ -32,4 +33,31 @@ data class LeagueResponseServer(
     @SerializedName("inactive") val inactive: Boolean,
     @SerializedName("freshBlood") val freshBlood: Boolean,
     @SerializedName("hotStreak") val hotStreak: Boolean,
+)
+
+data class ChampionsResponseServer(
+    @SerializedName("version") val version: String,
+    @SerializedName("data") val data: Map<String, ChampionResponseServer>,
+)
+
+data class ChampionResponseServer(
+    @SerializedName("version") val version: String,
+    @SerializedName("id") val id: String,
+    @SerializedName("key") val key: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("title") val title: String,
+    @SerializedName("image") val image: Image,
+    @SerializedName("blurb") val blurb: String,
+    @SerializedName("info") val info: Info,
+    @SerializedName("tags") val tags: List<String>,
+    @SerializedName("partype") val parType: String,
+    @SerializedName("stats") val stats: Map<String, Double>,
+    // Extra values
+    @SerializedName("skins") val skins: List<Skin>?,
+    @SerializedName("lore") val lore: String?,
+    @SerializedName("allytips") val allyTips: List<String>?,
+    @SerializedName("enemytips") val enemyTips: List<String>?,
+    @SerializedName("spells") val spells: List<Spell>?,
+    @SerializedName("passive") val passive: Passive?,
+    @SerializedName("recommended") val recommended: List<Recommended>?,
 )

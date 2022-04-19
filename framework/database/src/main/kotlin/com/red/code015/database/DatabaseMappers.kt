@@ -1,7 +1,7 @@
 package com.red.code015.database
 
 import com.red.code015.database.room.SummonerEntity
-import com.red.code015.domain.DataSource
+import com.red.code015.domain.DataSources
 import com.red.code015.domain.Summoner
 
 fun SummonerEntity.toDomain() = Summoner(
@@ -15,7 +15,7 @@ fun SummonerEntity.toDomain() = Summoner(
     account = account,
     leagues = leagues,
     lastCheckDate = lastCheckDate,
-    dataSource = DataSource.LOCAL
+    dataSource = DataSources.DATABASE
 )
 
 fun Summoner.toEntity() = SummonerEntity(
