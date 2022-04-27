@@ -1,0 +1,69 @@
+ext {
+    // region Versions
+
+    compose_version = '1.1.1'
+
+    // Android X libraries
+    def nav_version = '2.4.2'
+    def compose_runtime_version = '1.2.0-alpha07'
+    def lifecycle_version = '2.5.0-alpha06'
+    def room_version = '2.4.2'
+    def hilt_compiler_version = '1.0.0'
+
+    // Google
+    def material_version = '1.6.0-beta01'
+    def gson_version = '2.9.0'
+    def dagger_hilt_version = '2.41'
+
+    // Reactive X
+    def rxjava_version = '2.2.21'
+
+    // SquareUp
+    def retrofit_version = '2.9.0'
+
+    // endregion
+    // region Android X libraries
+    Android = [
+            androidx_core_lib              : 'androidx.core:core-ktx:1.7.0',
+
+            // ... > Activity
+            activity_compose_lib           : 'androidx.activity:activity-compose:1.4.0',
+
+            // ... > Navigation
+            navigation_copose_lib          : "androidx.navigation:navigation-compose:$nav_version",
+
+            // ... > Compose
+            // ... > ... > UI
+            compose_ui_lib                 : "androidx.compose.ui:ui:$compose_version",
+            compose_ui_preview_lib         : "androidx.compose.ui:ui-tooling-preview:$compose_version",
+            compose_ui_tooling_debug       : "androidx.compose.ui:ui-tooling:$compose_version",
+            compose_ui_util_lib            : "androidx.compose.ui:ui-util:$compose_version",
+            // ... > ... > Material
+            compose_material_lib           : "androidx.compose.material:material:$compose_version",
+            compose_material3_lib          : 'androidx.compose.material3:material3:1.0.0-alpha08',
+            compose_material_icons_lib     : "androidx.compose.material:material-icons-extended:$compose_version",
+            // ... > ... > Runtime
+            compose_runtime_lib            : "androidx.compose.runtime:runtime:$compose_runtime_version",
+            compose_livedata_lib           : "androidx.compose.runtime:runtime-livedata:$compose_runtime_version",
+            compose_rxjava_lib             : "androidx.compose.runtime:runtime-rxjava2:$compose_runtime_version",
+
+            // ... > Lifecycle
+            lifecycle_runtime_lib          : "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version",
+            lifecycle_livedata_lib         : "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version",
+            lifecycle_viewmodel_lib        : "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+            lifecycle_viewmodel_compose_lib: "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version",
+
+            // ... > Room
+            room_lib                       : "androidx.room:room-ktx:$room_version",
+            room_runtime_lib               : "androidx.room:room-runtime:$room_version",
+            room_compiler                  : "androidx.room:room-compiler:$room_version",
+            room_rxjava_lib                : "androidx.room:room-rxjava2:$room_version",
+
+            // ... > Hilt
+            hilt_lifecycle_viewmodel_lib   : 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03',
+            hilt_compiler                  : "androidx.hilt:hilt-compiler:$hilt_compiler_version",
+            hilt_nav_compose_lib           : "androidx.hilt:hilt-navigation-compose:$hilt_compiler_version"
+    ]
+
+    // endregion
+}

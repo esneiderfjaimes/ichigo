@@ -2,6 +2,7 @@ package com.red.code015.api.retrofit
 
 import com.red.code015.api.APIConstants.KEY
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 
 const val SERVICE_SUMMONER: String = "lol/summoner/v4"
@@ -41,6 +42,30 @@ interface AccountService : RiotAPI {
         @Path("tagLine") tagLine: String,
     ): AccountResponseServer
 
+}
+
+interface LoLService : LoLAPIs {
+
+    // CHAMPION-V3 API
+    @GET("lol/platform/v3/champion-rotations")
+    suspend fun championsRotations(
+        @Header("X-Riot-Token") riotToken: String,
+    ): ChampionsRotationResponseServer
+
+
+    // CHAMPION-MASTERY-V4
+
+    @GET("/lol/champion-mastery/v4/scores/by-summoner/{summonerId}")
+    suspend fun masteryScores(
+        @Path("summonerId") summonerId: String,
+        @Header("X-Riot-Token") riotToken: String,
+    ): Int
+
+    @GET("/lol/champion-mastery/v4/champion-masteries/by-summoner/{summonerId}")
+    suspend fun championMasteries(
+        @Path("summonerId") summonerId: String,
+        @Header("X-Riot-Token") riotToken: String,
+    ): List<MasteriesResponseServer>
 }
 
 interface DataDragonService : DataDragonAPI {

@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
     id "com.google.protobuf" version "0.8.17"
+    id 'com.google.gms.google-services'
 }
 
 dependencies {

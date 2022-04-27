@@ -1,4 +1,5 @@
 buildscript {
+    apply from: 'dependencies.gradle'
     ext {
         // region Versions
 
@@ -97,7 +98,7 @@ buildscript {
 
         // ... > Rx Java
         rxandroid_lib = "io.reactivex.rxjava2:rxandroid:$rxjava_version"
-        rxjava_lib = "io.reactivex.rxjava2:rxjava:$rxjava_version"
+        rxjava_lib = "io.reactivex.rxjava2:rxjava:2.2.21"
 
         // endregion
         // region SquareUp libraries
@@ -130,8 +131,13 @@ buildscript {
 
         // endregion
     }
+    repositories {
+        mavenCentral()
+        google()
+    }
     dependencies {
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.40.5'
+        classpath 'com.google.gms:google-services:4.3.10'
     }
 }
 

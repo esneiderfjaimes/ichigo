@@ -1,9 +1,6 @@
 package com.red.code015.api
 
-import com.red.code015.api.retrofit.AccountResponseServer
-import com.red.code015.api.retrofit.ChampionResponseServer
-import com.red.code015.api.retrofit.LeagueResponseServer
-import com.red.code015.api.retrofit.SummonerResponseServer
+import com.red.code015.api.retrofit.*
 import com.red.code015.domain.*
 
 fun SummonerResponseServer.toProfile(platformID: PlatformID) = Profile(
@@ -106,3 +103,8 @@ fun ChampionResponseServer.toDomain() = Champion(
     recommended = recommended ?: emptyList()
 )
 
+fun ChampionsRotationResponseServer.toDomain() = ChampionsRotation(
+    freeChampionIds = freeChampionIds.map { it.toString() },
+    freeChampionIdsForNewPlayers = freeChampionIdsForNewPlayers.map { it.toString() },
+    maxNewPlayerLevel = maxNewPlayerLevel
+)

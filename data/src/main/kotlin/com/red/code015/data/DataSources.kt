@@ -1,6 +1,8 @@
 package com.red.code015.data
 
 import com.red.code015.domain.*
+import kotlinx.coroutines.flow.FlowCollector
+import kotlin.experimental.ExperimentalTypeInference
 
 interface RemoteRiotGamesDataSource {
 
@@ -15,6 +17,14 @@ interface RemoteRiotGamesDataSource {
     suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner
 
     suspend fun encyclopediaChampion(lang: String): EncyclopediaChampion
+    suspend fun championsRotations(): ChampionsRotation
+
+    @OptIn(ExperimentalTypeInference::class)
+    suspend fun <T> fetchApiKey(
+        flowCollector: FlowCollector<T>,
+        @BuilderInference block: suspend FlowCollector<T>.() -> Unit,
+    )
+
 }
 
 interface LocalSummonerDataSource {

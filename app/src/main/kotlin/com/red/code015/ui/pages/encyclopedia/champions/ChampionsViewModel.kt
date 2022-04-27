@@ -4,7 +4,9 @@ import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.red.code015.domain.ChampListItem
+import com.red.code015.domain.ChampionsRotation
 import com.red.code015.domain.RotationChamp
+import com.red.code015.usecases.ChampionsRotationsUserCase
 import com.red.code015.usecases.EncyclopediaChampionUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,14 +22,8 @@ import javax.inject.Inject
 @OptIn(InternalCoroutinesApi::class)
 class ChampionsViewModel @Inject constructor(
     private val encyclopediaChampion: EncyclopediaChampionUserCase,
+    private val championsRotation: ChampionsRotationsUserCase,
 ) : ViewModel() {
-
-    // TODO: get from api
-    private val champsFree = listOf(15, 33, 40, 57, 80, 82, 98, 107, 114,
-        117, 134, 150, 238, 429, 711, 875).map { it.toString() }
-
-    private val champsFreeForNewPlayers = listOf(222, 254, 427, 82, 131,
-        147, 54, 17, 18, 37).map { it.toString() }
 
     //region Fields
 
@@ -55,8 +51,8 @@ class ChampionsViewModel @Inject constructor(
                 encyclopediaChampion.invoke().catch { it.printStackTrace() }.collect {
                     champions.value = it.data
                     generateFilters(champions.value)
-                    load()
                 }
+                championsRotation.invoke().catch { it.printStackTrace() }.collect { it.load() }
             }
         }
     }
@@ -79,12 +75,12 @@ class ChampionsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun load() {
+    private suspend fun ChampionsRotation.load() {
         withContext(Dispatchers.IO) {
             val champs = champions.value.toMutableList()
             champs.forEachIndexed { index, champ ->
-                val isFree = champsFree.contains(champ.key)
-                val isFreeForNewPlayers = champsFreeForNewPlayers.contains(champ.key)
+                val isFree = freeChampionIds.contains(champ.key)
+                val isFreeForNewPlayers = freeChampionIdsForNewPlayers.contains(champ.key)
                 when {
                     isFree && isFreeForNewPlayers ->
                         champs[index] = champ.copy(rotation = RotationChamp.Both)
@@ -120,6 +116,6 @@ class ChampionsViewModel @Inject constructor(
 
     }
 
-
     // endregion
+
 }

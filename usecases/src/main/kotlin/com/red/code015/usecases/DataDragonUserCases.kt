@@ -6,3 +6,7 @@ import javax.inject.Inject
 class EncyclopediaChampionUserCase @Inject constructor(private val repository: DataDragonRepository) {
     fun invoke() = repository.encyclopediaChampion()
 }
+
+class ChampionsRotationsUserCase @Inject constructor(private val repository: DataDragonRepository) {
+    fun invoke() = repository.championsRotations()
+}

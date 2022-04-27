@@ -35,6 +35,24 @@ data class LeagueResponseServer(
     @SerializedName("hotStreak") val hotStreak: Boolean,
 )
 
+data class ChampionsRotationResponseServer(
+    @SerializedName("freeChampionIds") val freeChampionIds: List<Int>,
+    @SerializedName("freeChampionIdsForNewPlayers") val freeChampionIdsForNewPlayers: List<Int>,
+    @SerializedName("maxNewPlayerLevel") val maxNewPlayerLevel: Int,
+)
+
+data class MasteriesResponseServer(
+    @SerializedName("championId") val championId: Int,
+    @SerializedName("championLevel") val championLevel: Int,
+    @SerializedName("championPoints") val championPoints: Long,
+    @SerializedName("lastPlayTime") val lastPlayTime: Long,
+    @SerializedName("championPointsSinceLastLevel") val championPointsSinceLastLevel: Long,
+    @SerializedName("championPointsUntilNextLevel") val championPointsUntilNextLevel: Long,
+    @SerializedName("chestGranted") val chestGranted: Boolean,
+    @SerializedName("tokensEarned") val tokensEarned: Int,
+    @SerializedName("summonerId") val summonerId: String,
+)
+
 data class ChampionsResponseServer(
     @SerializedName("version") val version: String,
     @SerializedName("data") val data: Map<String, ChampionResponseServer>,
