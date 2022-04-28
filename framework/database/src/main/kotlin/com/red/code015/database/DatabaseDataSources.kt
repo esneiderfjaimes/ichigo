@@ -1,9 +1,11 @@
 package com.red.code015.database
 
 import com.red.code015.data.LocalSummonerDataSource
+import com.red.code015.data.RedboxDataSource
+import com.red.code015.database.redbox.Redbox
 import com.red.code015.database.room.IchigoDatabase
-import com.red.code015.domain.PlatformID
-import com.red.code015.domain.Summoner
+import com.red.code015.domain.*
+import java.util.*
 
 class SummonerRoomDataSource(
     database: IchigoDatabase,
@@ -44,4 +46,31 @@ class SummonerRoomDataSource(
 
     // endregion
 
+}
+
+class DragonRedboxDataSource(
+    private val redbox: Redbox,
+) : RedboxDataSource {
+
+    private val daoEncyclopediaChampion by lazy { redbox.encyclopediaChampion }
+    private val daoChampionsRotation by lazy { redbox.championsRotation }
+
+    override suspend fun insetEncyclopediaChampion(
+        encyclopediaChampion: EncyclopediaChampion,
+        lang: String,
+    ) {
+        daoEncyclopediaChampion.insert(encyclopediaChampion.copy(dataSource = updateDS()), lang)
+    }
+
+    override suspend fun readEncyclopediaChampion(lang: String)
+            : EncyclopediaChampion? = daoEncyclopediaChampion.read(lang)
+
+    override suspend fun insetChampionsRotation(championsRotation: ChampionsRotation) {
+        daoChampionsRotation.insert(championsRotation.copy(dataSource = updateDS()))
+    }
+
+    override suspend fun readChampionsRotation()
+            : ChampionsRotation? = daoChampionsRotation.read()
+
+    private fun updateDS() = DataSource(dataSources = DataSources.DATABASE, time = Date().time)
 }

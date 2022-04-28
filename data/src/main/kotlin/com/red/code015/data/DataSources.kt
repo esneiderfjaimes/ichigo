@@ -16,7 +16,8 @@ interface RemoteRiotGamesDataSource {
     suspend fun summonerByName(name: String): Summoner
     suspend fun summonerByRiotId(gameName: String, tagLine: String): Summoner
 
-    suspend fun encyclopediaChampion(lang: String): EncyclopediaChampion
+    suspend fun lastVersion(): String?
+    suspend fun encyclopediaChampion(version: String, lang: String): EncyclopediaChampion
     suspend fun championsRotations(): ChampionsRotation
 
     @OptIn(ExperimentalTypeInference::class)
@@ -41,7 +42,19 @@ interface LocalSummonerDataSource {
 
 }
 
+interface RedboxDataSource {
+
+    suspend fun insetEncyclopediaChampion(encyclopediaChampion: EncyclopediaChampion, lang: String)
+    suspend fun readEncyclopediaChampion(lang: String): EncyclopediaChampion?
+
+    suspend fun insetChampionsRotation(championsRotation: ChampionsRotation)
+    suspend fun readChampionsRotation(): ChampionsRotation?
+
+}
+
 interface PreloadDataSource {
+    suspend fun lastVersion(): String?
+    suspend fun fillBitmaps(encyclopediaChampion: EncyclopediaChampion): EncyclopediaChampion
     suspend fun championsOriginal(lang: String): Map<String, Champion>
     suspend fun encyclopediaChampion(lang: String): EncyclopediaChampion
 }

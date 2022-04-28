@@ -27,11 +27,14 @@ class ChampionsViewModel @Inject constructor(
 
     //region Fields
 
+    private lateinit var latestVersion: String
+
     private val _state = MutableStateFlow(State())
     val state: StateFlow<State> get() = _state
 
     private val champions = MutableStateFlow<List<ChampListItem>>(listOf())
     private val tags = MutableStateFlow<List<String>>(listOf())
+    private val footer = MutableStateFlow<String?>(null)
 
     // endregion
     // region Override Methods & Callbacks
@@ -39,8 +42,8 @@ class ChampionsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                combine(champions, tags) { champions, tags ->
-                    State(champions, tags)
+                combine(champions, tags, footer) { champions, tags, footer ->
+                    State(champions, tags, footer)
                 }.flowOn(Dispatchers.IO).catch { throw it }.collect {
                     _state.value = it
                 }
@@ -51,10 +54,16 @@ class ChampionsViewModel @Inject constructor(
                 encyclopediaChampion.invoke().catch { it.printStackTrace() }.collect {
                     champions.value = it.data
                     generateFilters(champions.value)
+                    footer.value =
+                        "v${it.version} • ${it.dataSource.dataSources.name.substring(0..2)}"
                 }
                 championsRotation.invoke().catch { it.printStackTrace() }.collect { it.load() }
             }
         }
+    }
+
+    fun setup(latestVersion: String) {
+        this.latestVersion = latestVersion
     }
 
     // endregion
@@ -100,6 +109,7 @@ class ChampionsViewModel @Inject constructor(
     data class State(
         val list: List<ChampListItem> = listOf(),
         val filterByTags: List<String> = listOf(),
+        val footer: String? = null,
     )
 
     @Parcelize

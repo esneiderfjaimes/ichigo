@@ -29,8 +29,8 @@ fun ChampJson.toDomain() = Champion(
     recommended = recommended ?: emptyList()
 )
 
-fun Map<String, ChampSummaryJson>.toChampsList(applicationContext: Context): List<ChampListItem> =
-    map { it.value.toChampsListItem(applicationContext) }
+fun Map<String, ChampSummaryJson>.toChampsList(ctx: Context): List<ChampListItem> =
+    map { it.value.toChampsListItem(ctx) }
 
 fun ChampSummaryJson.toChampsListItem(ctx: Context, forceImageFetch: Boolean = ForceImageFetch) =
     ChampListItem(

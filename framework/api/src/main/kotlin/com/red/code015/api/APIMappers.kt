@@ -2,6 +2,7 @@ package com.red.code015.api
 
 import com.red.code015.api.retrofit.*
 import com.red.code015.domain.*
+import java.util.*
 
 fun SummonerResponseServer.toProfile(platformID: PlatformID) = Profile(
     platformID = platformID,
@@ -106,5 +107,6 @@ fun ChampionResponseServer.toDomain() = Champion(
 fun ChampionsRotationResponseServer.toDomain() = ChampionsRotation(
     freeChampionIds = freeChampionIds.map { it.toString() },
     freeChampionIdsForNewPlayers = freeChampionIdsForNewPlayers.map { it.toString() },
-    maxNewPlayerLevel = maxNewPlayerLevel
+    maxNewPlayerLevel = maxNewPlayerLevel,
+    dataSource = DataSource(DataSources.API, Date().time)
 )

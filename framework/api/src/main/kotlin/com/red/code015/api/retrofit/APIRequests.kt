@@ -18,7 +18,7 @@ abstract class BaseRequest2<A : BaseAPI>(
 ) {
 
     private val okHttpClient: OkHttpClient = HttpLoggingInterceptor().run {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = HttpLoggingInterceptor.Level.BASIC
         OkHttpClient.Builder().addInterceptor(this).build()
     }
 

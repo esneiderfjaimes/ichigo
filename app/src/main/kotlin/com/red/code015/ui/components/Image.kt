@@ -65,10 +65,11 @@ fun ChampionThumbnail(
     bitmap: Bitmap?,
     isInRotation: Boolean,
     championImage: String,
+    size: Dp,
     onClick: () -> Unit = {},
 ) {
     if (bitmap != null) Image(
-        modifier = Modifier.champThumbnail(isInRotation, onClick),
+        modifier = Modifier.champThumbnail(isInRotation, onClick, size),
         bitmap = bitmap.asImageBitmap(),
         contentDescription = null
     )
@@ -78,13 +79,13 @@ fun ChampionThumbnail(
             .build(),
         contentDescription = null,
         loading = {
-            Box(Modifier.champThumbnail(isInRotation, onClick)) {
+            Box(Modifier.champThumbnail(isInRotation, onClick, size)) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         },
         success = {
             Image(
-                modifier = Modifier.champThumbnail(isInRotation, onClick),
+                modifier = Modifier.champThumbnail(isInRotation, onClick, size),
                 painter = this@SubcomposeAsyncImage.painter,
                 contentDescription = null
             )
@@ -92,7 +93,7 @@ fun ChampionThumbnail(
         error = {
             colorScheme.error.ApplyOn {
                 Box(Modifier
-                    .champThumbnail(isInRotation, onClick)
+                    .champThumbnail(isInRotation, onClick, size)
                     .background(it)) {
                     Icon(Icons.Rounded.PriorityHigh, null, Modifier.align(Alignment.Center))
                 }
@@ -101,7 +102,7 @@ fun ChampionThumbnail(
     )
 }
 
-fun Modifier.champThumbnail(isInRotation: Boolean, onClick: () -> Unit = {}) = size(75.dp)
+fun Modifier.champThumbnail(isInRotation: Boolean, onClick: () -> Unit = {}, size: Dp) = size(size)
     .border(
         width = 0.75.dp,
         color = if (isInRotation) Color.Green else Color(0xFFC28F2C),

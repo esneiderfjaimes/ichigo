@@ -20,7 +20,6 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.ExecutionException
 
-
 class RiotGamesRetrofitDataSource(
     val context: Context,
     val remoteConfig: RemoteConfig,
@@ -76,7 +75,7 @@ class RiotGamesRetrofitDataSource(
     override suspend fun profileBySummonerName(
         name: String,
     ): Profile = tryCoroutineScope("profileBySummonerName") {
-        val summonerResp = loLRequest.service<SummonersService>().byName(name)
+        val summonerResp = loLRequest.service<SummonersService>().byName(name, remoteConfig.keyApi)
         summonerResp.toProfile(platformHost.host.id)
     }
 
@@ -84,8 +83,11 @@ class RiotGamesRetrofitDataSource(
         gameName: String,
         tagLine: String,
     ): Profile = tryCoroutineScope("profileByRiotID") {
-        val accountResp = riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
-        val summonerResp = loLRequest.service<SummonersService>().byPuuID(accountResp.puuid)
+        val accountResp =
+            riotRequest.getService<AccountService>()
+                .byRiotId(gameName, tagLine, remoteConfig.keyApi)
+        val summonerResp =
+            loLRequest.service<SummonersService>().byPuuID(accountResp.puuid, remoteConfig.keyApi)
         summonerResp.toProfile(platformHost.host.id)
     }
 
@@ -95,10 +97,13 @@ class RiotGamesRetrofitDataSource(
     override suspend fun summonerByPuuID(
         puuID: String,
     ): Summoner = tryCoroutineScope("summonerByPuuID") {
-        val summonerResp = async { loLRequest.service<SummonersService>().byPuuID(puuID) }
-        val accountResp = async { riotRequest.service<AccountService>().byPuuId(puuID) }
+        val summonerResp =
+            async { loLRequest.service<SummonersService>().byPuuID(puuID, remoteConfig.keyApi) }
+        val accountResp =
+            async { riotRequest.service<AccountService>().byPuuId(puuID, remoteConfig.keyApi) }
         val leaguesResp =
-            loLRequest.service<LeagueService>().bySummoner(summonerResp.await().id)
+            loLRequest.service<LeagueService>()
+                .bySummoner(summonerResp.await().id, remoteConfig.keyApi)
         SummonerMapper.toDomain(
             platformID = platformHost.host.id,
             summoner = summonerResp.await(),
@@ -110,11 +115,16 @@ class RiotGamesRetrofitDataSource(
     override suspend fun summonerByName(
         name: String,
     ): Summoner = tryCoroutineScope("summonerByName") {
-        val summonerResp = loLRequest.service<SummonersService>().byName(name)
+        val summonerResp = loLRequest.service<SummonersService>().byName(name, remoteConfig.keyApi)
         val account =
-            async { riotRequest.service<AccountService>().byPuuId(summonerResp.puuId) }
+            async {
+                riotRequest.service<AccountService>()
+                    .byPuuId(summonerResp.puuId, remoteConfig.keyApi)
+            }
         val leagues =
-            async { loLRequest.service<LeagueService>().bySummoner(summonerResp.id) }
+            async {
+                loLRequest.service<LeagueService>().bySummoner(summonerResp.id, remoteConfig.keyApi)
+            }
 
         SummonerMapper.toDomain(
             platformID = platformHost.host.id,
@@ -129,11 +139,13 @@ class RiotGamesRetrofitDataSource(
         tagLine: String,
     ): Summoner = tryCoroutineScope("summonerByRiotId") {
         val accountResp: AccountResponseServer =
-            riotRequest.getService<AccountService>().byRiotId(gameName, tagLine)
+            riotRequest.getService<AccountService>()
+                .byRiotId(gameName, tagLine, remoteConfig.keyApi)
         val summonerResp: SummonerResponseServer =
-            loLRequest.getService<SummonersService>().byPuuID(accountResp.puuid)
+            loLRequest.getService<SummonersService>()
+                .byPuuID(accountResp.puuid, remoteConfig.keyApi)
         val leaguesResp: List<LeagueResponseServer> =
-            loLRequest.getService<LeagueService>().bySummoner(summonerResp.id)
+            loLRequest.getService<LeagueService>().bySummoner(summonerResp.id, remoteConfig.keyApi)
 
         SummonerMapper.toDomain(
             platformID = platformHost.host.id,
@@ -146,13 +158,27 @@ class RiotGamesRetrofitDataSource(
     // endregion
     // region Data Dragon
 
+    private var lastVersion: String? = null
+
+    override suspend fun lastVersion(): String? = tryCoroutineScope("lastVersion") {
+        try {
+            if (lastVersion.isNullOrBlank())
+                dataDragonRequest.getService<DataDragonService>().versions().first()
+                    .also { lastVersion = it }
+            else lastVersion
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     override suspend fun encyclopediaChampion(
+        version: String,
         lang: String,
     ): EncyclopediaChampion = tryCoroutineScope("encyclopediaChampion") {
         val championsResp: ChampionsResponseServer =
             dataDragonRequest.getService<DataDragonService>()
                 .champions(
-                    version = "12.7.1", // TODO: always use the latest version
+                    version = version,
                     lang = lang
                 )
         EncyclopediaChampion(version = championsResp.version,

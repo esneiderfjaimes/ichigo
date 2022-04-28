@@ -14,14 +14,19 @@ import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Sort
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -42,9 +47,22 @@ typealias TopBar = @Composable (
     @Composable (ColumnScope.() -> Unit), // Header
 ) -> Unit
 
+@Preview
+@Composable
+fun EncyclopediaPage(
+    viewModel: EncyclopediaViewModel = hiltViewModel(),
+) {
+    val latestVersion by viewModel.latestVersion.collectAsState()
+    if (latestVersion.isNotBlank())
+        EncyclopediaPage(latestVersion)
+}
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun EncyclopediaPage(scope: CoroutineScope = rememberCoroutineScope()) {
+private fun EncyclopediaPage(
+    latestVersion: String,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
     val pagerState = rememberPagerState()
 
     // TODO: not working properly, possible solution:
@@ -57,13 +75,25 @@ fun EncyclopediaPage(scope: CoroutineScope = rememberCoroutineScope()) {
     val topBar: TopBar = { actions, header ->
         Surface(shadowElevation = 4.dp) {
             Column {
-                SmallTopAppBar(
+                SmallTopAppBar( // TODO: Make top app bar more small
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = colorScheme.surface.copy(0.75f)),
                     title = {
                         Text(
-                            tabs[pagerState.currentPage].name,
-                            color = colorScheme.primary,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
+                            buildAnnotatedString {
+                                withStyle(style = SpanStyle(
+                                    color = colorScheme.primary,
+                                    fontWeight = FontWeight.Bold)
+                                ) {
+                                    append("Encyclopedia")
+                                }
+                                if (latestVersion.isNotBlank()) withStyle(style = SpanStyle(
+                                    color = colorScheme.onSurface.copy(alpha = 0.5f),
+                                    fontSize = typography.titleSmall.fontSize
+                                )) {
+                                    append(" v$latestVersion")
+                                }
+                            },
+                            style = typography.headlineSmall,
                         )
                     },
                     actions = { actions() },
@@ -85,7 +115,9 @@ fun EncyclopediaPage(scope: CoroutineScope = rememberCoroutineScope()) {
     ) { page ->
         when (tabs[page]) {
             EncyclopediaTab.Champions -> {
-                ChampionScreen(topBar = topBar, scrollBehavior = scrollBehavior)
+                ChampionScreen(topBar = topBar,
+                    scrollBehavior = scrollBehavior,
+                    latestVersion = latestVersion)
             }
             EncyclopediaTab.Items -> {
                 Column {
@@ -113,6 +145,7 @@ fun EncyclopediaPage(scope: CoroutineScope = rememberCoroutineScope()) {
 @Composable
 private fun TabsEncyclopedia(selectedTabIndex: Int, onSelectedTab: (EncyclopediaTab) -> Unit) {
     TabRow(
+        containerColor = Color.Transparent,
         selectedTabIndex = selectedTabIndex,
         indicator = {
             TabRowDefaults.Indicator(

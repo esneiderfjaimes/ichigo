@@ -43,6 +43,12 @@ inline fun <reified T> DataDragonAssetsDataSource.assetsTo(filePath: String): T 
     return gson.fromJson(json, T::class.java)
 }
 
+fun DataDragonAssetsDataSource.readAssets(filePath: String): String? = try {
+    assetsToJson(filePath)
+} catch (e: Exception) {
+    null
+}
+
 fun DataDragonAssetsDataSource.assetsToJson(filePath: String): String {
     val json = application.assets.open(filePath).bufferedReader().use {
         it.readText()

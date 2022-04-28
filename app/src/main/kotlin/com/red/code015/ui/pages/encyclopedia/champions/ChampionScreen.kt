@@ -9,6 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -25,6 +26,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.red.code015.R
@@ -48,10 +50,12 @@ fun ChampionScreen(
     viewModel: ChampionsViewModel = hiltViewModel(),
     topBar: TopBar,
     scrollBehavior: TopAppBarScrollBehavior,
+    latestVersion: String,
 ) {
+    viewModel.setup(latestVersion)
     val state by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    var filters by rememberSaveable { mutableStateOf(Filters()) }
+    var filters by rememberSaveable { mutableStateOf(Filters(rotation = RotationChamp.Free)) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -94,7 +98,7 @@ fun ChampionScreen(
         },
         content = {
             if (state.list.isEmpty()) LoadingScreen()
-            else ChampsGrid(state.list, filters)
+            else ChampsGrid(state.list, filters, state.footer)
         }
     )
 }
@@ -103,31 +107,61 @@ fun ChampionScreen(
 fun ChampsGrid(
     champs: List<ChampListItem>,
     filters: Filters,
+    footer: String?,
 ) {
+    val size = 70.dp
+    val items = champs.filter(filters::predicate)
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 80.dp),
+        columns = GridCells.Adaptive(minSize = size),
         horizontalArrangement = Arrangement.SpaceAround,
         contentPadding = PaddingValues(
             start = 8.dp, end = 8.dp,
-            top = 16.dp, bottom = 80.dp
+            top = 4.dp, bottom = 80.dp
         ),
         content = {
-            items(items = champs.filter(filters::predicate), key = { it.name }) { champ ->
-                ChampItem(Modifier.animateItemPlacement(), champ)
+            if (items.isNotEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)) {
+                        Text(text = "${items.size} champions",
+                            modifier = Modifier.align(Alignment.Center),
+                            color = colorScheme.onBackground.copy(0.325f),
+                            style = typography.bodySmall)
+                    }
+                }
+            }
+            items(items = items, key = { it.name }) { champ ->
+                ChampItem(Modifier.animateItemPlacement(), champ, size)
+            }
+            footer?.let {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)) {
+                        Text(text = it,
+                            modifier = Modifier.align(Alignment.Center),
+                            color = colorScheme.onBackground.copy(0.25f),
+                            style = typography.bodySmall)
+                    }
+                }
             }
         }
     )
 }
 
 @Composable
-private fun ChampItem(modifier: Modifier, champ: ChampListItem) {
+private fun ChampItem(modifier: Modifier, champ: ChampListItem, size: Dp) {
     Column(
         modifier = modifier.padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ChampionThumbnail(bitmap = champ.bitmap,
+        ChampionThumbnail(
+            bitmap = champ.bitmap,
             isInRotation = champ.rotation == RotationChamp.Free,
-            championImage = champ.image.full)
+            championImage = champ.image.full,
+            size
+        )
 
         Text(text = champ.name,
             modifier = Modifier.padding(4.dp),

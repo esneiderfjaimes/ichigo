@@ -13,10 +13,11 @@ import retrofit2.HttpException
 import java.util.concurrent.Semaphore
 import kotlin.system.measureTimeMillis
 
-suspend inline fun <R> tryCoroutineScope(
+suspend inline fun <R> RiotGamesRetrofitDataSource.tryCoroutineScope(
     name: String = "fun",
     noinline block: suspend CoroutineScope.() -> R,
 ): R {
+    // Log.d(TAG, "tryCoroutineScope: API KEY: ${remoteConfig.keyApi}")
     try {
         Log.d(TAG, ">> $name")
         val value: R
