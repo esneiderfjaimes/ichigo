@@ -10,12 +10,12 @@ sealed class Platform(val id: PlatformID, host: String) : HostInterceptor.BaseHo
     object NA1 : Platform(PlatformID.NA, "na1.api.riotgames.com")
     object LA1 : Platform(PlatformID.LAN, "la1.api.riotgames.com")
     object LA2 : Platform(PlatformID.LAS, "la2.api.riotgames.com")
-    object BR1 : Platform(PlatformID.BR, "br.api.riotgames.com")
+    object BR1 : Platform(PlatformID.BR, "br1.api.riotgames.com")
     object EUN1 : Platform(PlatformID.EUNE, "eun1.api.riotgames.com")
     object EUW1 : Platform(PlatformID.EUW, "euw1.api.riotgames.com")
     object JP1 : Platform(PlatformID.JP, "jp1.api.riotgames.com")
     object OC1 : Platform(PlatformID.OCE, "oc1.api.riotgames.com")
-    object TR1 : Platform(PlatformID.TR, "tr.api.riotgames.com")
+    object TR1 : Platform(PlatformID.TR, "tr1.api.riotgames.com")
     object RU : Platform(PlatformID.RU, "ru.api.riotgames.com")
 }
 
@@ -36,7 +36,7 @@ internal fun PlatformID.toAPI() = when (this) {
 sealed class Region(val id: RegionID, host: String) : HostInterceptor.BaseHost(host) {
     object AMERICAS : Region(RegionID.AMERICAS, "americas.api.riotgames.com")
     object ASIA : Region(RegionID.ASIA, "asia.api.riotgames.com")
-    object EUROPE : Region(RegionID.EUROPE, "europa.api.riotgames.com")
+    object EUROPE : Region(RegionID.EUROPE, "europe.api.riotgames.com")
 }
 
 internal fun RegionID.toAPI() = when (this) {

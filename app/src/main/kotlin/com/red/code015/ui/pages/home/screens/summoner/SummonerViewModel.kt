@@ -2,8 +2,12 @@ package com.red.code015.ui.pages.home.screens.summoner
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.red.code015.data.model.MasteryUI
+import com.red.code015.data.model.SummonerUI
+import com.red.code015.data.model.toListMasteryUI
+import com.red.code015.data.model.toUI
 import com.red.code015.domain.PlatformID
-import com.red.code015.domain.Summoner
+import com.red.code015.usecases.MasteriesUserCase
 import com.red.code015.usecases.SummonerBySummonerNameUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +23,7 @@ import javax.inject.Inject
 @OptIn(InternalCoroutinesApi::class)
 class SummonerViewModel @Inject constructor(
     private val bySummonerName: SummonerBySummonerNameUserCase,
+    private val masteriesUserCase: MasteriesUserCase,
 ) : ViewModel() {
     //region Fields
 
@@ -28,16 +33,22 @@ class SummonerViewModel @Inject constructor(
     private val isRefreshing = MutableStateFlow(false)
     private val summoner = MutableStateFlow<State.SectionSummoner>(State.SectionSummoner.Loading)
     private val exception = MutableStateFlow<Throwable?>(null)
+    private val masteries = MutableStateFlow<List<MasteryUI>>(listOf())
 
     // endregion
     // region Override Methods & Callbacks
 
     init {
         viewModelScope.launch {
-            combine(isRefreshing, exception, summoner) { isRefreshing, exception, summoner ->
+            combine(isRefreshing,
+                exception,
+                summoner,
+                masteries) { isRefreshing, exception, summoner, masteries ->
                 State(isRefreshing = isRefreshing,
                     throwable = exception,
-                    sectionSummoner = summoner)
+                    sectionSummoner = summoner,
+                    masteries = masteries
+                )
             }.catch { throwable ->
                 throw throwable
             }.collect {
@@ -65,11 +76,16 @@ class SummonerViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             bySummonerName.invoke(platformID, name, forceFetch).catch {
                 exception.value = it
-            }.collect {
+            }.collect { summoner ->
                 if (isRefreshing.value) isRefreshing.value = false
-                summoner.value = State.SectionSummoner.Show(
-                    sectionSummonerUI = it
+                this@SummonerViewModel.summoner.value = State.SectionSummoner.Show(
+                    summoner = summoner.toUI()
                 )
+                masteriesUserCase.invoke(platformID, summoner.id, 3).catch {
+                    exception.value = it
+                }.collect { list ->
+                    masteries.value = list.toListMasteryUI()
+                }
             }
         }
     }
@@ -81,11 +97,12 @@ class SummonerViewModel @Inject constructor(
         val isRefreshing: Boolean = false,
         val throwable: Throwable? = null,
         val sectionSummoner: SectionSummoner = SectionSummoner.Loading,
+        val masteries: List<MasteryUI> = listOf(),
     ) {
         sealed class SectionSummoner {
             object Loading : SectionSummoner()
             class Show(
-                val sectionSummonerUI: Summoner,
+                val summoner: SummonerUI,
             ) : SectionSummoner()
         }
     }

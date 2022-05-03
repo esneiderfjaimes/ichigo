@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [SummonerEntity::class], version = 1)
+@Database(entities = [SummonerEntity::class, MasteriesEntity::class], version = 2)
 @TypeConverters(LeaguesConverter::class)
 abstract class IchigoDatabase : RoomDatabase() {
 
     abstract fun summonerDao(): SummonerDao
+
+    abstract fun masteriesDao(): MasteriesDao
 
     companion object {
 

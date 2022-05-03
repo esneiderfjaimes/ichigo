@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.red.code015.data.ForbiddenException
 import com.red.code015.data.model.Platform
-import com.red.code015.data.model.SummonerUI
-import com.red.code015.data.model.toUI
+import com.red.code015.data.model.SummonerSummaryUI
+import com.red.code015.data.model.toSummaryUI
 import com.red.code015.domain.Profile
 import com.red.code015.ui.pages.home.screens.home.HomeViewModel.State.CardMySummoner
 import com.red.code015.usecases.HelperRepository
@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
                 if (isRefreshing.value) isRefreshing.value = false
                 cardMySummoner.value = CardMySummoner.Show(
                     isLoading = false,
-                    summonerUI = it.toUI()
+                    summonerUI = it.toSummaryUI()
                 )
             }
         }
@@ -98,7 +98,7 @@ class HomeViewModel @Inject constructor(
             object Loading : CardMySummoner()
             class Show(
                 val isLoading: Boolean = false,
-                val summonerUI: SummonerUI,
+                val summonerUI: SummonerSummaryUI,
             ) : CardMySummoner()
         }
     }

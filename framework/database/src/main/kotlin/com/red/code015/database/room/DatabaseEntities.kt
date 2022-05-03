@@ -22,3 +22,23 @@ data class SummonerEntity(
     @ColumnInfo(name = "summoner_leagues") val leagues: List<League>,
     @ColumnInfo(name = "last_check_date") val lastCheckDate: Long,
 )
+
+@Entity(tableName = "masteries_table")
+data class MasteriesEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "summoner_id") val summonerId: String,
+    @ColumnInfo(name = "summoner_platform") val platformID: PlatformID,
+    @ColumnInfo(name = "last_check_date") val lastCheckDate: Long,
+    @ColumnInfo(name = "masteries") val data: List<MasteryEntity>,
+)
+
+data class MasteryEntity(
+    val championId: Int,
+    val championLevel: Int,
+    val championPoints: Long,
+    val lastPlayTime: Long,
+    val championPointsSinceLastLevel: Long,
+    val championPointsUntilNextLevel: Long,
+    val chestGranted: Boolean,
+    val tokensEarned: Int,
+)

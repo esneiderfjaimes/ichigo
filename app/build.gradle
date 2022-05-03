@@ -51,6 +51,14 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager-indicators:0.24.6-alpha"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.6-alpha"
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.6-alpha"
+    // If you're using Material, use accompanist-placeholder-material
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.24.6-alpha"
+
+    // Otherwise use the foundation version
+    implementation "com.google.accompanist:accompanist-placeholder:0.24.6-alpha"
+    implementation "com.google.accompanist:accompanist-insets:0.24.6-alpha"
+    // If using insets-ui
+    implementation "com.google.accompanist:accompanist-insets-ui:0.24.6-alpha"
 
     // endregion
     // region Lifecycle, dependency injection and reactive programming

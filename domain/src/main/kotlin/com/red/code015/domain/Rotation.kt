@@ -4,5 +4,5 @@ data class ChampionsRotation(
     val freeChampionIds: List<String>,
     val freeChampionIdsForNewPlayers: List<String>,
     val maxNewPlayerLevel: Int,
-    val dataSource: DataSource
+    val dataSource: DataSource,
 )

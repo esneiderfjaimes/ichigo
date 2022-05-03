@@ -5,14 +5,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.red.code015.data.AppSettings
 import com.red.code015.data.model.toUI
 import com.red.code015.ui.IchigoAppState
 import com.red.code015.ui.IchigoAppViewModel
 import com.red.code015.ui.Screen
+import com.red.code015.ui.comp
 import com.red.code015.ui.pages.home.screens.home.HomeScreen
 import com.red.code015.ui.pages.home.screens.register.RegisterScreen
 import com.red.code015.ui.pages.home.screens.summoner.SummonerScreen
+import com.red.code015.ui.pages.home.screens.summoner.masteries.MasteriesScreen
 
 @Composable
 fun HomePage(
@@ -31,7 +34,9 @@ fun HomePage(
         startDestination = Screen.Home.route
     ) {
 
-        composable(route = Screen.Home.route) { backStackEntry ->
+        comp(Screen.Home) { backStackEntry ->
+           // appState.navigateTo("lan/summoner/Like you do/masteries?view=list", backStackEntry)
+            // appState.navigateToSummoner("Esneider", backStackEntry)
             HomeScreen(
                 platform = settings.platformID.toUI(),
                 onPlatformChange = {
@@ -62,7 +67,7 @@ fun HomePage(
             )
         }
 
-        composable(route = Screen.Register.route) {
+        comp(Screen.Register) {
             RegisterScreen(
                 onBackPress = appState::navigateBack,
                 platform = settings.platformID.toUI(),
@@ -71,14 +76,26 @@ fun HomePage(
             )
         }
 
-        composable(
-            route = Screen.Summoner.route,
-            arguments = listOf(navArgument("name") { type = NavType.StringType })
-        ) { backStackEntry ->
+
+        comp(Screen.Summoner) { backStackEntry ->
+            val summonerName = backStackEntry.arguments?.getString("name") ?: ""
             SummonerScreen(
                 platform = settings.platformID,
                 onBackPress = appState::navigateBack,
-                summonerName = backStackEntry.arguments?.getString("name") ?: ""
+                onMasteryMorePress = { platform, name ->
+                    appState.navigateTo(Screen.Masteries.createRoute(platform, name),
+                        backStackEntry)
+                },
+                summonerName = summonerName
+            )
+        }
+
+        comp(Screen.Masteries) { backStackEntry ->
+            MasteriesScreen(
+                platform = settings.platformID,
+                onBackPress = appState::navigateBack,
+                summonerName = backStackEntry.arguments?.getString("summonerName") ?: "",
+                showView = Screen.Masteries.getShowView(backStackEntry)
             )
         }
     }

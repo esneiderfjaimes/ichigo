@@ -9,7 +9,6 @@ fun Map<String, ChampJson>.toDomain(): Map<String, Champion> =
     map { it.key to it.value.toDomain() }.toMap()
 
 fun ChampJson.toDomain() = Champion(
-    version = version,
     id = id,
     key = key,
     name = name,

@@ -32,6 +32,14 @@ data class League(
     val inactive: Boolean,
     val freshBlood: Boolean,
     val hotStreak: Boolean,
+    val miniSeries: MiniSeries? = null,
+)
+
+data class MiniSeries(
+    val losses: Int,
+    val progress: String,
+    val target: Int,
+    val wins: Int,
 )
 
 enum class QueueType {
@@ -41,3 +49,23 @@ enum class QueueType {
 enum class Tier {
     Unknown, Iron, Bronze, Silver, Gold, Platinum, Diamond, Master, GrandMaster, Challenger
 }
+
+
+data class Masteries(
+    val summonerId: String,
+    val platformID: PlatformID,
+    val data: List<Mastery>,
+    val dataSource: DataSource,
+)
+
+data class Mastery(
+    val championId: Int,
+    val championLevel: Int,
+    val championPoints: Long,
+    val lastPlayTime: Long,
+    val championPointsSinceLastLevel: Long,
+    val championPointsUntilNextLevel: Long,
+    val chestGranted: Boolean,
+    val tokensEarned: Int,
+    val champListItem: ChampListItem? = null,
+)

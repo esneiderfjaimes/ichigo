@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.red.code015.data.model.Platform
 import com.red.code015.data.model.Platforms
@@ -34,12 +35,13 @@ import com.red.code015.ui.theme.IchigoTheme
 fun BottomSheet(
     state: ModalBottomSheetState,
     sheetContent: @Composable () -> Unit,
+    padding: Dp = 32.dp,
     content: @Composable () -> Unit = {},
 ) {
     ModalBottomSheetLayout(
         sheetState = state,
         modifier = Modifier.padding(0.dp),
-        sheetPadding = PaddingValues(32.dp),
+        sheetPadding = PaddingValues(padding, padding, padding, padding + 80.dp),
         sheetShape = RoundedCornerShape(32.dp),
         sheetContent = sheetContent,
         sheetBackgroundColor = MaterialTheme.colorScheme.background,

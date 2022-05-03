@@ -22,13 +22,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.red.code015.data.model.Platform
 import com.red.code015.domain.Profile
+import com.red.code015.ui.components.AsyncImage
 import com.red.code015.ui.components.RedIconButton
 import com.red.code015.ui.components.SummonerIcon
 import com.red.code015.utils.Coil
+import com.red.code015.utils.MAX_PROFILES
 
 enum class BoxState {
     Collapsed,
@@ -76,7 +77,7 @@ fun HomeTopAppBar(
                             }
                         }
 
-                        if (profiles.size < 3) {
+                        if (profiles.size < MAX_PROFILES) {
                             if (profiles.isNotEmpty()) {
                                 MenuDefaults.Divider(Modifier.padding(top = 8.dp))
                             }
@@ -150,11 +151,10 @@ private fun ItemProfile(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                SubcomposeAsyncImage(Coil.urlProfileIcon(profile.profileIconID),
-                    contentDescription = "Summoner Icon",
-                    Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(50)),
+                AsyncImage(modifier = Modifier
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(50)),
+                    model = Coil.urlProfileIcon(profile.profileIconID),
                     loading = {
                         Box(Modifier.size(30.dp)) {
                             CircularProgressIndicator(modifier = Modifier.align(

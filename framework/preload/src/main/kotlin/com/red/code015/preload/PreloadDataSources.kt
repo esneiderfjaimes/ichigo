@@ -2,6 +2,7 @@ package com.red.code015.preload
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
 import com.google.gson.Gson
 import com.red.code015.data.PreloadDataSource
 import com.red.code015.domain.Champion
@@ -48,6 +49,9 @@ class DataDragonAssetsDataSource(
         e.printStackTrace()
         encyclopediaChampion
     }
+
+    override suspend fun getThumbChamp(champId: String): Bitmap? =
+        ctx.assetsToBitmap("$FolderChampsThumbnail/${champId}.webp")
 
 }
 

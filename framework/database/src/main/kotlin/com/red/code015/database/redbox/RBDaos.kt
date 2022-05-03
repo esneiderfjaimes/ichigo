@@ -3,6 +3,7 @@ package com.red.code015.database.redbox
 import android.app.Application
 import com.google.gson.Gson
 import com.red.code015.database.redbox.core.BaseRB
+import com.red.code015.domain.Champion
 import com.red.code015.domain.ChampionsRotation
 import com.red.code015.domain.EncyclopediaChampion
 import javax.inject.Inject
@@ -21,4 +22,13 @@ class EncyclopediaChampionRB @Inject constructor(app: Application, gson: Gson) :
         nameFile = "encyclopedia_champion",
         app = app,
         gson = gson
+    )
+
+class ChampionRB @Inject constructor(app: Application, gson: Gson) :
+    BaseRB<Champion>(
+        cls = Champion::class.java,
+        nameFile = "champion",
+        app = app,
+        gson = gson,
+        "data_dragon"
     )

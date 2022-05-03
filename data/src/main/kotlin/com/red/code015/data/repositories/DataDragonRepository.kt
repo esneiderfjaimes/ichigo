@@ -6,6 +6,7 @@ import com.red.code015.data.PreloadDataSource
 import com.red.code015.data.RedboxDataSource
 import com.red.code015.data.RemoteRiotGamesDataSource
 import com.red.code015.data.util.*
+import com.red.code015.domain.Champion
 import com.red.code015.domain.ChampionsRotation
 import com.red.code015.domain.DataSources
 import com.red.code015.domain.EncyclopediaChampion
@@ -37,14 +38,64 @@ class DataDragonRepository @Inject constructor(
 
     suspend fun lastVersion() = remote.lastVersion() ?: preload.lastVersion() ?: "..."
 
-    private suspend fun versions() = coroutineScope {
+    suspend fun versions() = coroutineScope {
         val vPreload = async { preload.lastVersion() }
         val vRemote = async { remote.lastVersion() }
         Versions(vPreload.await(), vRemote.await())
     }
 
+    suspend fun champion(champKey: String, version: String, lang: String): Champion? {
+        var champion = local.readChampion(champKey, version, lang, "champion")
+        if (champion == null) champion = remote.champion(version, lang, champKey)
+            ?.also { local.insertChampion(it, champKey, version, lang, "champion") }
+        return champion
+    }
+
+    suspend fun champsItems(
+        lang: String = "en_US",
+    ): EncyclopediaChampion {
+        val (vPreload, vRemote) = versions()
+
+        var errors = DataSourcesErrors()
+        var dataSources = getDataSource(vPreload, vRemote, errors)
+
+        Log.i(TAG, "encyclopediaChampion: vPreload:$vPreload vRemote:$vRemote")
+        loop@ while (dataSources != null) {
+            Log.i(TAG, "encyclopediaChampion: DataSource:$dataSources errors:$errors")
+            try {
+                when (dataSources) {
+                    DataSources.PRELOAD -> {
+                        return (preload.encyclopediaChampion(lang))
+                    }
+                    DataSources.DATABASE -> {
+                        val eLocal = local.readEncyclopediaChampion(lang)
+                        return (preload.fillBitmaps(eLocal!!))
+                    }
+                    DataSources.API -> {
+                        return tryRemote {
+                            val eApi = remote.encyclopediaChampion(vRemote!!, lang)
+                            local.insetEncyclopediaChampion(eApi, lang)
+                            return@tryRemote (preload.fillBitmaps(eApi))
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                errors = errors.let {
+                    when (dataSources) {
+                        DataSources.API -> it.copy(api = false)
+                        DataSources.DATABASE -> it.copy(local = false)
+                        DataSources.PRELOAD -> it.copy(preload = false)
+                        else -> it
+                    }
+                }
+                dataSources = getDataSource(vPreload, vRemote, errors)
+            }
+        }
+        throw Throwable("No data")
+    }
+
     // TODO: convert in generic fun
-    fun encyclopediaChampion(lang: String = "ko_KR")
+    fun encyclopediaChampion(lang: String = "en_US")
             : Flow<EncyclopediaChampion> = tryFlow("encyclopediaChampion") {
         val (vPreload, vRemote) = versions()
 
@@ -113,6 +164,16 @@ class DataDragonRepository @Inject constructor(
                 remote.fetchApiKey(flowCollector, block)
             } else throw e
         }
+    }
+
+    private suspend fun <T : Any> tryRemote(
+        block: suspend () -> T,
+    ): T = try {
+        block.invoke()
+    } catch (e: Exception) {
+        if (e is ForbiddenException) {
+            remote.fetchApiKey2(block)
+        } else throw e
     }
 
 }

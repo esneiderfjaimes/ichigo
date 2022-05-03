@@ -87,7 +87,8 @@ class RiotGamesRetrofitDataSource(
             riotRequest.getService<AccountService>()
                 .byRiotId(gameName, tagLine, remoteConfig.keyApi)
         val summonerResp =
-            loLRequest.service<SummonersService>().byPuuID(accountResp.puuid, remoteConfig.keyApi)
+            loLRequest.service<SummonersService>()
+                .byPuuID(accountResp.puuid!!, remoteConfig.keyApi)
         summonerResp.toProfile(platformHost.host.id)
     }
 
@@ -103,7 +104,7 @@ class RiotGamesRetrofitDataSource(
             async { riotRequest.service<AccountService>().byPuuId(puuID, remoteConfig.keyApi) }
         val leaguesResp =
             loLRequest.service<LeagueService>()
-                .bySummoner(summonerResp.await().id, remoteConfig.keyApi)
+                .bySummoner(summonerResp.await().id!!, remoteConfig.keyApi)
         SummonerMapper.toDomain(
             platformID = platformHost.host.id,
             summoner = summonerResp.await(),
@@ -119,11 +120,12 @@ class RiotGamesRetrofitDataSource(
         val account =
             async {
                 riotRequest.service<AccountService>()
-                    .byPuuId(summonerResp.puuId, remoteConfig.keyApi)
+                    .byPuuId(summonerResp.puuId!!, remoteConfig.keyApi)
             }
         val leagues =
             async {
-                loLRequest.service<LeagueService>().bySummoner(summonerResp.id, remoteConfig.keyApi)
+                loLRequest.service<LeagueService>()
+                    .bySummoner(summonerResp.id!!, remoteConfig.keyApi)
             }
 
         SummonerMapper.toDomain(
@@ -143,9 +145,10 @@ class RiotGamesRetrofitDataSource(
                 .byRiotId(gameName, tagLine, remoteConfig.keyApi)
         val summonerResp: SummonerResponseServer =
             loLRequest.getService<SummonersService>()
-                .byPuuID(accountResp.puuid, remoteConfig.keyApi)
+                .byPuuID(accountResp.puuid!!, remoteConfig.keyApi)
         val leaguesResp: List<LeagueResponseServer> =
-            loLRequest.getService<LeagueService>().bySummoner(summonerResp.id, remoteConfig.keyApi)
+            loLRequest.getService<LeagueService>()
+                .bySummoner(summonerResp.id!!, remoteConfig.keyApi)
 
         SummonerMapper.toDomain(
             platformID = platformHost.host.id,
@@ -153,6 +156,18 @@ class RiotGamesRetrofitDataSource(
             account = accountResp,
             leagues = leaguesResp
         )
+    }
+
+    override suspend fun masteryScores(summonerID: String)
+            : Int = tryCoroutineScope("masteryScores") {
+        loLRequest.getService<LoLService>().masteryScores(summonerID, remoteConfig.keyApi)
+    }
+
+    override suspend fun championMasteries(summonerID: String)
+            : Masteries = tryCoroutineScope("championMasteries") {
+        loLRequest.getService<LoLService>()
+            .championMasteries(summonerID, remoteConfig.keyApi)
+            .toDom2(summonerID, platformHost.host.id)
     }
 
     // endregion
@@ -181,9 +196,41 @@ class RiotGamesRetrofitDataSource(
                     version = version,
                     lang = lang
                 )
-        EncyclopediaChampion(version = championsResp.version,
-            data = championsResp.data.toList(),
+        EncyclopediaChampion(version = championsResp.version!!,
+            data = championsResp.data!!.map { it.value.toDomainItem() },
             dataSource = DataSource(DataSources.API, Date().time))
+    }
+
+    override suspend fun championsDetails(
+        version: String,
+        lang: String,
+        filter: List<String>,
+    ): List<Champion> {
+        val listOf = mutableListOf<Champion>()
+        filter.forEach {
+            val championsResp =
+                dataDragonRequest.getService<DataDragonService>()
+                    .champion(
+                        version = version,
+                        lang = lang,
+                        champKey = it
+                    )
+            championsResp.data?.get(it)
+                ?.let { it1 -> listOf.add(it1.copy(version = "XD").toDomain()) }
+        }
+        return listOf
+    }
+
+    override suspend fun champion(version: String, lang: String, champKey: String)
+            : Champion? = tryCoroutineScope("champion") {
+        val championsResp =
+            dataDragonRequest.getService<DataDragonService>()
+                .champion(
+                    version = version,
+                    lang = lang,
+                    champKey = champKey
+                )
+        championsResp.data?.get(champKey)?.toDomain()
     }
 
     override suspend fun championsRotations()
@@ -248,6 +295,54 @@ class RiotGamesRetrofitDataSource(
             block.invoke(flowCollector)
             Log.d(TAG, "<< fetchApiKey")
         } else Log.e(TAG, "<< fetchApiKey")
+    }
+
+    override suspend fun <T> fetchApiKey2(block: suspend () -> T): T {
+        Log.d(TAG, ">> fetchApiKey")
+        var fetchCompleted = false
+        firebaseRemoteConfig.setConfigSettingsAsync(
+            FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(0).build()
+        )
+        firebaseRemoteConfig.setDefaultsAsync(mapOf("RIOT_API_KEY" to "?"))
+        val task = firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                FirebaseRemoteConfig.getInstance().apply {
+                    remoteConfig.keyApi = getString("RIOT_API_KEY")
+                    val sharedPref =
+                        context.getSharedPreferences("api_preferences", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("RIOT_API_KEY", remoteConfig.keyApi)
+                        apply()
+                    }
+                }
+            }
+            Log.i(TAG, "fetch (1) result:${task.result} keyApi:${remoteConfig.keyApi}")
+            fetchCompleted = true
+        }
+
+        try {
+            // Block on a task and get the result synchronously. This is generally done
+            // when executing a task inside a separately managed background thread. Doing this
+            // on the main (UI) thread can cause your application to become unresponsive.
+            Log.w(TAG, "waiting for response from remote configuration")
+            withContext(Dispatchers.Main) {
+                val taskSync: Boolean = task.await()
+                Log.w(TAG, "fetch (2) taskSync:$taskSync " +
+                        "result:${task.result} keyApi:${remoteConfig.keyApi}")
+            }
+        } catch (e: ExecutionException) {
+            // The Task failed, this is the same exception you'd get in a non-blocking
+            // failure handler.
+            // ...
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            // An interrupt occurred while waiting for the task to complete.
+            // ...
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return block.invoke()
     }
 
     // endregion

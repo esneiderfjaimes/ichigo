@@ -4,10 +4,7 @@ package com.red.code015.ui.pages.encyclopedia
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
@@ -24,7 +21,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -47,7 +43,6 @@ typealias TopBar = @Composable (
     @Composable (ColumnScope.() -> Unit), // Header
 ) -> Unit
 
-@Preview
 @Composable
 fun EncyclopediaPage(
     viewModel: EncyclopediaViewModel = hiltViewModel(),
@@ -76,7 +71,6 @@ private fun EncyclopediaPage(
         Surface(shadowElevation = 4.dp) {
             Column {
                 SmallTopAppBar( // TODO: Make top app bar more small
-                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = colorScheme.surface.copy(0.75f)),
                     title = {
                         Text(
                             buildAnnotatedString {
@@ -115,12 +109,15 @@ private fun EncyclopediaPage(
     ) { page ->
         when (tabs[page]) {
             EncyclopediaTab.Champions -> {
-                ChampionScreen(topBar = topBar,
+                ChampionScreen(
+                    scope = scope,
+                    topBar = topBar,
                     scrollBehavior = scrollBehavior,
-                    latestVersion = latestVersion)
+                    latestVersion = latestVersion,
+                )
             }
             EncyclopediaTab.Items -> {
-                Column {
+                Column(Modifier.fillMaxSize()) {
                     topBar({
                         IconButton(onClick = { }) {
                             Icon(

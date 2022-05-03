@@ -15,8 +15,11 @@ data class ChampListItem(
     val image: Image,
     val tags: List<String>,
     val rotation: RotationChamp = RotationChamp.None,
+    val skins: List<Skin>? = listOf(),
     val bitmap: Bitmap? = null,
 )
+
+fun Champion.getItem() = ChampListItem(id, key, name, image, tags, skins = skins)
 
 enum class RotationChamp {
     Free,

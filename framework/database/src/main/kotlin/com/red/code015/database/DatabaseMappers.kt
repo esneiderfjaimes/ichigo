@@ -1,8 +1,9 @@
 package com.red.code015.database
 
+import com.red.code015.database.room.MasteriesEntity
+import com.red.code015.database.room.MasteryEntity
 import com.red.code015.database.room.SummonerEntity
-import com.red.code015.domain.DataSources
-import com.red.code015.domain.Summoner
+import com.red.code015.domain.*
 
 fun SummonerEntity.toDomain() = Summoner(
     id = id,
@@ -19,9 +20,9 @@ fun SummonerEntity.toDomain() = Summoner(
 )
 
 fun Summoner.toEntity() = SummonerEntity(
-    accountId = id,
-    puuId = accountId,
-    id = puuId,
+    accountId = accountId,
+    puuId = puuId,
+    id = id,
     platformID = platformID,
     name = name,
     profileIconId = profileIconId,
@@ -29,4 +30,40 @@ fun Summoner.toEntity() = SummonerEntity(
     account = account,
     leagues = leagues,
     lastCheckDate = lastCheckDate
+)
+
+fun MasteriesEntity.toDomain() = Masteries(
+    summonerId = summonerId,
+    platformID = platformID,
+    dataSource = DataSource(DataSources.DATABASE, lastCheckDate),
+    data = data.map { it.toDomain() }
+)
+
+fun Masteries.toEntity() = MasteriesEntity(
+    summonerId = summonerId,
+    platformID = platformID,
+    lastCheckDate = dataSource.time,
+    data = data.map { it.toEntity() }
+)
+
+fun MasteryEntity.toDomain() = Mastery(
+    championId = championId,
+    championLevel = championLevel,
+    championPoints = championPoints,
+    lastPlayTime = lastPlayTime,
+    championPointsSinceLastLevel = championPointsSinceLastLevel,
+    championPointsUntilNextLevel = championPointsUntilNextLevel,
+    chestGranted = chestGranted,
+    tokensEarned = tokensEarned,
+)
+
+fun Mastery.toEntity() = MasteryEntity(
+    championId = championId,
+    championLevel = championLevel,
+    championPoints = championPoints,
+    lastPlayTime = lastPlayTime,
+    championPointsSinceLastLevel = championPointsSinceLastLevel,
+    championPointsUntilNextLevel = championPointsUntilNextLevel,
+    chestGranted = chestGranted,
+    tokensEarned = tokensEarned
 )

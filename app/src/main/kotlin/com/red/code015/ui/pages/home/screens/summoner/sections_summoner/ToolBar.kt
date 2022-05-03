@@ -1,7 +1,12 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.red.code015.ui.pages.home.screens.summoner.sections_summoner
 
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -10,25 +15,35 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import com.red.code015.R
-import com.red.code015.domain.Summoner
+import com.red.code015.data.model.SummonerUI
+import com.red.code015.ui.common.margin
+import com.red.code015.ui.components.AsyncImage
 import com.red.code015.ui.components.ImageBackground
-import com.red.code015.ui.pages.home.screens.summoner.margin
 import com.red.code015.ui.pages.home.screens.summoner.paddingHorizontal
+import com.red.code015.ui.theme.md_theme_dark_onSurface
 import com.red.code015.utils.Coil
 
 @Composable
-fun ColumnScope.ToolBar(summoner: Summoner) {
+fun LazyItemScope.ToolBar(summoner: SummonerUI, bgChampId: String?) {
+
+    val painterResource = painterResource(id = R.mipmap.riot_desktop_background)
+    var painter by remember {
+        mutableStateOf(painterResource)
+    }
     ImageBackground(
-        painter = painterResource(id = R.mipmap.pyke_44),
+        Modifier.animateItemPlacement(),
+        painter = painter,
         paddingHorizontal = paddingHorizontal,
         verticalArrangement = Arrangement.spacedBy(margin),
     ) {
@@ -38,12 +53,11 @@ fun ColumnScope.ToolBar(summoner: Summoner) {
         ) {
             val sizeSummonerIcon = 80.dp
             Box(Modifier.height(sizeSummonerIcon)) {
-                SubcomposeAsyncImage(Coil.urlProfileIcon(
-                    summoner.profileIconId),
-                    contentDescription = "Summoner Icon",
-                    Modifier
-                        .size(sizeSummonerIcon)
-                        .clip(RoundedCornerShape(33)),
+                AsyncImage(Modifier
+                    .size(sizeSummonerIcon)
+                    .clip(RoundedCornerShape(33)),
+                    Coil.urlProfileIcon(
+                        summoner.profileIconId),
                     loading = {
                         Box(Modifier.size(sizeSummonerIcon)) {
                             CircularProgressIndicator(modifier = Modifier.align(
@@ -65,11 +79,18 @@ fun ColumnScope.ToolBar(summoner: Summoner) {
             Column {
                 Text(text = summoner.name,
                     fontWeight = FontWeight.Black,
-                    style = typography.titleLarge)
+                    color = md_theme_dark_onSurface,
+                    style = typography.titleLarge.copy(
+                        shadow = Shadow(
+                            color = Color.Black,
+                            offset = Offset(4f, 4f),
+                            blurRadius = 8f
+                        )
+                    ))
 
                 if (summoner.account != null)
-                    Text(text = "${summoner.account!!.gameName}#${summoner.account!!.tagLine}",
-                        color = colorScheme.onSurface.copy(alpha = 0.5f),
+                    Text(text = "${summoner.account.gameName}#${summoner.account.tagLine}",
+                        color = md_theme_dark_onSurface.copy(alpha = 1f),
                         style = typography.bodySmall)
             }
         }
@@ -86,5 +107,15 @@ fun ColumnScope.ToolBar(summoner: Summoner) {
                 Text(text = "In game")
             }
         }
+    }
+
+    bgChampId?.let {
+        Log.i("TAG", "ToolBar: https://ddragon.leagueoflegends.com/cdn/img/champion/splash/$it.jpg")
+        AsyncImage(
+            model = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${it}.jpg",
+            success = {
+                painter = this.painter
+            }
+        )
     }
 }

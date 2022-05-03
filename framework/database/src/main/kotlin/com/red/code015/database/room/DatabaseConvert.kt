@@ -23,4 +23,17 @@ open class LeaguesConverter {
         }
     }
 
+    @TypeConverter
+    fun masteriesToString(someObjects: List<MasteryEntity>): String? = gson.toJson(someObjects)
+
+    @TypeConverter
+    fun stringToMasteries(data: String?): List<MasteryEntity> {
+        if (data == null) return Collections.emptyList()
+        return try {
+            gson.fromJson(data, object : TypeToken<List<MasteryEntity>>() {}.type)
+        } catch (e: Exception) {
+            Collections.emptyList()
+        }
+    }
+
 }

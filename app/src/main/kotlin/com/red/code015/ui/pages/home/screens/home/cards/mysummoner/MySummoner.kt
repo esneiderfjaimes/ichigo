@@ -8,17 +8,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
-import com.red.code015.data.model.LeagueUI.Companion.summary
-import com.red.code015.data.model.SummonerUI
+import com.red.code015.data.model.LeagueSummaryUI.Companion.summaryRelevant
+import com.red.code015.data.model.SummonerSummaryUI
 import com.red.code015.data.model.copyUpdates
 import com.red.code015.data.model.requiresUpdate
 import com.red.code015.domain.Profile
+import com.red.code015.ui.components.AsyncImage
 import com.red.code015.ui.pages.home.screens.home.HomeViewModel.State.CardMySummoner
 import com.red.code015.ui.pages.home.screens.home.HomeViewModel.State.CardMySummoner.Loading
 import com.red.code015.ui.pages.home.screens.home.HomeViewModel.State.CardMySummoner.Show
@@ -64,7 +67,7 @@ private fun BoxScope.Loading() {
 @Composable
 private fun BoxScope.MySummoner(
     isLoading: Boolean,
-    summoner: SummonerUI,
+    summoner: SummonerSummaryUI,
     onDetailClick: (String) -> Unit = {},
     onRemoveClick: () -> Unit = {},
 ) {
@@ -73,11 +76,10 @@ private fun BoxScope.MySummoner(
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.height(sizeSummonerIcon)) {
-                SubcomposeAsyncImage(Coil.urlProfileIcon(summoner.profileIconId),
-                    contentDescription = "Summoner Icon",
-                    Modifier
-                        .size(sizeSummonerIcon)
-                        .clip(RoundedCornerShape(33)),
+                AsyncImage(modifier = Modifier
+                    .size(sizeSummonerIcon)
+                    .clip(RoundedCornerShape(33)),
+                    model = Coil.urlProfileIcon(summoner.profileIconId),
                     loading = {
                         Box(Modifier.size(sizeSummonerIcon)) {
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -104,13 +106,17 @@ private fun BoxScope.MySummoner(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         style = MaterialTheme.typography.bodySmall)
 
-                if (summoner.leagues.isNotEmpty())
+                if (summoner.leagues.isNotEmpty()) {
+                    val leaguePoints by rememberSaveable {
+                        mutableStateOf(summoner.leagues.minOrNull()?.points)
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(IconsLoL.Rank, contentDescription = "Rank Icon")
-                        Text(text = summoner.leagues.summary(),
+                        Text(text = summoner.leagues.summaryRelevant(leaguePoints),
                             style = MaterialTheme.typography.bodySmall)
                     }
+                }
             }
         }
         if (isLoading) {

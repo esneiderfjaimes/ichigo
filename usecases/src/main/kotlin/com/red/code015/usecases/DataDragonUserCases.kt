@@ -8,7 +8,8 @@ class LatestVersionUseCase @Inject constructor(private val repository: DataDrago
 }
 
 class EncyclopediaChampionUserCase @Inject constructor(private val repository: DataDragonRepository) {
-    fun invoke() = repository.encyclopediaChampion()
+    fun invoke(filersChamps: List<String> = listOf()) =
+        repository.encyclopediaChampion()
 }
 
 class ChampionsRotationsUserCase @Inject constructor(private val repository: DataDragonRepository) {

@@ -25,6 +25,7 @@ fun <T> tryFlow(
         }
         Log.d(TAG, "<< $name: time:$time")
     } catch (e: Exception) {
+        e.printStackTrace()
         Log.e(TAG, "<< $name")
         throw e
     }

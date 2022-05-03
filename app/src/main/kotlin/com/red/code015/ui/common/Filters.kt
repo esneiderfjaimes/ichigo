@@ -28,10 +28,11 @@ import com.red.code015.ui.pages.home.screens.summoner.paddingHorizontal
 @Composable
 fun <T> List<T>.Filter(
     filter: T? = null,
-    chipText: List<String>,
+    chipText: Collection<String>,
     title: String? = null,
     onFilterChipClick: (T?) -> Unit = {},
 ) {
+    // TODO: Always return index of -1
     var indexSelected by rememberSaveable { mutableStateOf(indexOf(filter)) }
     if (isNotEmpty()) {
         Column(
@@ -42,7 +43,7 @@ fun <T> List<T>.Filter(
         ) {
             title?.let {
                 Text(text = it,
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
                     fontStyle = FontStyle.Italic,

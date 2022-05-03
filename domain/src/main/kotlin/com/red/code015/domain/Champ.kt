@@ -1,7 +1,6 @@
 package com.red.code015.domain
 
 data class Champion(
-    val version: String,
     val id: String,
     val key: String,
     val name: String,
@@ -98,12 +97,12 @@ data class Spell(
     val tooltip: String,
     val leveltip: LevelTip,
     val maxrank: Long,
-    val cooldown: List<Long>,
+    val cooldown: List<Double>,
     val cooldownBurn: String,
     val cost: List<Long>,
     val costBurn: String,
     val datavalues: DataValues,
-    val effect: List<List<Long>?>,
+    val effect: List<List<Double>?>,
     val effectBurn: List<String?>,
     val vars: List<Any?>,
     val costType: String,

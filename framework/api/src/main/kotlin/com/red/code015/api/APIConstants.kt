@@ -14,6 +14,6 @@ object LeagueAPIConstants {
     const val TierPlatinum = "PLATINUM"
     const val TierDiamond = "DIAMOND"
     const val TierMaster = "MASTER"
-    const val TierGrandMaster = "GRAND_MASTER"
+    const val TierGrandMaster = "GRANDMASTER"
     const val TierChallenger = "CHALLENGER"
 }

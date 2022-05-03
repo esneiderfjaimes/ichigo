@@ -17,7 +17,6 @@ suspend inline fun <R> RiotGamesRetrofitDataSource.tryCoroutineScope(
     name: String = "fun",
     noinline block: suspend CoroutineScope.() -> R,
 ): R {
-    // Log.d(TAG, "tryCoroutineScope: API KEY: ${remoteConfig.keyApi}")
     try {
         Log.d(TAG, ">> $name")
         val value: R
@@ -31,6 +30,7 @@ suspend inline fun <R> RiotGamesRetrofitDataSource.tryCoroutineScope(
         when (e) {
             is HttpException -> {
                 if (e.code() == 403) {
+                    Log.e(TAG, "tryCoroutineScope: API KEY: ${remoteConfig.keyApi}")
                     throw ForbiddenException(e.message())
                 } else throw APIException(e.message())
             }

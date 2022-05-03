@@ -10,4 +10,6 @@ class Redbox @Inject constructor(app: Application, gson: Gson) {
 
     val championsRotation: ChampionsRotationRB by lazy { ChampionsRotationRB(app, gson) }
 
+    val champion: ChampionRB by lazy { ChampionRB(app, gson) }
+
 }

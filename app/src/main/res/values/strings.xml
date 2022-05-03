@@ -37,8 +37,23 @@
     <string name="region_RU">Russia</string>
 
     <string name="filter_by">Filter by</string>
+    <string name="sort_by">Sort by</string>
+
+    <string name="ascendant_order">Ascendant order</string>
+    <string name="descending_order">Descending order</string>
+    <string name="mastery_points">Mastery points</string>
+    <string name="mastery_level">Mastery level</string>
+    <string name="champion_name">Champion name</string>
+
     <string name="role">Role</string>
     <string name="free_champion_rotation">Free Champion Rotation</string>
+    <string name="level">Level</string>
+    <string name="chest">Chest</string>
     <string name="all">All</string>
+
+    <string-array name="filtersByChest">
+        <item>Chest Granted</item>
+        <item>Chest Available</item>
+    </string-array>
 
 </resources>

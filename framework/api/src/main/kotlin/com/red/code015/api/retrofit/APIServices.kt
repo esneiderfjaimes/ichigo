@@ -86,4 +86,11 @@ interface DataDragonService : DataDragonAPI {
         @Path("lang") lang: String,
     ): ChampionsResponseServer
 
+    @GET("cdn/{version}/data/{lang}/champion/{champKey}.json")
+    suspend fun champion(
+        @Path("version") version: String,
+        @Path("lang") lang: String,
+        @Path("champKey") champKey: String,
+    ): ChampionsResponseServer
+
 }

@@ -22,19 +22,68 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
+import androidx.navigation.*
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.red.code015.domain.PlatformID
+import com.red.code015.ui.pages.home.screens.summoner.masteries.ShowView
+
+const val uri = "https://ichi.go"
 
 /**
  * List of screens for [IchigoApp]
  */
-sealed class Screen(val route: String) {
+sealed class Screen(
+    val route: String,
+    val args: List<NamedNavArgument> = listOf(),
+    val deepLinks: List<NavDeepLink> = listOf(),
+) {
     object Home : Screen("home")
     object Register : Screen("register")
-    object Summoner : Screen("summoner/{name}") {
+    object Summoner :
+        Screen("summoner/{name}", listOf(navArgument("name") { type = NavType.StringType })) {
         fun createRoute(name: String) = "summoner/$name"
     }
+
+    object Masteries : Screen(
+        route = "{platform}/summoner/{summonerName}/masteries?view={viewMode}",
+        args = listOf(
+            navArgument("platform") { type = NavType.StringType },
+            navArgument("summonerName") { type = NavType.StringType },
+            navArgument("viewMode") { type = NavType.StringType },
+        ),
+        listOf(navDeepLink {
+            uriPattern = "$uri/{platform}/summoner/{summonerName}/masteries?view={viewMode}"
+        })
+    ) {
+        private val defaultShowView = ShowView.List
+
+        fun createRoute(
+            platform: PlatformID,
+            summonerName: String,
+            showView: ShowView = defaultShowView,
+        ) = "${platform.name}/summoner/$summonerName/masteries?view=${showView.name}"
+
+        fun getShowView(backStackEntry: NavBackStackEntry)
+                : ShowView = backStackEntry.arguments?.getString("viewMode")?.let {
+            try {
+                when (it.lowercase()) {
+                    ShowView.Grid.name.lowercase() -> ShowView.Grid
+                    ShowView.List.name.lowercase() -> ShowView.List
+                    else -> defaultShowView
+                }
+            } catch (e: Exception) {
+                defaultShowView
+            }
+
+        } ?: defaultShowView
+    }
+}
+
+fun NavGraphBuilder.comp(
+    screen: Screen, content: @Composable (NavBackStackEntry) -> Unit,
+) {
+    composable(screen.route, screen.args, screen.deepLinks, content = content)
 }
 
 @Composable
@@ -55,6 +104,13 @@ class IchigoAppState(
         if (from.lifecycleIsResumed()) {
             val encodedUri = Uri.encode(summonerName)
             navController.navigate(Screen.Summoner.createRoute(encodedUri))
+        }
+    }
+
+    fun navigateTo(route: String, from: NavBackStackEntry) {
+        // In order to discard duplicated navigation events, we check the Lifecycle
+        if (from.lifecycleIsResumed()) {
+            navController.navigate(route)
         }
     }
 

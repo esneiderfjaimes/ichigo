@@ -12,7 +12,7 @@ interface SummonerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(summonerEntity: SummonerEntity)
 
-    @Query("SELECT last_check_date FROM summoner_table WHERE summoner_id = :puuid")
+    @Query("SELECT last_check_date FROM summoner_table WHERE puu_id = :puuid")
     suspend fun lastCheckDateByPuuID(puuid: String): Long?
 
     @Query("SELECT last_check_date FROM summoner_table " +
@@ -22,7 +22,7 @@ interface SummonerDao {
     @Query("SELECT last_check_date FROM summoner_table WHERE gameName = :gameName AND tagLine = :tagLine")
     suspend fun lastCheckDateByRiotId(gameName: String, tagLine: String): Long?
 
-    @Query("SELECT * FROM summoner_table WHERE summoner_id = :puuid")
+    @Query("SELECT * FROM summoner_table WHERE puu_id = :puuid")
     suspend fun byPuuID(puuid: String): SummonerEntity
 
     @Query("SELECT * FROM summoner_table WHERE summoner_platform = :platformID AND upper(summoner_name) = upper(:name)")
@@ -30,5 +30,21 @@ interface SummonerDao {
 
     @Query("SELECT * FROM summoner_table WHERE gameName = :gameName AND tagLine = :tagLine")
     suspend fun byRiotID(gameName: String, tagLine: String): SummonerEntity
+
+}
+
+@Dao
+interface MasteriesDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(masteriesEntity: MasteriesEntity)
+
+    @Query("SELECT last_check_date FROM masteries_table " +
+            "WHERE summoner_platform = :platformID AND summoner_id = :summonerID")
+    suspend fun lastCheckDateBySummonerId(platformID: PlatformID, summonerID: String): Long?
+
+    @Query("SELECT * FROM masteries_table " +
+            "WHERE summoner_platform = :platformID AND summoner_id = :summonerID")
+    suspend fun bySummonerId(platformID: PlatformID, summonerID: String): MasteriesEntity
 
 }
