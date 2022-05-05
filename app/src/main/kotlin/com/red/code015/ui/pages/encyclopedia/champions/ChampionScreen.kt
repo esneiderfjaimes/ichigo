@@ -28,6 +28,8 @@ import com.red.code015.domain.ChampListItem
 import com.red.code015.domain.RotationChamp
 import com.red.code015.ui.common.CommonChampsGrid
 import com.red.code015.ui.common.LoadingScreen
+import com.red.code015.ui.common.margin
+import com.red.code015.ui.common.margin2
 import com.red.code015.ui.components.CommonChampionThumbnail
 import com.red.code015.ui.components.IchigoScaffold
 import com.red.code015.ui.components.IconButtonBadge
@@ -87,7 +89,7 @@ fun ChampsGrid(
 ) {
     val size = 70.dp
     val items = champs.filter(filters::predicate)
-    CommonChampsGrid(items.size, size, footer) {
+    CommonChampsGrid(items.size, size + margin2, footer) {
         items(items = items, key = { it.name }) { champ ->
             ChampItem(Modifier.animateItemPlacement(), champ, size)
         }
@@ -97,13 +99,13 @@ fun ChampsGrid(
 @Composable
 fun ChampItem(modifier: Modifier, champ: ChampListItem, size: Dp) {
     Column(
-        modifier = modifier.padding(4.dp),
+        modifier = modifier.padding(margin),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ChampThumbEncyclopedia(champ, size)
 
         Text(text = champ.name,
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(margin),
             style = typography.bodySmall,
             textAlign = TextAlign.Center)
     }

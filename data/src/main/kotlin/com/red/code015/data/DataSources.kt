@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTypeInference::class)
+
 package com.red.code015.data
 
 import android.graphics.Bitmap
@@ -42,6 +44,19 @@ interface RemoteRiotGamesDataSource {
     ): T
 
     suspend fun champion(version: String, lang: String, champKey: String): Champion?
+}
+
+interface APIDataSource {
+
+    // Flow
+    suspend fun <T> fetchApiKey(
+        flowCollector: FlowCollector<T>,
+        @BuilderInference block: suspend FlowCollector<T>.() -> Unit,
+    )
+
+    // Coroutine
+    suspend fun <T> fetchApiKey(block: suspend () -> T): T
+
 }
 
 interface LocalMasteriesDataSource {

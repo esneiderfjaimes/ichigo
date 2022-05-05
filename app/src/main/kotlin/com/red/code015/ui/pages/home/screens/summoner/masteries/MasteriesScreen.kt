@@ -27,7 +27,7 @@ fun MasteriesScreen(
     platform: PlatformID,
     onBackPress: () -> Unit,
     summonerName: String,
-    showView: ShowView=ShowView.Grid,
+    showView: ShowView = ShowView.Grid,
     viewModel: MasteriesViewModel = hiltViewModel(),
 ) {
     if (summonerName.isBlank()) {
@@ -45,7 +45,7 @@ fun MasteriesScreen(
         onBackPress = onBackPress,
         isLoading = state.isLoading,
         masteries = state.masteries,
-        showView =showView
+        showView = showView
     )
 }
 
@@ -65,7 +65,7 @@ private fun SummonerScreen(
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     var filters by rememberSaveable { mutableStateOf(Filters()) }
     var action by rememberSaveable { mutableStateOf(Action.Booty) }
-    var selectShowView by remember { mutableStateOf(showView) }
+    var selectShowView by rememberSaveable { mutableStateOf(showView) }
 
     // TODO move top when filter change
 

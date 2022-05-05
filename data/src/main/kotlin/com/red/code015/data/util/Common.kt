@@ -34,7 +34,7 @@ fun <T> tryFlow(
 fun getDataSource(
     vPreload: String?,
     vRemote: String?,
-    dataSourcesError: DataSourcesErrors,
+    dataSourcesError: DataSourcesErrors = DataSourcesErrors(),
 ): DataSources? {
 
     if (vPreload == null && vRemote == null) return null // NO versions
@@ -73,10 +73,49 @@ fun getDataSource(
 
 }
 
+fun getDataSource(
+    dataSourcesError: DataSourcesErrorsRiot = DataSourcesErrorsRiot(),
+    forceFetching: Boolean = false,
+    requiresFetching: Boolean = false,
+): DataSources? = when {
+    forceFetching -> when {
+        dataSourcesError.api -> DataSources.API
+        else -> null
+    }
+    requiresFetching -> when {
+        dataSourcesError.api -> DataSources.API
+        dataSourcesError.local -> DataSources.DATABASE
+        else -> null
+    }
+    else -> when {
+        dataSourcesError.local -> DataSources.DATABASE
+        dataSourcesError.api -> DataSources.API
+        else -> null
+    }
+}
+
 data class DataSourcesErrors(
     val preload: Boolean = true,
     val local: Boolean = true,
     val api: Boolean = true,
-)
+) {
+    override fun toString(): String =
+        mapOf("preload" to preload,
+            "local" to local,
+            "api" to api).filter { !it.value }.keys.toString()
+
+}
+
+data class DataSourcesErrorsRiot(
+    val local: Boolean = true,
+    val api: Boolean = true,
+) {
+    override fun toString(): String = when {
+        !local && !api -> "errors[local and api]"
+        !local -> "error[local]"
+        !api -> "error[api]"
+        else -> ""
+    }
+}
 
 data class Versions(val preload: String?, val api: String?)

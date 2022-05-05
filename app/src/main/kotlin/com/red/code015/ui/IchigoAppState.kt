@@ -41,8 +41,9 @@ sealed class Screen(
     object Home : Screen("home")
     object Register : Screen("register")
     object Summoner :
-        Screen("summoner/{name}", listOf(navArgument("name") { type = NavType.StringType })) {
-        fun createRoute(name: String) = "summoner/$name"
+        Screen("{platform}/summoner/{name}",
+            listOf(navArgument("name") { type = NavType.StringType })) {
+        fun createRoute(platform: PlatformID, name: String) = "${platform.name}/summoner/$name"
     }
 
     object Masteries : Screen(
@@ -99,11 +100,11 @@ class IchigoAppState(
     context: Context,
 ) {
 
-    fun navigateToSummoner(summonerName: String, from: NavBackStackEntry) {
+    fun navigateToSummoner(platform: PlatformID, summonerName: String, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
         if (from.lifecycleIsResumed()) {
             val encodedUri = Uri.encode(summonerName)
-            navController.navigate(Screen.Summoner.createRoute(encodedUri))
+            navController.navigate(Screen.Summoner.createRoute(platform, encodedUri))
         }
     }
 

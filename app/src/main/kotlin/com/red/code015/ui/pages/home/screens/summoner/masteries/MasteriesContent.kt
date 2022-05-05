@@ -55,7 +55,7 @@ import java.util.*
 fun MasteriesContent(
     selectShowView: ShowView,
     filters: MasteriesViewModel.Filters,
-    masteries: List<MasteryUI>
+    masteries: List<MasteryUI>,
 ) {
     when (selectShowView) {
         ShowView.Grid -> MasteriesGrid(
@@ -76,7 +76,7 @@ fun MasteriesGrid(
 ) {
     val size = 80.dp
     val items = masteries.filter(filters::predicate)
-    CommonChampsGrid(items.size, size, footer) {
+    CommonChampsGrid(items.size, size + margin2, footer) {
         items(items = items, key = { it.championId }) { mastery ->
             MasteryItem(Modifier.animateItemPlacement(), mastery, size)
         }
@@ -86,8 +86,9 @@ fun MasteriesGrid(
 @Composable
 fun MasteryItem(modifier: Modifier, mastery: MasteryUI, size: Dp) {
     val champ = mastery.champListItem
-    CommonChampionThumbnail(champ, Modifier.champThumbnail(false, { }, size)) { imageBox ->
-        Box(modifier, contentAlignment = Alignment.TopCenter) {
+    CommonChampionThumbnail(champ,
+        Modifier.champThumbnail(false, { }, size)) { imageBox ->
+        Box(modifier.padding(margin), contentAlignment = Alignment.TopCenter) {
             Image(painter = painterResource(mastery.getMasteryItem()!!),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -162,7 +163,8 @@ fun ScrollToTopButton(visible: Boolean, onClick: () -> Unit) {
         .fillMaxWidth()
         .padding(margin / 2),
         contentAlignment = Alignment.TopCenter) {
-        SmallFloatingActionButton(onClick = onClick, containerColor = MaterialTheme.colorScheme.surface) {
+        SmallFloatingActionButton(onClick = onClick,
+            containerColor = MaterialTheme.colorScheme.surface) {
             MyIcon(icon = Icons.Rounded.ArrowUpward)
         }
     }

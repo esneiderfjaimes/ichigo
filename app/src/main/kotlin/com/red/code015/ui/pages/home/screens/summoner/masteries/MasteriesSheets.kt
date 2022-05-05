@@ -144,7 +144,7 @@ fun SheetHextechCraftingMastery(sheetState: ModalBottomSheetState, masteries: Li
 
 @Composable
 private fun MasteryTokenItem(mastery: MasteryUI, size: Dp) {
-    val champ = mastery.champListItem.copy(bitmap = null)
+    val champ = mastery.champListItem
     CommonChampionThumbnail(champ,
         Modifier
             .size(size)

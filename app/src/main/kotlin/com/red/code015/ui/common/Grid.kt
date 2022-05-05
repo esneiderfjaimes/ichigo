@@ -26,52 +26,8 @@ fun CommonChampsGrid(
         columns = GridCells.Adaptive(minSize = size),
         horizontalArrangement = Arrangement.SpaceAround,
         contentPadding = PaddingValues(
-            start = 8.dp, end = 8.dp,
-            top = 4.dp, bottom = 80.dp
-        ),
-        content = {
-            if (itemsSize > 0) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box(Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)) {
-                        Text(text = "$itemsSize champions",
-                            modifier = Modifier.align(Alignment.Center),
-                            color = colorScheme.onBackground.copy(0.325f),
-                            style = typography.bodySmall)
-                    }
-                }
-            }
-            content(this)
-            footer?.let {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box(Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)) {
-                        Text(text = it,
-                            modifier = Modifier.align(Alignment.Center),
-                            color = colorScheme.onBackground.copy(0.25f),
-                            style = typography.bodySmall)
-                    }
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun CommonChampsList(
-    itemsSize: Int,
-    size: Dp,
-    footer: String? = null,
-    content: LazyGridScope.() -> Unit,
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
-        horizontalArrangement = Arrangement.SpaceAround,
-        contentPadding = PaddingValues(
-            start = 8.dp, end = 8.dp,
-            top = 4.dp, bottom = 80.dp
+            start = padHor, end = padHor,
+            top = 0.dp, bottom = 80.dp
         ),
         content = {
             if (itemsSize > 0) {

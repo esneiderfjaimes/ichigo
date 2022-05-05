@@ -9,7 +9,12 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.red.code015.R
 import androidx.compose.material3.MaterialTheme as Material3Theme
+
+val SomaticRounded = FontFamily(Font(R.font.somatic_rounded))
 
 private val LightThemeColors = lightColorScheme(
     primary = md_theme_light_primary,

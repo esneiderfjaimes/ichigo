@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.red.code015.data.model.Platform
+import com.red.code015.domain.PlatformID
 import com.red.code015.domain.Profile
 import com.red.code015.ui.common.SheetPlatforms
 import com.red.code015.ui.components.IchigoScaffold
@@ -33,7 +34,7 @@ fun HomeScreen(
     platform: Platform,
     onPlatformChange: (Platform) -> Unit = {},
     goToRegister: () -> Unit = {},
-    goToSummonerDetails: (String) -> Unit = {},
+    goToSummonerDetails: (PlatformID, String) -> Unit = { _, _ -> },
     profiles: List<Profile>,
     profile: Profile?,
     onProfileChange: (Profile) -> Unit = {},
@@ -64,15 +65,18 @@ fun HomeScreen(
             SwipeRefresh(
                 state = rememberSwipeRefreshState(state.isRefreshing),
                 onRefresh = { viewModel.refresh(profile) },
+                swipeEnabled = profile != null
             ) {
-                HomeHeader(innerPadding) {
+                HomeHeader(innerPadding, {
+                    if (it.isNotBlank()) goToSummonerDetails(platform.id, it)
+                }) {
                     item { Spacer(Modifier.height(8.dp)) }
                     item {
                         MySummonerSection(
                             state = state.cardMySummoner,
                             profile = profile,
                             onRegisterClick = goToRegister,
-                            onDetailClick = goToSummonerDetails,
+                            onDetailClick = { goToSummonerDetails(platform.id, it) },
                             onRemoveClick = { profile?.let { onProfileRemove(it) } },
                             updateProfile = updateProfile,
                         )

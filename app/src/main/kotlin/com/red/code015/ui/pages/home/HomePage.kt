@@ -1,11 +1,7 @@
 package com.red.code015.ui.pages.home
 
 import androidx.compose.runtime.*
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import com.red.code015.data.AppSettings
 import com.red.code015.data.model.toUI
 import com.red.code015.ui.IchigoAppState
@@ -35,8 +31,6 @@ fun HomePage(
     ) {
 
         comp(Screen.Home) { backStackEntry ->
-           // appState.navigateTo("lan/summoner/Like you do/masteries?view=list", backStackEntry)
-            // appState.navigateToSummoner("Esneider", backStackEntry)
             HomeScreen(
                 platform = settings.platformID.toUI(),
                 onPlatformChange = {
@@ -47,8 +41,8 @@ fun HomePage(
                     profileSelected = profilesByPlatform.firstOrNull()
                 },
                 goToRegister = { appState.navigateToRegister(backStackEntry) },
-                goToSummonerDetails = { summonerName ->
-                    appState.navigateToSummoner(summonerName, backStackEntry)
+                goToSummonerDetails = { platform, summonerName ->
+                    appState.navigateToSummoner(platform, summonerName, backStackEntry)
                 },
                 profiles = profilesByPlatform,
                 profile = profileSelected,

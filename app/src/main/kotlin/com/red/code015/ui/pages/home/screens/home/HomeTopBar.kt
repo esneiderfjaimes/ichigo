@@ -8,16 +8,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.HighlightOff
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
@@ -25,9 +32,12 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.red.code015.data.model.Platform
 import com.red.code015.domain.Profile
+import com.red.code015.ui.common.MyIcon
+import com.red.code015.ui.common.MyIconButton
 import com.red.code015.ui.components.AsyncImage
 import com.red.code015.ui.components.RedIconButton
 import com.red.code015.ui.components.SummonerIcon
+import com.red.code015.ui.theme.SomaticRounded
 import com.red.code015.utils.Coil
 import com.red.code015.utils.MAX_PROFILES
 
@@ -52,12 +62,12 @@ fun HomeTopAppBar(
             title = {
                 Text(text = "ICHI.GO",
                     color = colorScheme.primary,
-                    style = MaterialTheme.typography.displaySmall,
+                    style = MaterialTheme.typography.displaySmall.copy(fontFamily = SomaticRounded),
                     fontWeight = FontWeight.Black
                 )
             },
             navigationIcon = {
-                if (selectedProfile != null) {
+                if (selectedProfile != null && MAX_PROFILES != 1) {
                     var expanded by remember { mutableStateOf(false) }
                     val sizeSummonerIcon = 50.dp
                     RedIconButton(onClick = { expanded = true }, Modifier.size(sizeSummonerIcon)) {
@@ -182,24 +192,56 @@ private fun ItemProfile(
 @Composable
 fun HomeHeader(
     innerPadding: PaddingValues,
+    executeSearch: (String) -> Unit,
     content: LazyListScope.() -> Unit,
 ) {
-    var summonerName by remember { mutableStateOf(TextFieldValue("")) }
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val manager = LocalFocusManager.current
     Column {
         Box(Modifier
             .fillMaxWidth()
             .background(colorScheme.surface)
             .padding(16.dp)) {
             OutlinedTextField(
-                value = summonerName,
-                leadingIcon = {
-                    Icon(imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search Icon")
+                value = query,
+                trailingIcon = {
+                    if (query.text.isNotEmpty())
+                        MyIconButton(Icons.Rounded.HighlightOff) {
+                            query = query.copy("")
+                        }
                 },
-                onValueChange = { summonerName = it },
+                leadingIcon = {
+                    IconToggleButton(checked = query.text.isNotBlank(),
+                        onCheckedChange = {
+                            if (!it) {
+                                manager.clearFocus(true)
+                                executeSearch(query.text)
+                            }
+                        }) {
+                        MyIcon(Icons.Rounded.Search,
+                            tint = if (query.text.isNotBlank()) colorScheme.primary else colorScheme.onSurface)
+                    }
+                },
+                onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = "Search Summoner") },
-                shape = RoundedCornerShape(33)
+                shape = RoundedCornerShape(33),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                    keyboardType = KeyboardType.Ascii,
+                    autoCorrect = false,
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        if (query.text.isNotBlank()) {
+                            manager.clearFocus(true)
+                            executeSearch(query.text)
+                        }
+                    }
+                ),
+                singleLine = true
             )
         }
         LazyColumn(
