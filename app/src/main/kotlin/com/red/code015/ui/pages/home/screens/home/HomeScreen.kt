@@ -81,12 +81,6 @@ fun HomeScreen(
                             updateProfile = updateProfile,
                         )
                     }
-                    item {
-                        Box(modifier = Modifier
-                            .height(1000.dp)
-                            .background(Color.Red)
-                            .fillMaxWidth())
-                    }
                 }
             }
         },

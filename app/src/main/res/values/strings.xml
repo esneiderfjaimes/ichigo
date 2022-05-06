@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Code 015</string>
+    <string name="app_name">ICHI.GO</string>
 
     <string name="home">Home</string>
     <string name="encyclopedia">Encyclopedia</string>
@@ -44,12 +44,15 @@
     <string name="mastery_points">Mastery points</string>
     <string name="mastery_level">Mastery level</string>
     <string name="champion_name">Champion name</string>
+    <string name="last_play_time">Last Play Time</string>
 
     <string name="role">Role</string>
     <string name="free_champion_rotation">Free Champion Rotation</string>
     <string name="level">Level</string>
     <string name="chest">Chest</string>
     <string name="all">All</string>
+
+    <string name="chest_granted">Chest granted</string>
 
     <string-array name="filtersByChest">
         <item>Chest Granted</item>

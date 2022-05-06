@@ -23,11 +23,25 @@ data class MasteryUI(
     ) {
         Points(SortByPoints, true),
         Level(SortByLevel, true),
-        Alpha(SortByAlpha);
+        Alpha(SortByAlpha),
+        LastPlayTime(SortByLastPlayTime, true);
 
         fun inList(list: List<MasteryUI>, reverse: Boolean) =
             list.sortedWith(comparator, reverse)
 
+    }
+
+    object SortByLastPlayTime : Comparator<MasteryUI> {
+
+        override fun compare(p0: MasteryUI?, p1: MasteryUI?): Int = p0.run {
+            when {
+                this == null && p1 == null -> 0
+                p1 == null -> -1
+                this == null -> 1
+                this.lastPlayTime != p1.lastPlayTime -> this.lastPlayTime compareTo p1.lastPlayTime
+                else -> 0
+            }
+        }
     }
 
     object SortByAlpha : Comparator<MasteryUI> {

@@ -61,13 +61,9 @@ private fun SummonerScreen(
         LoadingScreen(); return
     }
 
-    // TODO create stateTopBar
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    var filters by rememberSaveable { mutableStateOf(Filters()) }
-    var action by rememberSaveable { mutableStateOf(Action.Booty) }
-    var selectShowView by rememberSaveable { mutableStateOf(showView) }
-
-    // TODO move top when filter change
+    var filters by rememberSaveable { mutableStateOf(Filters(sortBy = MasteryUI.SortBy.LastPlayTime)) }
+    var selectShowView by rememberSaveable { mutableStateOf(ShowView.Grid) }
 
     IchigoScaffold(
         topBar = {
@@ -75,10 +71,7 @@ private fun SummonerScreen(
                 onBackPress = onBackPress,
                 selectShowView = selectShowView,
                 onShowViewClick = { selectShowView = it },
-                changeAction = {
-                    action = it
-                    scope.launch { sheetState.show() }
-                },
+                showSheet = { scope.launch { sheetState.show() } },
                 filters = filters,
                 onFiltersUpdate = { filters = it }
             )
@@ -87,23 +80,7 @@ private fun SummonerScreen(
             MasteriesContent(selectShowView, filters, masteries)
         },
         bottomSheet = {
-            MasteriesBottomSheet(action, sheetState, filters, masteries) { filters = it }
+            SheetHextechCraftingMastery(sheetState, masteries.sortByLevel())
         }
     )
-}
-
-@Composable
-fun MasteriesBottomSheet(
-    action: Action,
-    sheetState: ModalBottomSheetState,
-    filters: Filters,
-    masteries: List<MasteryUI>,
-    onFilterChange: (Filters) -> Unit,
-) {
-    when (action) {
-        Action.Filter -> SheetFilters(sheetState, filters, onFilterChange)
-        Action.Order -> SheetSorters(sheetState, filters, onFilterChange)
-        Action.Booty -> SheetHextechCraftingMastery(sheetState, masteries.sortByLevel())
-        else -> Unit
-    }
 }

@@ -29,6 +29,7 @@ import com.red.code015.ui.common.*
 import com.red.code015.ui.components.BottomSheet
 import com.red.code015.ui.components.CommonChampionThumbnail
 import com.red.code015.ui.components.material_modifications.ModalBottomSheetState
+import com.red.code015.ui.components.red.menu.BottomSheetPop
 import com.red.code015.ui.components.red.menu.Menu
 import com.red.code015.ui.pages.home.screens.summoner.paddingHorizontal
 import com.red.code015.ui.pages.home.screens.summoner.paddingVertical
@@ -36,12 +37,14 @@ import com.red.code015.utils.gradientShadow
 
 @Composable
 fun SheetFilters(
-    sheetState: ModalBottomSheetState,
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
     filters: MasteriesViewModel.Filters,
     onFilterChange: (MasteriesViewModel.Filters) -> Unit,
 ) {
-    BottomSheet(
-        state = sheetState,
+    BottomSheetPop(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
         sheetContent = {
             Column(Modifier
                 .fillMaxWidth()
@@ -79,12 +82,14 @@ fun SheetFilters(
 
 @Composable
 fun SheetSorters(
-    sheetState: ModalBottomSheetState,
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
     filters: MasteriesViewModel.Filters,
     onFilterChange: (MasteriesViewModel.Filters) -> Unit,
 ) {
-    BottomSheet(
-        state = sheetState,
+    BottomSheetPop(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
         sheetContent = {
             Column(Modifier
                 .fillMaxWidth()
@@ -102,7 +107,8 @@ fun SheetSorters(
                 Menu(items = mapOf(
                     MasteryUI.SortBy.Points to stringResource(R.string.mastery_points),
                     MasteryUI.SortBy.Level to stringResource(R.string.mastery_level),
-                    MasteryUI.SortBy.Alpha to stringResource(R.string.champion_name)
+                    MasteryUI.SortBy.Alpha to stringResource(R.string.champion_name),
+                    MasteryUI.SortBy.LastPlayTime to stringResource(R.string.last_play_time),
                 ), selected = filters.sortBy) {
                     onFilterChange(filters.copy(
                         sortBy = it,

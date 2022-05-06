@@ -27,7 +27,7 @@ import com.red.code015.utils.clearFocusOnKeyboardDismiss2
 val filterByChestGranted: List<Boolean?> = listOf(true, false)
 
 enum class Action(val icon: ImageVector? = null) {
-    Filter(Rounded.FilterList), Order(Rounded.Sort), Booty, Search(Rounded.Search), Refresh(Rounded.Refresh), SeeHow
+    Filter(Rounded.FilterList), Order(Rounded.Sort), Search(Rounded.Search), Refresh(Rounded.Refresh), SeeHow
 }
 
 enum class ShowView {
@@ -42,12 +42,13 @@ fun MasteriesTopBar(
     onBackPress: () -> Unit,
     onShowViewClick: (ShowView) -> Unit,
     selectShowView: ShowView,
-    changeAction: (Action) -> Unit,
+    showSheet: () -> Unit,
     onFiltersUpdate: (MasteriesViewModel.Filters) -> Unit,
     filters: MasteriesViewModel.Filters,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var searchShowing by rememberSaveable { mutableStateOf(false) }
+    var expandedAction by rememberSaveable { mutableStateOf<Action?>(null) }
 
     Column(Modifier.animateContentSize()) {
         SmallTopAppBar(
@@ -63,7 +64,7 @@ fun MasteriesTopBar(
                 }
             },
             actions = {
-                FilledTonalButton(onClick = { changeAction(Booty) }) {
+                FilledTonalButton(onClick = { showSheet() }) {
                     Text(text = "Booty")
                 }
                 IconButton(onClick = { expanded = true }) {
@@ -93,8 +94,7 @@ fun MasteriesTopBar(
                             Text(text = action.name)
                         }, onClick = {
                             if (action == Search) searchShowing = true
-                            else changeAction(action)
-
+                            else expandedAction = action
                             expanded = false
                         }, leadingIcon = {
                             action.icon?.let {
@@ -112,6 +112,20 @@ fun MasteriesTopBar(
             onFiltersUpdate = onFiltersUpdate
         )
     }
+
+    SheetFilters(
+        expanded = expandedAction == Filter,
+        onDismissRequest = { expandedAction = null },
+        filters = filters,
+        onFilterChange = onFiltersUpdate
+    )
+
+    SheetSorters(
+        expanded = expandedAction == Order,
+        onDismissRequest = { expandedAction = null },
+        filters = filters,
+        onFilterChange = onFiltersUpdate
+    )
 }
 
 @Composable
