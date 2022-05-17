@@ -57,7 +57,7 @@ sealed class Screen(
             uriPattern = "$uri/{platform}/summoner/{summonerName}/masteries?view={viewMode}"
         })
     ) {
-        private val defaultShowView = ShowView.List
+        private val defaultShowView = ShowView.Grid
 
         fun createRoute(
             platform: PlatformID,
@@ -90,15 +90,19 @@ fun NavGraphBuilder.comp(
 @Composable
 fun rememberIchigoAppState(
     navController: NavHostController = rememberNavController(),
+    navControllerMasteries: NavHostController = rememberNavController(),
     context: Context = LocalContext.current,
-) = remember(navController, context) {
-    IchigoAppState(navController, context)
+) = remember(navController, navControllerMasteries, context) {
+    IchigoAppState(navController, navControllerMasteries, context)
 }
 
 class IchigoAppState(
     val navController: NavHostController,
+  private  val navControllerMasteries: NavHostController,
     context: Context,
 ) {
+
+    val navMasteries = Directions(navControllerMasteries)
 
     fun navigateToSummoner(platform: PlatformID, summonerName: String, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
@@ -126,6 +130,18 @@ class IchigoAppState(
         }
     }
 
+}
+
+class Directions(val controller: NavHostController){
+    fun navigateBack() {
+        controller.popBackStack()
+    }
+    fun to(route: String, from: NavBackStackEntry) {
+        // In order to discard duplicated navigation events, we check the Lifecycle
+      //  if (from.lifecycleIsResumed()) {
+            controller.navigate(route)
+    //    }
+    }
 }
 
 /**

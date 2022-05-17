@@ -7,23 +7,21 @@ plugins {
 
 android {
     compileSdk 31
+    namespace 'com.red.code015.data'
 }
 
 dependencies {
 
-    implementation project(":domain")
+    implementation project(':domain')
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1-native-mt"
+    implementation Android.core
+    implementation Jetbrains.kotlinx_coroutines_play_services
 
-    implementation(androidx_core_lib)
+    implementation Hilt.lifecycle_viewmodel
+    implementation Hilt.nav_comp
+    kapt Hilt.compiler
 
-    implementation(hilt_lifecycle_viewmodel_lib)
-    implementation(hilt_nav_compose_lib)
-    kapt(hilt_compiler)
-    implementation(dagger_hilt_lib)
-    kapt(dagger_hilt_compiler)
-
-    implementation(rxandroid_lib)
-    implementation(rxjava_lib)
+    implementation Dagger.hilt
+    kapt Dagger.hilt_compiler
 
 }

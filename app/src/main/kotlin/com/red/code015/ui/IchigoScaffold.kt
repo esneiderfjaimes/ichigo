@@ -19,7 +19,7 @@ fun IchigoScaffold(
     scope: CoroutineScope = rememberCoroutineScope(),
     pager: @Composable (Page) -> Unit,
 ) {
-    val pagerState = rememberPagerState(0)
+    val pagerState = rememberPagerState(1)
     Scaffold(
         bottomBar = {
             IchigoNavigationBar(

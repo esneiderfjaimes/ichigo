@@ -6,7 +6,9 @@ plugins {
 }
 
 android {
+
     compileSdk 32
+    namespace 'com.red.code015.preload'
 
     defaultConfig {
         minSdk 30
@@ -16,18 +18,18 @@ android {
 
 dependencies {
 
-    implementation project(":data")
-    implementation project(":domain")
+    implementation project(':data')
+    implementation project(':domain')
 
-    implementation(androidx_core_lib)
+    implementation Android.core
 
-    implementation(hilt_lifecycle_viewmodel_lib)
-    implementation(hilt_nav_compose_lib)
-    implementation 'androidx.test:core-ktx:1.4.0'
-    kapt(hilt_compiler)
-    implementation(dagger_hilt_lib)
-    kapt(dagger_hilt_compiler)
+    implementation Hilt.lifecycle_viewmodel
+    implementation Hilt.nav_comp
+    kapt Hilt.compiler
 
-    implementation(gson_lib)
+    implementation Dagger.hilt
+    kapt Dagger.hilt_compiler
+
+    implementation Google.gson
 
 }

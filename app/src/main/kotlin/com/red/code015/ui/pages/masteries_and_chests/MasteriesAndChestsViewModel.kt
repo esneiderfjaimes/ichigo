@@ -1,0 +1,106 @@
+package com.red.code015.ui.pages.masteries_and_chests
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.red.code015.data.ForbiddenException
+import com.red.code015.data.model.Platform
+import com.red.code015.data.model.SummonerSummaryUI
+import com.red.code015.data.model.toSummaryUI
+import com.red.code015.domain.Profile
+import com.red.code015.usecases.HelperRepository
+import com.red.code015.usecases.SummonerByPuuIDUserCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+@OptIn(InternalCoroutinesApi::class)
+class MasteriesAndChestsViewModel @Inject constructor(
+    private val helperRepository: HelperRepository,
+    private val byPuuID: SummonerByPuuIDUserCase,
+) : ViewModel() {
+    //region Fields
+
+    private val _state = MutableStateFlow(State())
+    val state: StateFlow<State> get() = _state
+
+    private val isRefreshing = MutableStateFlow(false)
+    private val exception = MutableStateFlow<String?>(null)
+    private val cardMySummoner = MutableStateFlow<State.CardMySummoner>(State.CardMySummoner.Loading)
+
+    // endregion
+    // region Override Methods & Callbacks
+
+    init {
+        viewModelScope.launch {
+            combine(isRefreshing, exception, cardMySummoner) { isRefreshing, e, cardMySummoner ->
+                State(isRefreshing, e, cardMySummoner)
+            }.catch { throwable ->
+                throw throwable
+            }.collect {
+                _state.value = it
+            }
+        }
+    }
+
+    // endregion
+    // region Public Methods
+
+    fun setup(platform: Platform, puuID: String?) {
+        helperRepository.updateHost(platform.id)
+        exception.value = null
+        if (puuID != null) loadSummonerByPuuID(puuID)
+    }
+
+    fun refresh(profile: Profile?) {
+
+    }
+
+    // endregion
+    // region Private Methods
+
+    private fun loadSummonerByPuuID(puuID: String, forceFetch: Boolean = false) {
+        if (!forceFetch) cardMySummoner.value = State.CardMySummoner.Loading
+        viewModelScope.launch(Dispatchers.IO) {
+            byPuuID.invoke(puuID, forceFetch).catch {
+                isRefreshing.value = false
+                if (it is ForbiddenException)
+                    exception.value = it.message
+            }.collect {
+                if (isRefreshing.value) isRefreshing.value = false
+                cardMySummoner.value = State.CardMySummoner.Show(
+                    isLoading = false,
+                    summonerUI = it.toSummaryUI()
+                )
+            }
+        }
+    }
+
+    fun refresh() {
+    }
+
+    // endregion
+    // region Inner, Data and Sealed Classes & Interfaces
+
+    data class State(
+        val isRefreshing: Boolean = false,
+        val exception: String? = null,
+        val cardMySummoner: CardMySummoner = CardMySummoner.Loading,
+    ) {
+        sealed class CardMySummoner {
+            object Loading : CardMySummoner()
+            class Show(
+                val isLoading: Boolean = false,
+                val summonerUI: SummonerSummaryUI,
+            ) : CardMySummoner()
+        }
+    }
+
+    // endregion
+}

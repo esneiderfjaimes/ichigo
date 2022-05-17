@@ -6,20 +6,18 @@ plugins {
 
 android {
     compileSdk 31
+    namespace 'com.red.code015.usecases'
 }
 
 dependencies {
 
-    implementation project(":data")
-    implementation project(":domain")
+    implementation project(':data')
+    implementation project(':domain')
 
-    implementation(androidx_core_lib)
-    implementation(kotlinx_coroutines_lib)
+    implementation Android.core
+    implementation Jetbrains.kotlinx_coroutines
 
-    implementation(hilt_lifecycle_viewmodel_lib)
-    kapt(hilt_compiler)
-
-    implementation(rxandroid_lib)
-    implementation(rxjava_lib)
+    implementation Hilt.lifecycle_viewmodel
+    kapt Hilt.compiler
 
 }

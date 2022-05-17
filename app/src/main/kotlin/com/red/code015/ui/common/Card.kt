@@ -25,12 +25,14 @@ val modFill = Modifier.padding(horizontal = padHor)
 @Composable
 fun MyCard(
     modifier: Modifier = Modifier,
+    minWith: Dp = 250.dp,
+    minHeight: Dp = 80.dp,
     content: @Composable () -> Unit = {},
 ) {
     Card(modifier = modifier
         .fillMaxWidth()
         .padding(margin)
-        .defaultMinSize(minWidth = 250.dp, minHeight = 80.dp),
+        .defaultMinSize(minWidth = minWith, minHeight = minHeight),
         contentColor = contentColorFor(colorScheme.background).copy(alpha = 0.75f),
         containerColor = colorScheme.background,
         border = BorderStroke(0.5.dp, colorScheme.outline.copy(alpha = 0.25f)),

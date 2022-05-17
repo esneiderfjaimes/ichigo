@@ -4,110 +4,104 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
-    id "com.google.protobuf" version "0.8.17"
+    id 'com.google.protobuf' version '0.8.17'
     id 'com.google.gms.google-services'
 }
 
 dependencies {
     // region Core
 
-    implementation project(":usecases")
-    implementation project(":data")
-    implementation project(":domain")
-    implementation project(":framework:api")
-    implementation project(":framework:database")
-    implementation project(":framework:preload")
+    implementation project(':usecases')
+    implementation project(':data')
+    implementation project(':domain')
+    implementation project(':framework:api')
+    implementation project(':framework:database')
+    implementation project(':framework:preload')
 
-    implementation(androidx_core_lib)
-    implementation(kotlin_std_lib)
-    implementation(kotlinx_coroutines_lib)
+    implementation Android.core
+    implementation Jetbrains.kotlin_std
+    implementation Jetbrains.kotlinx_coroutines
 
     // endregion
     // region Compose and UI
 
-    implementation(activity_compose_lib)
-    implementation(navigation_copose_lib)
+    implementation Android.activity_comp
+    implementation Android.nav_comp
 
-    implementation(compose_ui_lib)
-    implementation(compose_ui_preview_lib)
-    debugImplementation(compose_ui_tooling_debug)
-    debugImplementation(compose_ui_util_lib)
+    implementation Compose.ui
+    implementation Compose.ui_preview
+    debugImplementation Compose.ui_tooling_debug
+    debugImplementation Compose.ui_util
 
-    implementation(compose_runtime_lib)
-    implementation(compose_livedata_lib)
-    implementation(compose_rxjava_lib)
+    implementation Compose.runtime
+    implementation Compose.livedata
 
-    implementation(compose_material3_lib)
-    implementation(compose_material_lib)
-    implementation(compose_material_icons_lib)
+    implementation Compose.material
+    implementation Compose.material3
+    implementation Compose.material_icons
 
-    implementation(material_lib)
-    implementation(swiperefresh_lib)
+    implementation Google.material
 
-    implementation(coil_copose_lib)
-    implementation 'com.github.bumptech.glide:glide:4.13.1'
+    implementation Accompanist.pager
+    implementation Accompanist.pager_indicartors
+    implementation Accompanist.swiperefresh
+    implementation Accompanist.systemuicontroller
+    implementation Accompanist.flowlayout
+    implementation Accompanist.placeholder_material
+    implementation Accompanist.placeholder
+    implementation Accompanist.insets
+    implementation Accompanist.insets_ui
 
-    implementation "com.google.accompanist:accompanist-pager:0.24.6-alpha"
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.24.6-alpha"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.6-alpha"
-    implementation "com.google.accompanist:accompanist-flowlayout:0.24.6-alpha"
-    // If you're using Material, use accompanist-placeholder-material
-    implementation "com.google.accompanist:accompanist-placeholder-material:0.24.6-alpha"
-
-    // Otherwise use the foundation version
-    implementation "com.google.accompanist:accompanist-placeholder:0.24.6-alpha"
-    implementation "com.google.accompanist:accompanist-insets:0.24.6-alpha"
-    // If using insets-ui
-    implementation "com.google.accompanist:accompanist-insets-ui:0.24.6-alpha"
+    implementation coil_comp_lib
+    implementation glide_lib
 
     // endregion
     // region Lifecycle, dependency injection and reactive programming
 
-    implementation(lifecycle_runtime_lib)
-    implementation(lifecycle_livedata_lib)
-    implementation(lifecycle_viewmodel_lib)
-    implementation(lifecycle_viewmodel_compose_lib)
+    implementation Lifecycle.runtime
+    implementation Lifecycle.livedata
+    implementation Lifecycle.viewmodel
+    implementation Lifecycle.viewmodel_comp
 
-    implementation(hilt_lifecycle_viewmodel_lib)
-    implementation(hilt_nav_compose_lib)
-    kapt(hilt_compiler)
-    implementation(dagger_hilt_lib)
-    kapt(dagger_hilt_compiler)
+    implementation Hilt.lifecycle_viewmodel
+    implementation Hilt.nav_comp
+    kapt Hilt.compiler
 
-    implementation(rxandroid_lib)
-    implementation(rxjava_lib)
+    implementation Dagger.hilt
+    kapt Dagger.hilt_compiler
 
     // endregion
     // region Datastore TODO(switch to a new module)
 
-    implementation(gson_lib)
+    implementation Google.gson
 
-    implementation "androidx.datastore:datastore:1.0.0"
-    implementation "androidx.datastore:datastore-core:1.0.0"
-    implementation "com.google.protobuf:protobuf-javalite:3.18.0"
+    implementation Android.datastore
+    implementation Android.datastore_core
+    implementation Google.protobuf
 
     // endregion
     // region Test dependencies
 
-    testImplementation(junit_lib)
-    androidTestImplementation(junit_androidx_lib)
-    androidTestImplementation(junit_compose_lib)
-    androidTestImplementation(espresso_lib)
+    testImplementation junit_lib
+    androidTestImplementation junit_androidx_lib
+    androidTestImplementation junit_comp_lib
+    androidTestImplementation espresso_lib
 
     // endregion
 }
 
 android {
     compileSdk 32
+    namespace 'com.red.code015'
 
     defaultConfig {
-        applicationId "com.red.code015"
+        applicationId 'com.red.code015'
         minSdk 30
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables {
             useSupportLibrary true
         }
@@ -141,7 +135,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.14.0"
+        artifact = 'com.google.protobuf:protoc:3.14.0'
     }
 
     generateProtoTasks {

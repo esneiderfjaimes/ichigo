@@ -2,6 +2,8 @@
     <string name="app_name">ICHI.GO</string>
 
     <string name="home">Home</string>
+    <string name="masteries">Masteries</string>
+    <string name="masteries_and_chests">Masteries &amp; Chests</string>
     <string name="encyclopedia">Encyclopedia</string>
     <string name="settings">Settings</string>
 

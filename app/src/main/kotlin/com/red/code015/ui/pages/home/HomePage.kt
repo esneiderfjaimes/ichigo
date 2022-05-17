@@ -77,7 +77,7 @@ fun HomePage(
                 platform = settings.platformID,
                 onBackPress = appState::navigateBack,
                 onMasteryMorePress = { platform, name ->
-                    appState.navigateTo(Screen.Masteries.createRoute(platform, name),
+                    appState.navMasteries.to(Screen.Masteries.createRoute(platform, name),
                         backStackEntry)
                 },
                 summonerName = summonerName

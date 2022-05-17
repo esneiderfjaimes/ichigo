@@ -7,29 +7,27 @@ plugins {
 
 android {
     compileSdk 31
+    namespace 'com.red.code015.database'
 }
 
 dependencies {
 
-    implementation project(":data")
-    implementation project(":domain")
+    implementation project(':data')
+    implementation project(':domain')
 
-    implementation(androidx_core_lib)
+    implementation Android.core
 
-    implementation(hilt_lifecycle_viewmodel_lib)
-    implementation(hilt_nav_compose_lib)
-    kapt(hilt_compiler)
-    implementation(dagger_hilt_lib)
-    kapt(dagger_hilt_compiler)
+    implementation Hilt.lifecycle_viewmodel
+    implementation Hilt.nav_comp
+    kapt Hilt.compiler
 
-    implementation(gson_lib)
+    implementation Dagger.hilt
+    kapt Dagger.hilt_compiler
 
-    implementation(room_lib)
-    annotationProcessor(room_compiler)
-    kapt(room_compiler)
-    implementation(room_rxjava_lib)
+    implementation Google.gson
 
-    implementation(rxandroid_lib)
-    implementation(rxjava_lib)
+    implementation Android.room
+    annotationProcessor Android.room_compiler
+    kapt Android.room_compiler
 
 }

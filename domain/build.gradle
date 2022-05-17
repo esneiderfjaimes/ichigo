@@ -5,8 +5,5 @@ plugins {
 
 android {
     compileSdk 31
-}
-
-dependencies {
-    implementation(androidx_core_lib)
+    namespace 'com.red.code015.domain'
 }
