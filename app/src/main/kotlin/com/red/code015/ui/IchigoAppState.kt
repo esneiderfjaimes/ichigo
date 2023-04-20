@@ -106,17 +106,17 @@ class IchigoAppState(
 
     fun navigateToSummoner(platform: PlatformID, summonerName: String, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
-        if (from.lifecycleIsResumed()) {
+     //   if (from.lifecycleIsResumed()) {
             val encodedUri = Uri.encode(summonerName)
             navController.navigate(Screen.Summoner.createRoute(platform, encodedUri))
-        }
+    //    }
     }
 
     fun navigateTo(route: String, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
-        if (from.lifecycleIsResumed()) {
+    //    if (from.lifecycleIsResumed()) {
             navController.navigate(route)
-        }
+   //     }
     }
 
     fun navigateBack() {
@@ -125,9 +125,9 @@ class IchigoAppState(
 
     fun navigateToRegister(from: NavBackStackEntry? = null) {
         // In order to discard duplicated navigation events, we check the Lifecycle
-        if (from == null || from.lifecycleIsResumed()) {
+     //   if (from == null || from.lifecycleIsResumed()) {
             navController.navigate(Screen.Register.route)
-        }
+    //    }
     }
 
 }
@@ -143,11 +143,3 @@ class Directions(val controller: NavHostController){
     //    }
     }
 }
-
-/**
- * If the lifecycle is not resumed it means this NavBackStackEntry already processed a nav event.
- *
- * This is used to de-duplicate navigation events.
- */
-private fun NavBackStackEntry.lifecycleIsResumed() =
-    this.lifecycle.currentState == Lifecycle.State.RESUMED

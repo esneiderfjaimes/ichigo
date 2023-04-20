@@ -86,10 +86,10 @@ fun MasteriesTopBar(
                         ShowView.List to ChipData2("List", Rounded.ViewList)
                     ), selected = selectShowView, onClick = onShowViewClick)
 
-                    MenuDefaults.Divider()
+                    //MenuDefaults.Divider()
 
                     itemsMore.forEach { action ->
-                        if (action == Refresh) MenuDefaults.Divider()
+                     //   if (action == Refresh) MenuDefaults.Divider()
                         DropdownMenuItem(text = {
                             Text(text = action.name)
                         }, onClick = {

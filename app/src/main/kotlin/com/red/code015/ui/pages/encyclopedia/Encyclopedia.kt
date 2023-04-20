@@ -59,14 +59,7 @@ private fun EncyclopediaPage(
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val pagerState = rememberPagerState()
-
-    // TODO: not working properly, possible solution:
-    //  https://proandroiddev.com/scrollable-topappbar-with-jetpack-compose-bf22ca900cfe
-    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
-    val scrollBehavior = remember(decayAnimationSpec) {
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(decayAnimationSpec)
-    }
-
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state = rememberTopAppBarState(),)
     val topBar: TopBar = { actions, header ->
         Surface(shadowElevation = 4.dp) {
             Column {

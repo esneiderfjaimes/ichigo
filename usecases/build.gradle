@@ -1,23 +1,37 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
     namespace 'com.red.code015.usecases'
+
+    defaultConfig {
+        minSdk 25
+        targetSdk 33
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
 
+    //noinspection GradleDependency
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
     implementation project(':data')
     implementation project(':domain')
 
-    implementation Android.core
-    implementation Jetbrains.kotlinx_coroutines
-
     implementation Hilt.lifecycle_viewmodel
-    kapt Hilt.compiler
+    annotationProcessor Hilt.compiler
 
 }

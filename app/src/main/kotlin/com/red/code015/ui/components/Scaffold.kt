@@ -28,6 +28,6 @@ fun IchigoScaffold(
         floatingActionButtonPosition,
         containerColor,
         contentColor,
-        content)
+        content=   content)
     bottomSheet()
 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import com.red.code015.ui.components.material_modifications.SwipeableDefaults.AnimationSpec
 import com.red.code015.ui.components.material_modifications.SwipeableDefaults.StandardResistanceFactor
 import com.red.code015.ui.components.material_modifications.SwipeableDefaults.VelocityThreshold
@@ -633,7 +633,7 @@ data class FractionalThreshold(
     private val fraction: Float,
 ) : ThresholdConfig {
     override fun Density.computeThreshold(fromValue: Float, toValue: Float): Float {
-        return lerp(fromValue, toValue, fraction)
+        TODO()
     }
 }
 

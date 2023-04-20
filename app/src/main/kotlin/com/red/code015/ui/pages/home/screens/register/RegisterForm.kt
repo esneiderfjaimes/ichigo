@@ -33,6 +33,7 @@ import com.red.code015.ui.pages.home.screens.register.RegisterViewModel.State.Se
 import com.red.code015.ui.pages.home.screens.register.RegisterViewModel.State.SearchBy.SummonerName
 import com.red.code015.utils.PrefixTransformation
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterForm(
     viewState: State,

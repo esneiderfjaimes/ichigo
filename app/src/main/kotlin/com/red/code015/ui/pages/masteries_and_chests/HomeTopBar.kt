@@ -46,6 +46,7 @@ enum class BoxState {
     Expanded
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
     profiles: List<Profile>,
@@ -88,9 +89,6 @@ fun HomeTopAppBar(
                         }
 
                         if (profiles.size < MAX_PROFILES) {
-                            if (profiles.isNotEmpty()) {
-                                MenuDefaults.Divider(Modifier.padding(top = 8.dp))
-                            }
                             DropdownMenuItem(
                                 text = { Text("Add") },
                                 onClick = {
@@ -189,6 +187,7 @@ private fun ItemProfile(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeHeader(
     innerPadding: PaddingValues,

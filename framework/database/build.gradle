@@ -1,33 +1,47 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'kotlin-parcelize'
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
     namespace 'com.red.code015.database'
+    defaultConfig {
+        minSdk 25
+        targetSdk 33
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
 
+    //noinspection GradleDependency
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
     implementation project(':data')
     implementation project(':domain')
 
-    implementation Android.core
-
     implementation Hilt.lifecycle_viewmodel
     implementation Hilt.nav_comp
-    kapt Hilt.compiler
+    annotationProcessor Hilt.compiler
 
     implementation Dagger.hilt
-    kapt Dagger.hilt_compiler
+    annotationProcessor Dagger.hilt_compiler
 
     implementation Google.gson
 
     implementation Android.room
     annotationProcessor Android.room_compiler
-    kapt Android.room_compiler
+    annotationProcessor Android.room_compiler
 
 }

@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "188743598974",
+    "project_id": "ichi-go",
+    "storage_bucket": "ichi-go.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188743598974:android:e03c504a1b2af361d1292f",
+        "android_client_info": {
+          "package_name": "com.red.code015"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188743598974-2ub6jfs483cblkhm1ck400ubq05aocnp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeFzHUfoyII8EkMn71HKJE3u-TmGbXNM0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188743598974-2ub6jfs483cblkhm1ck400ubq05aocnp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188743598974:android:452e1fab9772805cd1292f",
+        "android_client_info": {
+          "package_name": "com.red.code015.api"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188743598974-2ub6jfs483cblkhm1ck400ubq05aocnp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeFzHUfoyII8EkMn71HKJE3u-TmGbXNM0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188743598974-2ub6jfs483cblkhm1ck400ubq05aocnp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

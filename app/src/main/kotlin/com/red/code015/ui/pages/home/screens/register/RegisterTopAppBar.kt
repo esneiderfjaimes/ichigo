@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import com.red.code015.data.model.Platform
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterTopAppBar(
     onBackPress: () -> Unit,

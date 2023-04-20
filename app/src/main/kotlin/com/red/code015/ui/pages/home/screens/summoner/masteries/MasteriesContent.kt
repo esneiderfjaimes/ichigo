@@ -164,7 +164,7 @@ fun MasteryItem(modifier: Modifier, mastery: MasteryUI, filterSearch: String, si
                         )
                     }
 
-                    MenuDefaults.Divider()
+                    //MenuDefaults.Divider()
 
                     Text(
                         text = buildAnnotatedString {

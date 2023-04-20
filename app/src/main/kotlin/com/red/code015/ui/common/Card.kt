@@ -56,8 +56,6 @@ fun Card(
         shape = shape,
         color = containerColor,
         contentColor = contentColor,
-        tonalElevation = elevation.tonalElevation(interactionSource = null).value,
-        shadowElevation = elevation.shadowElevation(interactionSource = null).value,
         border = border,
         content = content
     )

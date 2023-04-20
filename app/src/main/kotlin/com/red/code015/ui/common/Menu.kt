@@ -81,10 +81,10 @@ fun Menu() { // TODO
                         Icon(imageVector = Icons.Rounded.ArrowRight, contentDescription = null)
                     }
                 )
-                MenuDefaults.Divider()
+               // MenuDefaults.Divider()
 
                 itemsMore.forEach { action ->
-                    if (action == Action.Refresh) MenuDefaults.Divider()
+                 //   if (action == Action.Refresh) MenuDefaults.Divider()
                     DropdownMenuItem(
                         text = {
                             Text(text = action.name)
