@@ -3,7 +3,7 @@ package com.red.code015.data.model
 import com.red.code015.domain.Account
 import com.red.code015.domain.DataSources
 import com.red.code015.domain.PlatformID
-import java.util.*
+import java.util.Date
 
 data class SummonerSummaryUI(
     val name: String,

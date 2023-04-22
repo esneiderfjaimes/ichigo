@@ -7,15 +7,20 @@ package com.red.code015.ui.pages.home.screens.summoner.masteries
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.red.code015.data.model.MasteryUI
 import com.red.code015.data.model.sortByLevel
 import com.red.code015.domain.PlatformID
 import com.red.code015.ui.common.LoadingScreen
 import com.red.code015.ui.components.IchigoScaffold
-import com.red.code015.ui.components.material_modifications.ModalBottomSheetState
 import com.red.code015.ui.components.material_modifications.ModalBottomSheetValue
 import com.red.code015.ui.components.material_modifications.rememberModalBottomSheetState
 import com.red.code015.ui.pages.home.screens.summoner.masteries.MasteriesViewModel.Filters
@@ -28,7 +33,7 @@ fun MasteriesScreen(
     onBackPress: () -> Unit,
     summonerName: String,
     showView: ShowView = ShowView.Grid,
-    viewModel: MasteriesViewModel = hiltViewModel(),
+    viewModel: MasteriesViewModel = viewModel(),
 ) {
     if (summonerName.isBlank()) {
         onBackPress()

@@ -9,7 +9,6 @@ import com.red.code015.data.model.toUI
 import com.red.code015.domain.PlatformID
 import com.red.code015.usecases.MasteriesUserCase
 import com.red.code015.usecases.SummonerBySummonerNameUserCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
+
 @OptIn(InternalCoroutinesApi::class)
-class SummonerViewModel @Inject constructor(
+class SummonerViewModel constructor(
     private val bySummonerName: SummonerBySummonerNameUserCase,
     private val masteriesUserCase: MasteriesUserCase,
 ) : ViewModel() {

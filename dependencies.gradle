@@ -5,7 +5,7 @@ ext {
     // region Android X libraries
 
     def nav_version = '2.4.2'
-    def room_version = '2.4.2'
+    def room_version = '2.5.1'
 
     Android = [
 
@@ -50,7 +50,7 @@ ext {
 
     ]
 
-    def lifecycle_version = '2.5.0-rc01'
+    def lifecycle_version = '2.6.1'
 
     Lifecycle = [
             runtime       : "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version",
@@ -71,7 +71,7 @@ ext {
     // region Google libraries
 
     def material_version = '1.7.0-alpha01'
-    def gson_version = '2.9.0'
+    def gson_version = '2.10.1'
 
     Google = [
 
@@ -86,7 +86,7 @@ ext {
 
     ]
 
-    def accompanist_version = '0.24.8-beta'
+    def accompanist_version = '0.31.0-alpha'
 
     Accompanist = [
             pager               : "com.google.accompanist:accompanist-pager:$accompanist_version",
@@ -100,7 +100,7 @@ ext {
             insets_ui           : "com.google.accompanist:accompanist-insets-ui:$accompanist_version",
     ]
 
-    def firebase_version = '30.0.1'
+    def firebase_version = '31.5.0'
 
     Firebase = [
             bom      : "com.google.firebase:firebase-bom:$firebase_version",
@@ -108,7 +108,7 @@ ext {
             analytics: 'com.google.firebase:firebase-analytics',
     ]
 
-    def dagger_hilt_version = '2.42'
+    def dagger_hilt_version = '2.45'
 
     Dagger = [
             hilt         : "com.google.dagger:hilt-android:$dagger_hilt_version",

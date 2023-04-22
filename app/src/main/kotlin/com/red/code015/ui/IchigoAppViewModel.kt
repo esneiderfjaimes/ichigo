@@ -6,15 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.red.code015.data.AppSettings
 import com.red.code015.domain.PlatformID
 import com.red.code015.domain.Profile
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-@OptIn(InternalCoroutinesApi::class)
-class IchigoAppViewModel @Inject constructor(
+class IchigoAppViewModel constructor(
     private val settingsDataStore: DataStore<AppSettings>,
 ) : ViewModel() {
 

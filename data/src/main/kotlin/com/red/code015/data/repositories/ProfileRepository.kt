@@ -6,11 +6,11 @@ import com.red.code015.data.RemoteRiotGamesDataSource
 import com.red.code015.data.util.TAG
 import com.red.code015.domain.Profile
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ProfileRepository @Inject constructor(
+
+
+
+class ProfileRepository constructor(
     source: APIDataSource,
     private val remote: RemoteRiotGamesDataSource,
 ) : API(source) {

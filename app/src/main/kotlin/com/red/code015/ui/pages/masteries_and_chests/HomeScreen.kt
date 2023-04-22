@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.red.code015.R
@@ -27,7 +27,7 @@ import com.red.code015.ui.components.IchigoScaffold
 @Composable
 fun HomeScreen(
     profiles: List<Profile>,
-    viewModel: MasteriesAndChestsViewModel = hiltViewModel(),
+    viewModel: MasteriesAndChestsViewModel = viewModel(),
     onProfileClick: (Profile) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()

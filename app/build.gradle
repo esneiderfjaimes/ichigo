@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    id 'dagger.hilt.android.plugin'
     id 'com.google.protobuf' version '0.9.0'
     id 'com.google.gms.google-services'
 }
@@ -18,15 +17,15 @@ dependencies {
     implementation project(':framework:preload')
 
     //noinspection GradleDependency
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation Jetbrains.kotlin_std
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // endregion
     // region Compose and UI
 
-    implementation Android.activity_comp
-    implementation Android.nav_comp
+    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation "androidx.navigation:navigation-compose:2.5.3"
 
     implementation platform('androidx.compose:compose-bom:2023.04.00')
     implementation 'androidx.compose.ui:ui'
@@ -39,10 +38,10 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-    implementation Compose.runtime
-    implementation Compose.livedata
+    implementation "androidx.compose.runtime:runtime:1.5.0-alpha02"
+    implementation "androidx.compose.runtime:runtime-livedata:1.5.0-alpha02"
 
-    implementation Compose.material_icons
+    implementation "androidx.compose.material:material-icons-extended:1.4.1"
 
     implementation Google.material
 
@@ -56,8 +55,8 @@ dependencies {
     implementation Accompanist.insets
     implementation Accompanist.insets_ui
 
-    implementation coil_comp_lib
-    implementation glide_lib
+    implementation 'io.coil-kt:coil-compose:2.3.0'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
 
     // endregion
     // region Lifecycle, dependency injection and reactive programming
@@ -67,12 +66,8 @@ dependencies {
     implementation Lifecycle.viewmodel
     implementation Lifecycle.viewmodel_comp
 
-    implementation Hilt.lifecycle_viewmodel
-    implementation Hilt.nav_comp
-    annotationProcessor Hilt.compiler
-
-    implementation Dagger.hilt
-    annotationProcessor Dagger.hilt_compiler
+    implementation 'io.insert-koin:koin-android:3.4.0'
+    implementation 'io.insert-koin:koin-androidx-compose:3.4.4'
 
     // endregion
     // region Datastore TODO(switch to a new module)
@@ -87,9 +82,9 @@ dependencies {
     // region Test dependencies
 
     testImplementation junit_lib
-    androidTestImplementation junit_androidx_lib
-    androidTestImplementation junit_comp_lib
-    androidTestImplementation espresso_lib
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.1"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // endregion
 }

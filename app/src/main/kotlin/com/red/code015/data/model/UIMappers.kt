@@ -2,7 +2,12 @@ package com.red.code015.data.model
 
 import androidx.compose.ui.graphics.Color
 import com.red.code015.R
-import com.red.code015.domain.*
+import com.red.code015.domain.ChampListItem
+import com.red.code015.domain.League
+import com.red.code015.domain.Mastery
+import com.red.code015.domain.QueueType
+import com.red.code015.domain.Summoner
+import com.red.code015.domain.Tier
 
 // region Summoner
 

@@ -25,7 +25,7 @@ android {
 dependencies {
 
     //noinspection GradleDependency
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     implementation project(':data')
@@ -34,12 +34,7 @@ dependencies {
     implementation Jetbrains.kotlinx_coroutines
     implementation Jetbrains.kotlinx_coroutines_play_services
 
-    implementation Hilt.lifecycle_viewmodel
-    implementation Hilt.nav_comp
-    annotationProcessor Hilt.compiler
-
-    implementation Dagger.hilt
-    annotationProcessor Dagger.hilt_compiler
+    implementation 'io.insert-koin:koin-android:3.4.0'
 
     implementation platform(SquareUp.okhttp_bom)
     implementation SquareUp.okhttp

@@ -6,12 +6,12 @@ import com.red.code015.data.APIDataSource
 import com.red.code015.data.ForbiddenException
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
+
 import kotlin.experimental.ExperimentalTypeInference
 
 typealias Block<T> = suspend FlowCollector<T>.() -> Unit
 
-open class API @Inject constructor(
+open class API constructor(
     private val remote: APIDataSource,
 ) {
     suspend fun <T> tryRemote(

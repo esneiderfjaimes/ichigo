@@ -12,13 +12,13 @@ import com.red.code015.domain.EncyclopediaChampion
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
+
+
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-@Singleton
-class DataDragonRepository @Inject constructor(
+
+class DataDragonRepository constructor(
     source: APIDataSource,
     private val remote: RemoteRiotGamesDataSource,
     private val local: RedboxDataSource,

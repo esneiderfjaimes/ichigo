@@ -7,35 +7,17 @@ import com.red.code015.data.RedboxDataSource
 import com.red.code015.database.DragonRedboxDataSource
 import com.red.code015.database.MasteriesRoomDataSource
 import com.red.code015.database.SummonerRoomDataSource
-import com.red.code015.database.redbox.Redbox
 import com.red.code015.database.room.IchigoDatabase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class DatabaseModule {
-
-    @Provides
-    @Singleton
-    fun databaseProvider(@ApplicationContext context: Context) = IchigoDatabase.getDatabase(context)
-
-    @Provides
-    fun localSummonerDataSourceProvider(
-        database: IchigoDatabase,
-    ): LocalSummonerDataSource = SummonerRoomDataSource(database)
-
-    @Provides
-    fun localMasteriesDataSourceProvider(
-        database: IchigoDatabase,
-    ): LocalMasteriesDataSource = MasteriesRoomDataSource(database)
-
-    @Provides
-    fun dragonRedboxDataSourceProvider(
-        redbox: Redbox,
-    ): RedboxDataSource = DragonRedboxDataSource(redbox)
+val databaseModule = module {
+    single<IchigoDatabase> { IchigoDatabase.getDatabase(this.androidContext()) }
+    single<LocalSummonerDataSource> {
+        val database = get<Context>()
+        print("here")
+        SummonerRoomDataSource(get())
+    }
+    single<LocalMasteriesDataSource> { MasteriesRoomDataSource(get()) }
+    single<RedboxDataSource> { DragonRedboxDataSource(get()) }
 }

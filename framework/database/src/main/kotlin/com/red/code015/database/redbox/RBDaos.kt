@@ -6,9 +6,9 @@ import com.red.code015.database.redbox.core.BaseRB
 import com.red.code015.domain.Champion
 import com.red.code015.domain.ChampionsRotation
 import com.red.code015.domain.EncyclopediaChampion
-import javax.inject.Inject
 
-class ChampionsRotationRB @Inject constructor(app: Application, gson: Gson) :
+
+class ChampionsRotationRB constructor(app: Application, gson: Gson) :
     BaseRB<ChampionsRotation>(
         cls = ChampionsRotation::class.java,
         nameFile = "champions_rotation",
@@ -16,7 +16,7 @@ class ChampionsRotationRB @Inject constructor(app: Application, gson: Gson) :
         gson = gson
     )
 
-class EncyclopediaChampionRB @Inject constructor(app: Application, gson: Gson) :
+class EncyclopediaChampionRB constructor(app: Application, gson: Gson) :
     BaseRB<EncyclopediaChampion>(
         cls = EncyclopediaChampion::class.java,
         nameFile = "encyclopedia_champion",
@@ -24,7 +24,7 @@ class EncyclopediaChampionRB @Inject constructor(app: Application, gson: Gson) :
         gson = gson
     )
 
-class ChampionRB @Inject constructor(app: Application, gson: Gson) :
+class ChampionRB constructor(app: Application, gson: Gson) :
     BaseRB<Champion>(
         cls = Champion::class.java,
         nameFile = "champion",

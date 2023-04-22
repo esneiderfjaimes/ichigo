@@ -10,7 +10,6 @@ import com.red.code015.domain.Profile
 import com.red.code015.ui.pages.home.screens.home.HomeViewModel.State.CardMySummoner
 import com.red.code015.usecases.HelperRepository
 import com.red.code015.usecases.SummonerByPuuIDUserCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,11 +17,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
+
 @OptIn(InternalCoroutinesApi::class)
-class HomeViewModel @Inject constructor(
+class HomeViewModel constructor(
     private val helperRepository: HelperRepository,
     private val byPuuID: SummonerByPuuIDUserCase,
 ) : ViewModel() {

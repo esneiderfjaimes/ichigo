@@ -1,7 +1,14 @@
 package com.red.code015.ui.pages.masteries_and_chests
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForwardIos
@@ -20,7 +27,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.red.code015.domain.Profile
-import com.red.code015.ui.common.*
+import com.red.code015.ui.common.MyCard
+import com.red.code015.ui.common.MyIcon
+import com.red.code015.ui.common.margin
+import com.red.code015.ui.common.margin2
+import com.red.code015.ui.common.margin4
 import com.red.code015.ui.components.AsyncImage
 import com.red.code015.utils.Coil
 

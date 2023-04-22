@@ -12,6 +12,10 @@ class SummonerRoomDataSource(
     database: IchigoDatabase,
 ) : LocalSummonerDataSource {
 
+    init {
+        print("here")
+    }
+
     private val dao by lazy { database.summonerDao() }
 
     // region Insert and update

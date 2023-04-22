@@ -9,7 +9,6 @@ import com.red.code015.data.model.toSummaryUI
 import com.red.code015.domain.Profile
 import com.red.code015.usecases.HelperRepository
 import com.red.code015.usecases.SummonerByPuuIDUserCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,11 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
+
 @OptIn(InternalCoroutinesApi::class)
-class MasteriesAndChestsViewModel @Inject constructor(
+class MasteriesAndChestsViewModel constructor(
     private val helperRepository: HelperRepository,
     private val byPuuID: SummonerByPuuIDUserCase,
 ) : ViewModel() {

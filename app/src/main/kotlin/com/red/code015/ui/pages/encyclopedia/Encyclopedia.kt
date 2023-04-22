@@ -3,7 +3,6 @@
 package com.red.code015.ui.pages.encyclopedia
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -22,7 +21,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -45,7 +44,7 @@ typealias TopBar = @Composable (
 
 @Composable
 fun EncyclopediaPage(
-    viewModel: EncyclopediaViewModel = hiltViewModel(),
+    viewModel: EncyclopediaViewModel = viewModel(),
 ) {
     val latestVersion by viewModel.latestVersion.collectAsState()
     if (latestVersion.isNotBlank())

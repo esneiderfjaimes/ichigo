@@ -3,7 +3,17 @@ package com.red.code015.data.model
 import android.os.Parcelable
 import com.red.code015.R
 import com.red.code015.domain.PlatformID
-import com.red.code015.domain.PlatformID.*
+import com.red.code015.domain.PlatformID.BR
+import com.red.code015.domain.PlatformID.EUNE
+import com.red.code015.domain.PlatformID.EUW
+import com.red.code015.domain.PlatformID.JP
+import com.red.code015.domain.PlatformID.KR
+import com.red.code015.domain.PlatformID.LAN
+import com.red.code015.domain.PlatformID.LAS
+import com.red.code015.domain.PlatformID.NA
+import com.red.code015.domain.PlatformID.OCE
+import com.red.code015.domain.PlatformID.RU
+import com.red.code015.domain.PlatformID.TR
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

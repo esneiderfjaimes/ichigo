@@ -12,13 +12,13 @@ import com.red.code015.domain.PlatformID
 import com.red.code015.domain.Summoner
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
-import javax.inject.Singleton
+
+
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-@Singleton
-class SummonerRepository @Inject constructor(
+
+class SummonerRepository constructor(
     source: APIDataSource,
     private val remote: RemoteRiotGamesDataSource,
     private val local: LocalSummonerDataSource,

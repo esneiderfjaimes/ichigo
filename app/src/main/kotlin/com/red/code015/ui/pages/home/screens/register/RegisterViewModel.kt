@@ -11,14 +11,17 @@ import com.red.code015.ui.pages.home.screens.register.RegisterViewModel.State.Se
 import com.red.code015.usecases.HelperRepository
 import com.red.code015.usecases.ProfileByRiotIDUserCase
 import com.red.code015.usecases.ProfileBySummonerNameUserCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class RegisterViewModel @Inject constructor(
+
+class RegisterViewModel constructor(
     private val helperRepository: HelperRepository,
     private val byRiotID: ProfileByRiotIDUserCase,
     private val bySummonerName: ProfileBySummonerNameUserCase,

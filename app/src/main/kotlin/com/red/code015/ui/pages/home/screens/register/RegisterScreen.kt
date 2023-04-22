@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.red.code015.data.model.Platform
 import com.red.code015.data.model.Platforms
 import com.red.code015.domain.Profile
@@ -39,7 +39,7 @@ fun RegisterScreen(
     platform: Platform,
     onPlatformChange: (Platform) -> Unit,
     registerProfile: (Profile) -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel(),
+    viewModel: RegisterViewModel = viewModel(),
 ) {
     viewModel.setup(platform)
 

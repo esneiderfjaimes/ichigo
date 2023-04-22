@@ -12,7 +12,6 @@ import com.red.code015.ui.pages.home.HomePage
 import com.red.code015.ui.pages.masteries_and_chests.MasteriesAndChestsPage
 import com.red.code015.ui.theme.icons.IconsLoL
 import com.red.code015.ui.theme.icons.Mastery
-import com.red.code015.ui.theme.icons.Rank
 
 @Composable
 fun IchigoApp(

@@ -8,7 +8,6 @@ import com.red.code015.domain.ChampionsRotation
 import com.red.code015.domain.RotationChamp
 import com.red.code015.usecases.ChampionsRotationsUserCase
 import com.red.code015.usecases.EncyclopediaChampionUserCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -16,11 +15,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import javax.inject.Inject
 
-@HiltViewModel
+
 @OptIn(InternalCoroutinesApi::class)
-class ChampionsViewModel @Inject constructor(
+class ChampionsViewModel constructor(
     private val encyclopediaChampion: EncyclopediaChampionUserCase,
     private val championsRotation: ChampionsRotationsUserCase,
 ) : ViewModel() {

@@ -8,11 +8,11 @@ import com.red.code015.data.util.TAG_LOGS
 import com.red.code015.data.util.tryFlow
 import com.red.code015.domain.*
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SummonerDragonRepository @Inject constructor(
+
+
+
+class SummonerDragonRepository constructor(
     private val remote: RemoteRiotGamesDataSource,
     private val local: LocalMasteriesDataSource,
     private val preload: PreloadDataSource,

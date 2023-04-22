@@ -4,6 +4,7 @@
 
 package com.red.code015.ui.pages.home.screens.summoner
 
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.*
@@ -33,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.red.code015.data.model.*
 import com.red.code015.domain.PlatformID
 import com.red.code015.ui.common.*
@@ -52,7 +53,7 @@ fun SummonerScreen(
     platform: PlatformID,
     onBackPress: () -> Unit,
     summonerName: String,
-    viewModel: SummonerViewModel = hiltViewModel(),
+    viewModel: SummonerViewModel = viewModel(),
     onMasteryMorePress: (PlatformID, String) -> Unit,
 ) {
     if (summonerName.isBlank()) {
@@ -76,6 +77,7 @@ fun SummonerScreen(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun SummonerScreen(
     onBackPress: () -> Unit,
