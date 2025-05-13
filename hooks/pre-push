@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "[>] Running lint..."
+./gradlew lint || exit 1
+
+echo "[>] Running unit tests..."
+./gradlew testDebug || exit 1
+
+echo "[>] Assembling project..."
+./gradlew assembleDebug || exit 1
+
+echo "[OK] All checks passed. Pushing..."
