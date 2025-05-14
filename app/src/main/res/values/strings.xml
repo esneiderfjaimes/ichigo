@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ichigo</string>
+    <string name="all">All</string>
+    <string name="filter_by_tag">Filter by tag</string>
 </resources>

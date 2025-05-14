@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -27,17 +28,23 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,64 +64,42 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage
+import com.nei.ichigo.core.designsystem.component.ErrorScreen
+import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
 
 @Composable
 fun ChampionsScreen(viewModel: ChampionsViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    ChampionsScreen(state = state)
+    ChampionsScreen(
+        state = state,
+        onTagSelected = viewModel::onTagSelected
+    )
 }
 
 @Composable
-private fun ChampionsScreen(state: ChampionsUiState) {
+private fun ChampionsScreen(
+    state: ChampionsUiState,
+    onTagSelected: (String?) -> Unit = {}
+) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
-            Surface(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Encyclopedia")
-                        }
-                        if (state is ChampionsUiState.Success) {
-                            val latestVersion = state.version
-                            if (latestVersion.isNotBlank()) withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                    fontSize = MaterialTheme.typography.titleSmall.fontSize
-                                )
-                            ) {
-                                append(" v$latestVersion")
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 32.dp, vertical = 16.dp)
-                        .statusBarsPadding(),
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-            }
+            ChampionsTopAppBar(
+                state = state,
+                onTagSelected = onTagSelected
+            )
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         when (state) {
             ChampionsUiState.Error -> {
-                Text(text = "Error")
+                ErrorScreen(Modifier.padding(innerPadding))
             }
 
             ChampionsUiState.Loading -> {
-                Text(text = "Loading")
+                LoadingScreen(Modifier.padding(innerPadding))
             }
 
             is ChampionsUiState.Success -> {
@@ -127,11 +112,72 @@ private fun ChampionsScreen(state: ChampionsUiState) {
     }
 }
 
-private val ITEM_SIZE = 75.dp
+@Composable
+private fun ChampionsTopAppBar(
+    state: ChampionsUiState,
+    onTagSelected: (String?) -> Unit
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .statusBarsPadding(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append("Encyclopedia")
+                    }
+                    if (state is ChampionsUiState.Success) {
+                        val latestVersion = state.version
+                        if (latestVersion.isNotBlank()) withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                fontSize = MaterialTheme.typography.titleSmall.fontSize
+                            )
+                        ) {
+                            append(" v$latestVersion")
+                        }
+                    }
+                },
+                modifier = Modifier.minimumInteractiveComponentSize(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(Modifier.weight(1f))
+            if (state is ChampionsUiState.Success) {
+                var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+                IconButton(onClick = { openBottomSheet = true }) {
+                    Icon(Icons.Rounded.FilterList, contentDescription = null)
+                }
+
+                if (openBottomSheet) {
+                    ChampionsFilterDialog(
+                        currentTagSelected = state.tagSelected,
+                        champions = state.tags,
+                        onDismiss = { openBottomSheet = false },
+                        onTagSelected = onTagSelected
+                    )
+                }
+            }
+        }
+    }
+}
+
+private val ITEM_SIZE = 70.dp
 private val ITEM_SPADING = 4.dp
 
 @Composable
-fun ChampionsSuccess(
+private fun ChampionsSuccess(
     champions: List<Champion>,
     innerPadding: PaddingValues
 ) {
@@ -144,7 +190,7 @@ fun ChampionsSuccess(
     )
     LazyVerticalGrid(
         modifier = Modifier,
-        columns = GridCells.Adaptive(minSize = ITEM_SIZE + (ITEM_SPADING)),
+        columns = GridCells.Adaptive(minSize = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2)),
         horizontalArrangement = Arrangement.SpaceAround,
         contentPadding = contentPadding,
         content = {
@@ -158,7 +204,7 @@ fun ChampionsSuccess(
                 )
             }
             items(champions, key = { it.id }) { champion ->
-                ChampionItem(champion)
+                ChampionItem(champion, Modifier.animateItem())
             }
         }
     )
@@ -167,9 +213,9 @@ fun ChampionsSuccess(
 private val BORDER_SIZE = 0.75.dp
 
 @Composable
-fun ChampionItem(champion: Champion) {
+fun ChampionItem(champion: Champion, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(ITEM_SPADING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -177,7 +223,6 @@ fun ChampionItem(champion: Champion) {
             model = champion.image,
             contentDescription = null,
             modifier = Modifier
-                .size(ITEM_SIZE)
                 .clip(RoundedCornerShape(25))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
@@ -185,7 +230,8 @@ fun ChampionItem(champion: Champion) {
                     color = Color(0xFFC28F2C),
                     shape = RoundedCornerShape(25)
                 )
-                .padding(BORDER_SIZE),
+                .padding(BORDER_SIZE)
+                .size(ITEM_SIZE),
             onError = {
                 it.result.throwable.printStackTrace()
             },
@@ -203,10 +249,7 @@ fun ChampionItem(champion: Champion) {
                 Box(
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp)
-                    )
+                    CircularProgressIndicator(Modifier.size(24.dp))
                 }
             }
         )
@@ -244,8 +287,21 @@ fun ChampionsScreenPreview() {
                         image = "aatrox.png",
                         tags = emptyList()
                     ),
-                )
+                ),
+                tags = emptyList()
             )
         )
     }
+}
+
+@Preview
+@Composable
+fun ChampionsScreenErrorPreview() {
+    ChampionsScreen(state = ChampionsUiState.Error)
+}
+
+@Preview
+@Composable
+fun ChampionsScreenLoadingPreview() {
+    ChampionsScreen(state = ChampionsUiState.Loading)
 }
