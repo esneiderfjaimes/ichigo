@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ichigo.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ichigo.hilt)
 }
 
 android {
@@ -41,6 +42,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

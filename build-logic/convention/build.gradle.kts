@@ -47,6 +47,10 @@ gradlePlugin {
             id = libs.plugins.ichigo.android.lint.get().pluginId
             implementationClass = "com.nei.ichigo.AndroidLintConventionPlugin"
         }
+        register("hilt") {
+            id = libs.plugins.ichigo.hilt.get().pluginId
+            implementationClass = "com.nei.ichigo.HiltConventionPlugin"
+        }
         register("jvmLibrary") {
             id = libs.plugins.ichigo.jvm.library.get().pluginId
             implementationClass = "com.nei.ichigo.JvmLibraryConventionPlugin"
