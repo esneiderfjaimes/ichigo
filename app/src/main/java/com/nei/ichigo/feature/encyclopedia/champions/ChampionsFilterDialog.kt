@@ -5,8 +5,6 @@ package com.nei.ichigo.feature.encyclopedia.champions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -51,7 +49,6 @@ fun ChampionsFilterDialogContent(
     tags: List<String>,
     onTagSelected: (String?) -> Unit = {},
 ) {
-
     Column(
         Modifier
             .padding(horizontal = 24.dp)
@@ -60,9 +57,10 @@ fun ChampionsFilterDialogContent(
     ) {
         Text(
             text = stringResource(R.string.filter_by_tag),
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleLarge
+                .copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(bottom = 12.dp)
         )
-        Spacer(Modifier.height(8.dp))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -86,7 +84,6 @@ fun ChampionsFilterDialogContent(
             }
         }
     }
-
 }
 
 @Preview

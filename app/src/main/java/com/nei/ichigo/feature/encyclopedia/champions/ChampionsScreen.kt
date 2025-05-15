@@ -33,6 +33,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -172,7 +174,15 @@ private fun ChampionsTopAppBar(
             if (state is ChampionsUiState.Success) {
                 var openFilterDialog by rememberSaveable { mutableStateOf(false) }
                 IconButton(onClick = { openFilterDialog = true }) {
-                    Icon(Icons.Rounded.FilterList, contentDescription = null)
+                    BadgedBox(
+                        badge = {
+                            if (state.tagSelected != null) {
+                                Badge()
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Rounded.FilterList, contentDescription = null)
+                    }
                 }
 
                 if (openFilterDialog) {

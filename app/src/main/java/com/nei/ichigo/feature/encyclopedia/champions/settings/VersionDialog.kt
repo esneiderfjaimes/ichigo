@@ -4,12 +4,17 @@ package com.nei.ichigo.feature.encyclopedia.champions.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -90,33 +96,38 @@ fun VersionDialogContent(
                     }
                 }) {
                     Icon(
-                        if (contentMode == ContentMode.Group) Icons.AutoMirrored.Rounded.Segment
+                        if (contentMode == ContentMode.List) Icons.AutoMirrored.Rounded.Segment
                         else Icons.AutoMirrored.Rounded.List,
                         contentDescription = null
                     )
                 }
             }
-            Column(
-                Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                ItemCombo(
-                    value = stringResource(R.string.latest),
-                    selected = selectedVersion == null,
-                    onClick = { onVersionSelected(null) }
-                )
 
-                when (contentMode) {
-                    ContentMode.List -> {
-                        ContentList(
-                            versions = versions,
-                            selectedVersion = selectedVersion,
-                            onVersionSelected = onVersionSelected
-                        )
+            when (contentMode) {
+                ContentMode.List -> {
+                    val lazyListState = rememberLazyListState()
+                    LaunchedEffect(Unit) {
+                        if (selectedVersion == null) {
+                            lazyListState.animateScrollToItem(0)
+                        } else {
+                            val indexOf = versions.indexOf(selectedVersion)
+                            if (indexOf == -1) return@LaunchedEffect
+                            lazyListState.animateScrollToItem(indexOf + 1)
+                        }
                     }
 
-                    ContentMode.Group -> {
-                        ContentGroup(
+                    LazyColumn(
+                        state = lazyListState,
+                        contentPadding = PaddingValues(bottom = 12.dp)
+                    ) {
+                        item(key = null) {
+                            ItemCombo(
+                                value = stringResource(R.string.latest),
+                                selected = selectedVersion == null,
+                                onClick = { onVersionSelected(null) }
+                            )
+                        }
+                        contentList(
                             versions = versions,
                             selectedVersion = selectedVersion,
                             onVersionSelected = onVersionSelected
@@ -124,19 +135,35 @@ fun VersionDialogContent(
                     }
                 }
 
-                Spacer(Modifier.height(12.dp))
+                ContentMode.Group -> {
+                    Column(
+                        Modifier
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        ItemCombo(
+                            value = stringResource(R.string.latest),
+                            selected = selectedVersion == null,
+                            onClick = { onVersionSelected(null) }
+                        )
+                        ContentGroup(
+                            versions = versions,
+                            selectedVersion = selectedVersion,
+                            onVersionSelected = onVersionSelected
+                        )
+                        Spacer(Modifier.height(12.dp))
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun ContentList(
+fun LazyListScope.contentList(
     versions: List<String>,
     selectedVersion: String?,
     onVersionSelected: (String?) -> Unit
 ) {
-    versions.forEach { version ->
+    items(versions, key = { it }) { version ->
         ItemCombo(
             value = version,
             selected = version == selectedVersion,
@@ -157,7 +184,7 @@ fun ContentGroup(
         .toSortedMap(compareByDescending { it })
     groupBy.forEach { (header, versions) ->
         Surface(
-            shape = MaterialTheme.shapes.extraLarge,
+            shape = MaterialTheme.shapes.large,
             onClick = {
                 expandedGroupId = if (expandedGroupId == header) {
                     null

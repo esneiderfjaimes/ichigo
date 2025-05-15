@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "com.nei.ichigo.core.database"
     defaultConfig {
+        //noinspection WrongGradleMethod
         ksp {
             arg("room.schemaLocation", "$projectDir/core/database/schemas")
         }

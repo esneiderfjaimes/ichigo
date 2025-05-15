@@ -53,4 +53,5 @@
     <string name="lang_zh_my">Chinese (Malaysia)</string>
     <string name="lang_zh_cn">Chinese (China)</string>
     <string name="lang_zh_tw">Chinese (Taiwan)</string>
+    <string name="version">Version</string>
 </resources>
