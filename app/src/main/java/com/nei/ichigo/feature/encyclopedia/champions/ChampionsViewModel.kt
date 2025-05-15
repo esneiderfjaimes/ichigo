@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.core.data.repository.ChampionsRepository
@@ -25,7 +24,10 @@ class ChampionsViewModel @Inject constructor(
 
     val uiState: StateFlow<ChampionsUiState> =
         combine(repository.getChampionsPage(), tagSelected) { page, tagSelected ->
-            val (version, lang, champions) = page.getOrNull() ?: return@combine ChampionsUiState.Error
+            val (version, lang, champions) = page.getOrElse {
+                it.printStackTrace()
+                return@combine ChampionsUiState.Error
+            }
             val sortedUniqueTags = champions
                 .flatMap { it.tags }
                 .distinct()
@@ -45,7 +47,7 @@ class ChampionsViewModel @Inject constructor(
                 tags = sortedUniqueTags
             )
         }.catch {
-            Log.e("ChampionsViewModel", ": ", it)
+            it.printStackTrace()
             emit(ChampionsUiState.Error)
         }.flowOn(Dispatchers.IO).stateIn(
             scope = viewModelScope,

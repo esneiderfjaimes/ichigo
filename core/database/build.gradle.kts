@@ -5,17 +5,21 @@ plugins {
 }
 
 android {
-    namespace = "com.nei.ichigo.core.data"
+    namespace = "com.nei.ichigo.core.database"
+    defaultConfig {
+        ksp {
+            arg("room.schemaLocation", "$projectDir/core/database/schemas")
+        }
+    }
 }
 
 dependencies {
 
     implementation(projects.core.model)
-    implementation(projects.core.network)
-    implementation(projects.core.datastore)
-    implementation(projects.core.database)
 
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

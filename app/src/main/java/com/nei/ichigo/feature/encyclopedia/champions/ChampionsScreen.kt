@@ -72,6 +72,7 @@ import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
 import com.nei.ichigo.feature.encyclopedia.champions.settings.ChampionsSettingsDialog
@@ -113,6 +114,7 @@ private fun ChampionsScreen(
             is ChampionsUiState.Success -> {
                 ChampionsSuccess(
                     champions = state.champions,
+                    version = state.version,
                     innerPadding = innerPadding
                 )
             }
@@ -200,6 +202,7 @@ private val ITEM_SPADING = 4.dp
 @Composable
 private fun ChampionsSuccess(
     champions: List<Champion>,
+    version: String,
     innerPadding: PaddingValues
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -229,7 +232,7 @@ private fun ChampionsSuccess(
                 )
             }
             items(champions, key = { it.id }, contentType = { it }) { champion ->
-                ChampionItem(champion, Modifier.animateItem())
+                ChampionItem(champion, version, Modifier.animateItem())
             }
         }
     )
@@ -238,14 +241,14 @@ private fun ChampionsSuccess(
 private val BORDER_SIZE = 0.75.dp
 
 @Composable
-fun ChampionItem(champion: Champion, modifier: Modifier = Modifier) {
+fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(ITEM_SPADING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SubcomposeAsyncImage(
-            model = champion.image,
+            model = getChampionImage(champion.image, version),
             contentDescription = null,
             modifier = Modifier
                 .clip(RoundedCornerShape(25))

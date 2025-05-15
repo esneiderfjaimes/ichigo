@@ -45,7 +45,6 @@ data class ImageResponseServer(
 fun ChampionResponseServer.asExternalModel() = Champion(
     id = id!!,
     name = name!!,
-    // image = "https://ddragon.leagueoflegends.com/cdn/$version/img/champion/${champion.image.full}",
-    image = "https://opgg-static.akamaized.net/meta/images/lol/$version/champion/${image!!.full}?image=c_crop,h_103,w_103,x_9,y_9/q_auto:good,f_webp,w_160,h_160&v=1510",
+    image = image!!.full!!,
     tags = tags!!,
 )

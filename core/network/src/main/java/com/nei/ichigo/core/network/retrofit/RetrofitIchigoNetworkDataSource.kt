@@ -3,6 +3,7 @@ package com.nei.ichigo.core.network.retrofit
 import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
+import com.nei.ichigo.core.network.model.ChampionResponseServer
 import com.nei.ichigo.core.network.model.ChampionsResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import dagger.Lazy
@@ -74,6 +75,8 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
     }
 
     override suspend fun getChampions(version: String, lang: String): List<Champion> {
-        return networkApi.champions(version, lang).data!!.values.map { it.asExternalModel() }
+        return networkApi.champions(version, lang)
+            .data!!.values
+            .map(ChampionResponseServer::asExternalModel)
     }
 }
