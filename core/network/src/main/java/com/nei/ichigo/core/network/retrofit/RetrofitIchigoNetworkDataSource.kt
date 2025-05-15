@@ -57,12 +57,20 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
             .create(DataDragonApi::class.java)
     }
 
-    override suspend fun getLanguages(): List<String> {
-        return networkApi.languages()
+    override suspend fun getLanguages() = kotlin.runCatching {
+        networkApi.languages().also {
+            if (it.isEmpty()) {
+                throw IllegalStateException("No languages found")
+            }
+        }
     }
 
-    override suspend fun getVersions(): List<String> {
-        return networkApi.versions().filter { !it.contains("lolpatch") }
+    override suspend fun getVersions() = kotlin.runCatching {
+        networkApi.versions().filter { !it.contains("lolpatch") }.also {
+            if (it.isEmpty()) {
+                throw IllegalStateException("No versions found")
+            }
+        }
     }
 
     override suspend fun getChampions(version: String, lang: String): List<Champion> {
