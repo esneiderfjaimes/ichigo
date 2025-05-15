@@ -15,22 +15,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
     private val repository: ChampionsRepository
 ) : ViewModel() {
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getVersions().let {
-                Log.i("ChampionsViewModel", ": versions: $it")
-            }
-        }
-    }
-
     private val tagSelected = MutableStateFlow<String?>(null)
 
     private val pageFlow = flow<ChampionsPage?> {
@@ -39,7 +31,7 @@ class ChampionsViewModel @Inject constructor(
     }.catch {
         Log.e("ChampionsViewModel", ": ", it)
         emit(null)
-    }
+    }.flowOn(Dispatchers.IO)
 
     val uiState: StateFlow<ChampionsUiState> =
         combine(pageFlow, tagSelected) { page, tagSelected ->
@@ -65,7 +57,7 @@ class ChampionsViewModel @Inject constructor(
         }.catch {
             Log.e("ChampionsViewModel", ": ", it)
             ChampionsUiState.Error
-        }.stateIn(
+        }.flowOn(Dispatchers.IO).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ChampionsUiState.Loading,

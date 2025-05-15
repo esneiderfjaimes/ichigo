@@ -21,6 +21,9 @@ private const val BASE_URL = "https://ddragon.leagueoflegends.com/"
  */
 private interface DataDragonApi {
 
+    @GET("/cdn/languages.json")
+    suspend fun languages(): List<String>
+
     @GET("/api/versions.json")
     suspend fun versions(): List<String>
 
@@ -52,6 +55,10 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
             .addConverterFactory(converterFactory.get())
             .build()
             .create(DataDragonApi::class.java)
+    }
+
+    override suspend fun getLanguages(): List<String> {
+        return networkApi.languages()
     }
 
     override suspend fun getVersions(): List<String> {

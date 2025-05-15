@@ -6,5 +6,7 @@ interface IchigoNetworkDataSource {
 
     suspend fun getVersions(): List<String>
 
+    suspend fun getLanguages(): List<String>
+
     suspend fun getChampions(version: String, lang: String): List<Champion>
 }

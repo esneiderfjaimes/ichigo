@@ -13,15 +13,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -125,7 +128,12 @@ private fun ChampionsTopAppBar(
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .statusBarsPadding(),
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing
+                        .only(
+                            WindowInsetsSides.Start + WindowInsetsSides.End + WindowInsetsSides.Top
+                        )
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -155,19 +163,27 @@ private fun ChampionsTopAppBar(
             )
             Spacer(Modifier.weight(1f))
             if (state is ChampionsUiState.Success) {
-                var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-                IconButton(onClick = { openBottomSheet = true }) {
+                var openFilterDialog by rememberSaveable { mutableStateOf(false) }
+                IconButton(onClick = { openFilterDialog = true }) {
                     Icon(Icons.Rounded.FilterList, contentDescription = null)
                 }
 
-                if (openBottomSheet) {
+                if (openFilterDialog) {
                     ChampionsFilterDialog(
                         currentTagSelected = state.tagSelected,
                         champions = state.tags,
-                        onDismiss = { openBottomSheet = false },
+                        onDismiss = { openFilterDialog = false },
                         onTagSelected = onTagSelected
                     )
                 }
+            }
+            var openSettingsDialog by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { openSettingsDialog = true }) {
+                Icon(Icons.Rounded.Settings, contentDescription = null)
+            }
+
+            if (openSettingsDialog) {
+                ChampionsSettingsDialog(onDismiss = { openSettingsDialog = false })
             }
         }
     }
