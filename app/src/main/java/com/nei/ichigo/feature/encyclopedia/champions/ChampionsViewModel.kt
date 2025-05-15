@@ -3,7 +3,6 @@ package com.nei.ichigo.feature.encyclopedia.champions
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nei.ichigo.core.data.model.ChampionsPage
 import com.nei.ichigo.core.data.repository.ChampionsRepository
 import com.nei.ichigo.core.model.Champion
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,28 +13,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
-    private val repository: ChampionsRepository
+    repository: ChampionsRepository
 ) : ViewModel() {
     private val tagSelected = MutableStateFlow<String?>(null)
 
-    private val pageFlow = flow<ChampionsPage?> {
-        val page = repository.getChampionsPage()
-        emit(page)
-    }.catch {
-        Log.e("ChampionsViewModel", ": ", it)
-        emit(null)
-    }.flowOn(Dispatchers.IO)
-
     val uiState: StateFlow<ChampionsUiState> =
-        combine(pageFlow, tagSelected) { page, tagSelected ->
-            val (version, lang, champions) = page ?: return@combine ChampionsUiState.Error
+        combine(repository.getChampionsPage(), tagSelected) { page, tagSelected ->
+            val (version, lang, champions) = page.getOrNull() ?: return@combine ChampionsUiState.Error
             val sortedUniqueTags = champions
                 .flatMap { it.tags }
                 .distinct()
@@ -56,7 +46,7 @@ class ChampionsViewModel @Inject constructor(
             )
         }.catch {
             Log.e("ChampionsViewModel", ": ", it)
-            ChampionsUiState.Error
+            emit(ChampionsUiState.Error)
         }.flowOn(Dispatchers.IO).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

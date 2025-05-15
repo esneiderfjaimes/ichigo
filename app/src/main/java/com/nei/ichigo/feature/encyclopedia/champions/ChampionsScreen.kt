@@ -61,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
@@ -71,9 +72,11 @@ import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
+import com.nei.ichigo.feature.encyclopedia.champions.settings.ChampionsSettingsDialog
 
 @Composable
-fun ChampionsScreen(viewModel: ChampionsViewModel) {
+fun ChampionsScreen() {
+    val viewModel: ChampionsViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     ChampionsScreen(
         state = state,
@@ -219,7 +222,7 @@ private fun ChampionsSuccess(
                     textAlign = TextAlign.Center,
                 )
             }
-            items(champions, key = { it.id }) { champion ->
+            items(champions, key = { it.id }, contentType = { it }) { champion ->
                 ChampionItem(champion, Modifier.animateItem())
             }
         }

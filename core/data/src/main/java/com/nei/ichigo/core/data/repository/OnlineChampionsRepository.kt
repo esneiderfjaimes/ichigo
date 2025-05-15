@@ -9,7 +9,11 @@ import com.nei.ichigo.core.datastore.OfflineDataDragonPreferencesDataSource
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 internal class OnlineChampionsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -17,6 +21,54 @@ internal class OnlineChampionsRepository @Inject constructor(
     private val offlinePreferencesDataSource: OfflineDataDragonPreferencesDataSource,
     private val ichigoPreferencesDataSource: IchigoPreferencesDataSource,
 ) : ChampionsRepository {
+    override fun getChampionsPage() =
+        ichigoPreferencesDataSource.userSettings
+            .map {
+                val lang = getCurrentLang(it.langSelected)
+                val version = getCurrentVersion(it.versionSelected)
+                version to lang
+            }.distinctUntilChanged().map { (version, lang) ->
+                kotlin.runCatching {
+                    ChampionsPage(
+                        version = version,
+                        lang = lang,
+                        champions = networkDataSource.getChampions(version, lang)
+                    )
+                }
+            }.catch {
+                emit(
+                    Result.failure(it)
+                )
+            }.flowOn(Dispatchers.IO)
+
+    private suspend fun getCurrentVersion(userVersionSelected: String?): String {
+        val versions = getVersions()
+        return if (userVersionSelected != null && versions.contains(userVersionSelected)) {
+            userVersionSelected
+        } else {
+            versions.first()
+        }
+    }
+
+    private suspend fun getCurrentLang(userLangSelected: String?): String {
+        val languages = getLanguages()
+
+        fun automaticSelection(): String {
+            val langFromRes = context.getString(R.string.core_data_lang_code)
+            return if (languages.contains(langFromRes)) {
+                langFromRes
+            } else {
+                languages.first()
+            }
+        }
+
+        return if (userLangSelected != null && languages.contains(userLangSelected)) {
+            userLangSelected
+        } else {
+            automaticSelection()
+        }
+    }
+
     override suspend fun getLanguages() = getValue(
         offlinePreferencesDataSource::languagesIsExpired,
         offlinePreferencesDataSource::getLanguages,
@@ -58,48 +110,6 @@ internal class OnlineChampionsRepository @Inject constructor(
                 }
             )
         }
-    }
-
-    private suspend fun getCurrentVersion(): String {
-        val userVersionSelected: String? =
-            ichigoPreferencesDataSource.userSettings.first().versionSelected
-        val versions = getVersions()
-        return if (userVersionSelected != null && versions.contains(userVersionSelected)) {
-            userVersionSelected
-        } else {
-            versions.first()
-        }
-    }
-
-    private suspend fun getCurrentLang(): String {
-        val userLangSelected: String? =
-            ichigoPreferencesDataSource.userSettings.first().langSelected
-        val languages = getLanguages()
-
-        fun automaticSelection(): String {
-            val langFromRes = context.getString(R.string.core_data_lang_code)
-            return if (languages.contains(langFromRes)) {
-                langFromRes
-            } else {
-                languages.first()
-            }
-        }
-
-        return if (userLangSelected != null && languages.contains(userLangSelected)) {
-            userLangSelected
-        } else {
-            automaticSelection()
-        }
-    }
-
-    override suspend fun getChampionsPage(): ChampionsPage {
-        val version = getCurrentVersion()
-        val lang = getCurrentLang()
-        return ChampionsPage(
-            version = version,
-            lang = lang,
-            champions = networkDataSource.getChampions(version, lang)
-        )
     }
 
     companion object {
