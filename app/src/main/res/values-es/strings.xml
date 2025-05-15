@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ichigo</string>
+
+    <string name="all">Todos</string>
+    <string name="filter_by_tag">Filtrar por etiqueta</string>
+    <string name="select_language">Seleccionar idioma</string>
+    <string name="automatic">Automático</string>
+    <string name="select_version">Seleccionar versión</string>
+    <string name="language">Idioma</string>
+    <string name="latest">Última</string>
+    <string name="settings">Configuración</string>
+
+    <plurals name="number_of_champions">
+        <item quantity="one">%d campeón.</item>
+        <item quantity="many">%d campeones.</item>
+        <item quantity="other">%d campeones.</item>
+    </plurals>
+
+    <string name="role_assassin">Asesino</string>
+    <string name="role_fighter">Luchador</string>
+    <string name="role_mage">Mago</string>
+    <string name="role_marksman">Tirador</string>
+    <string name="role_support">Apoyo</string>
+    <string name="role_tank">Tanque</string>
+
+    <string name="lang_ar_ae">Árabe (Emiratos Árabes Unidos)</string>
+    <string name="lang_cs_cz">Checo (República Checa)</string>
+    <string name="lang_el_gr">Griego (Grecia)</string>
+    <string name="lang_pl_pl">Polaco (Polonia)</string>
+    <string name="lang_ro_ro">Rumano (Rumania)</string>
+    <string name="lang_hu_hu">Húngaro (Hungría)</string>
+    <string name="lang_en_gb">Inglés (Reino Unido)</string>
+    <string name="lang_de_de">Alemán (Alemania)</string>
+    <string name="lang_es_es">Español (España)</string>
+    <string name="lang_it_it">Italiano (Italia)</string>
+    <string name="lang_fr_fr">Francés (Francia)</string>
+    <string name="lang_ja_jp">Japonés (Japón)</string>
+    <string name="lang_ko_kr">Coreano (Corea)</string>
+    <string name="lang_es_mx">Español (México)</string>
+    <string name="lang_es_ar">Español (Argentina)</string>
+    <string name="lang_pt_br">Portugués (Brasil)</string>
+    <string name="lang_en_us">Inglés (Estados Unidos)</string>
+    <string name="lang_en_au">Inglés (Australia)</string>
+    <string name="lang_ru_ru">Ruso (Rusia)</string>
+    <string name="lang_tr_tr">Turco (Turquía)</string>
+    <string name="lang_ms_my">Malayo (Malasia)</string>
+    <string name="lang_en_ph">Inglés (Filipinas)</string>
+    <string name="lang_en_sg">Inglés (Singapur)</string>
+    <string name="lang_th_th">Tailandés (Tailandia)</string>
+    <string name="lang_vi_vn">Vietnamita (Vietnam)</string>
+    <string name="lang_id_id">Indonesio (Indonesia)</string>
+    <string name="lang_zh_my">Chino (Malasia)</string>
+    <string name="lang_zh_cn">Chino (China)</string>
+    <string name="lang_zh_tw">Chino (Taiwán)</string>
+
+</resources>

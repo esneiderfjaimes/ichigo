@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +69,7 @@ import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage
+import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.model.Champion
@@ -215,7 +217,11 @@ private fun ChampionsSuccess(
         content = {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = "${champions.size} champions.",
+                    text = pluralStringResource(
+                        id = R.plurals.number_of_champions,
+                        count = champions.size,
+                        champions.size
+                    ),
                     modifier = Modifier
                         .padding(8.dp),
                     style = MaterialTheme.typography.bodySmall,

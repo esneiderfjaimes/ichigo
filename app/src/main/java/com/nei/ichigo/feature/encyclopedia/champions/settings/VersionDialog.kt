@@ -2,32 +2,42 @@
 
 package com.nei.ichigo.feature.encyclopedia.champions.settings
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.automirrored.rounded.Segment
+import androidx.compose.material.icons.rounded.ExpandLess
+import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.ItemCombo
 
 @Composable
 fun VersionDialog(
@@ -45,6 +55,10 @@ fun VersionDialog(
     }
 }
 
+enum class ContentMode {
+    List,
+    Group
+}
 
 @Composable
 fun VersionDialogContent(
@@ -52,6 +66,7 @@ fun VersionDialogContent(
     versions: List<String>,
     onVersionSelected: (String?) -> Unit,
 ) {
+    var contentMode by rememberSaveable { mutableStateOf(ContentMode.List) }
     Surface(
         shape = MaterialTheme.shapes.extraLarge
     ) {
@@ -59,27 +74,114 @@ fun VersionDialogContent(
             Modifier
                 .sizeIn(maxHeight = 600.dp)
         ) {
-            Text(
-                text = "Select Version",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(24.dp)
-            )
+            Row(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = stringResource(R.string.select_version),
+                    style = MaterialTheme.typography.titleLarge
+                        .copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(12.dp)
+                )
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = {
+                    contentMode = if (contentMode == ContentMode.List) {
+                        ContentMode.Group
+                    } else {
+                        ContentMode.List
+                    }
+                }) {
+                    Icon(
+                        if (contentMode == ContentMode.Group) Icons.AutoMirrored.Rounded.Segment
+                        else Icons.AutoMirrored.Rounded.List,
+                        contentDescription = null
+                    )
+                }
+            }
             Column(
                 Modifier
                     .verticalScroll(rememberScrollState())
             ) {
-                Item(
-                    "Last Version",
+                ItemCombo(
+                    value = stringResource(R.string.latest),
                     selected = selectedVersion == null,
                     onClick = { onVersionSelected(null) }
                 )
 
-                versions.forEach { version ->
-                    Item(
-                        value = version,
-                        selected = version == selectedVersion,
-                        onClick = { onVersionSelected(version) }
-                    )
+                when (contentMode) {
+                    ContentMode.List -> {
+                        ContentList(
+                            versions = versions,
+                            selectedVersion = selectedVersion,
+                            onVersionSelected = onVersionSelected
+                        )
+                    }
+
+                    ContentMode.Group -> {
+                        ContentGroup(
+                            versions = versions,
+                            selectedVersion = selectedVersion,
+                            onVersionSelected = onVersionSelected
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun ContentList(
+    versions: List<String>,
+    selectedVersion: String?,
+    onVersionSelected: (String?) -> Unit
+) {
+    versions.forEach { version ->
+        ItemCombo(
+            value = version,
+            selected = version == selectedVersion,
+            onClick = { onVersionSelected(version) }
+        )
+    }
+}
+
+@Composable
+fun ContentGroup(
+    versions: List<String>,
+    selectedVersion: String?,
+    onVersionSelected: (String?) -> Unit
+) {
+    var expandedGroupId by rememberSaveable { mutableStateOf<Int?>(null) }
+    val groupBy = versions
+        .groupBy { it.substringBefore(".").toInt() }
+        .toSortedMap(compareByDescending { it })
+    groupBy.forEach { (header, versions) ->
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            onClick = {
+                expandedGroupId = if (expandedGroupId == header) {
+                    null
+                } else {
+                    header
+                }
+            },
+            tonalElevation = if (expandedGroupId == header) 2.dp else 0.dp
+        ) {
+            Column {
+                Header(
+                    value = header.toString(),
+                    isExpanded = expandedGroupId == header
+                )
+                AnimatedVisibility(expandedGroupId == header) {
+                    Column {
+                        versions.forEach { version ->
+                            ItemCombo(
+                                value = version,
+                                selected = version == selectedVersion,
+                                onClick = { onVersionSelected(version) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -87,31 +189,23 @@ fun VersionDialogContent(
 }
 
 @Composable
-private fun Item(value: String, selected: Boolean, onClick: () -> Unit) {
+private fun Header(value: String, isExpanded: Boolean) {
     Row(
         Modifier
-            .clip(RoundedCornerShape(50))
-            .clickable(
-                enabled = !selected,
-                onClick = onClick
-            )
             .minimumInteractiveComponentSize()
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Icon(
+            if (isExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
+            contentDescription = null,
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+        )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 24.dp)
+            modifier = Modifier.padding(end = 24.dp)
         )
-        if (selected) {
-            Spacer(Modifier.weight(1f))
-            Icon(
-                Icons.Rounded.Check,
-                contentDescription = null,
-                modifier = Modifier.padding(end = 24.dp)
-            )
-        }
     }
 }
 

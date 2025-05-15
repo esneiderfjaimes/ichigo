@@ -22,13 +22,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 import com.nei.ichigo.feature.encyclopedia.champions.settings.ChampionsSettingsViewmodel.ChampionsSettingsUiState
 
 @Composable
@@ -61,7 +64,7 @@ private fun ChampionsSettingsDialogContent(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings),
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
         )
         Spacer(Modifier.height(8.dp))
@@ -77,7 +80,7 @@ private fun ChampionsSettingsDialogContent(
             is ChampionsSettingsUiState.Success -> {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Language",
+                        text = stringResource(R.string.language),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.weight(1f))
@@ -85,7 +88,10 @@ private fun ChampionsSettingsDialogContent(
                     TextButton(onClick = {
                         showLanguageDialog = true
                     }) {
-                        Text(state.language?.let { languageCodeToString(it) } ?: "Automatic")
+                        Text(
+                            text = state.language?.let { languageCodeToString(it) }
+                                ?: stringResource(R.string.automatic)
+                        )
                     }
                     if (showLanguageDialog) {
                         LanguageDialog(
@@ -109,7 +115,7 @@ private fun ChampionsSettingsDialogContent(
                     TextButton(onClick = {
                         showVersionDialog = true
                     }) {
-                        Text(state.version ?: "Latest")
+                        Text(state.version ?: stringResource(R.string.latest))
                     }
                     if (showVersionDialog) {
                         VersionDialog(

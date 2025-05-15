@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
+import com.nei.ichigo.core.designsystem.utils.roleToString
 
 @Composable
 fun ChampionsFilterDialog(
@@ -76,7 +77,7 @@ fun ChampionsFilterDialogContent(
 
             tags.forEach { tag ->
                 IchigoFilterChip(
-                    text = tag,
+                    text = roleToString(tag),
                     selected = tag == currentTagSelected,
                     onClick = {
                         onTagSelected(tag)

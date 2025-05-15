@@ -2,12 +2,11 @@
 
 package com.nei.ichigo.feature.encyclopedia.champions.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BasicAlertDialog
@@ -17,11 +16,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
-
+import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.ItemCombo
+import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 
 @Composable
 fun LanguageDialog(
@@ -39,7 +40,6 @@ fun LanguageDialog(
     }
 }
 
-
 @Composable
 fun LanguageDialogContent(
     selectedLanguage: String?,
@@ -51,72 +51,35 @@ fun LanguageDialogContent(
     ) {
         Column(
             Modifier
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState())
+                .sizeIn(maxHeight = 600.dp)
         ) {
             Text(
-                text = "Select Language",
+                text = stringResource(R.string.select_language),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(24.dp)
             )
-            Spacer(Modifier.height(8.dp))
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+
+            Column(
+                Modifier
+                    .verticalScroll(rememberScrollState())
             ) {
-                IchigoFilterChip(
-                    text = "Automatic",
+                ItemCombo(
+                    stringResource(R.string.automatic),
                     selected = selectedLanguage == null,
-                    onClick = {
-                        onLanguageSelected(null)
-                    }
+                    onClick = { onLanguageSelected(null) }
                 )
 
-                languages.forEach { languageCode ->
-                    IchigoFilterChip(
-                        text = languageCodeToString(languageCode),
+                languages.sorted().forEach { languageCode ->
+                    ItemCombo(
+                        value = languageCodeToString(languageCode),
                         selected = languageCode == selectedLanguage,
-                        onClick = {
-                            onLanguageSelected(languageCode)
-                        }
+                        onClick = { onLanguageSelected(languageCode) }
                     )
                 }
+
+                Spacer(Modifier.height(12.dp))
             }
         }
-    }
-}
-
-@Composable
-fun languageCodeToString(languageCode: String): String {
-    return when (languageCode) {
-        "cs_CZ" -> "Czech (Czech Republic)"
-        "el_GR" -> "Greek (Greece)"
-        "pl_PL" -> "Polish (Poland)"
-        "ro_RO" -> "Romanian (Romania)"
-        "hu_HU" -> "Hungarian (Hungary)"
-        "en_GB" -> "English (United Kingdom)"
-        "de_DE" -> "German (Germany)"
-        "es_ES" -> "Spanish (Spain)"
-        "it_IT" -> "Italian (Italy)"
-        "fr_FR" -> "French (France)"
-        "ja_JP" -> "Japanese (Japan)"
-        "ko_KR" -> "Korean (Korea)"
-        "es_MX" -> "Spanish (Mexico)"
-        "es_AR" -> "Spanish (Argentina)"
-        "pt_BR" -> "Portuguese (Brazil)"
-        "en_US" -> "English (United States)"
-        "en_AU" -> "English (Australia)"
-        "ru_RU" -> "Russian (Russia)"
-        "tr_TR" -> "Turkish (Turkey)"
-        "ms_MY" -> "Malay (Malaysia)"
-        "en_PH" -> "English (Republic of the Philippines)"
-        "en_SG" -> "English (Singapore)"
-        "th_TH" -> "Thai (Thailand)"
-        "vi_VN" -> "Vietnamese (Viet Nam)"
-        "id_ID" -> "Indonesian (Indonesia)"
-        "zh_MY" -> "Chinese (Malaysia)"
-        "zh_CN" -> "Chinese (China)"
-        "zh_TW" -> "Chinese (Taiwan)"
-        else -> languageCode
     }
 }
 
@@ -124,7 +87,7 @@ fun languageCodeToString(languageCode: String): String {
 @Composable
 private fun LanguageDialogContentPreview() {
     LanguageDialogContent(
-        selectedLanguage = "English",
+        selectedLanguage = null,
         languages = listOf(
             "cs_CZ",
             "el_GR",
