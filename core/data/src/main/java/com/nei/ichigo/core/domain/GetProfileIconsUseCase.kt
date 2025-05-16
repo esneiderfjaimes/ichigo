@@ -1,14 +1,20 @@
 package com.nei.ichigo.core.domain
 
 import android.content.Context
-import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.map
 import com.nei.ichigo.core.data.model.ProfileIconsPage
+import com.nei.ichigo.core.data.model.asEntity
+import com.nei.ichigo.core.data.model.asExternalModel
 import com.nei.ichigo.core.data.repository.ChampionsRepository
+import com.nei.ichigo.core.database.dao.ProfileIconDao
+import com.nei.ichigo.core.database.model.ProfileIconEntity
 import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
-import com.nei.ichigo.core.model.ProfileIcon
 import com.nei.ichigo.core.network.BuildConfig
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private const val FORCE_FETCH_ICONS = false
@@ -16,6 +22,7 @@ private const val FORCE_FETCH_ICONS = false
 class GetProfileIconsUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val networkDataSource: IchigoNetworkDataSource,
+    private val profileIconDao: ProfileIconDao,
     championsRepository: ChampionsRepository,
     ichigoPreferencesDataSource: IchigoPreferencesDataSource,
 ) : PagerHelper<ProfileIconsPage>(
@@ -24,23 +31,25 @@ class GetProfileIconsUseCase @Inject constructor(
     ichigoPreferencesDataSource
 ) {
     override suspend fun fetchPage(version: String, lang: String) = kotlin.runCatching {
-        val icons: List<ProfileIcon> = kotlin.runCatching {
-            if (BuildConfig.DEBUG && FORCE_FETCH_ICONS) {
-                throw IllegalStateException("Forced fetch")
-            }
-
-            TODO()
-        }.getOrElse { throwable ->
-            Log.e("OnlineChampions", "Error getting champions from database", throwable)
-            networkDataSource.getProfileIcons(version, lang).also { icons ->
-                // TODO save to database
-            }
+        val count = profileIconDao.countByVersionAndLang(version, lang)
+        if (count <= 0 || (BuildConfig.DEBUG && FORCE_FETCH_ICONS)) {
+            val allIcons = networkDataSource.getProfileIcons(version, lang)
+            val entities = allIcons
+                .sortedByDescending { it.id.toInt() }
+                .map { it.asEntity(version, lang) }
+            profileIconDao.insertAll(entities)
         }
+
+        val profileIcons = profileIconDao.getProfileIcons(version, lang)
 
         ProfileIconsPage(
             version = version,
             lang = lang,
-            icons = icons
+            icons = profileIcons.map(ProfileIconEntity::asExternalModel),
+            pager = Pager(
+                config = PagingConfig(pageSize = 50),
+                pagingSourceFactory = { profileIconDao.getPagingSource(version, lang) }
+            ).flow.map { it.map(ProfileIconEntity::asExternalModel) }
         )
     }
 }

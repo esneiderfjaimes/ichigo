@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "435b26b69e4b2ca183a524c2522088b7",
+    "identityHash": "68fcfc02f42aacc8c94bb8322be011a2",
     "entities": [
       {
-        "tableName": "champion",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`version` TEXT NOT NULL, `lang` TEXT NOT NULL, `id` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `tags` TEXT NOT NULL, PRIMARY KEY(`version`, `lang`, `id`))",
+        "tableName": "champions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `version` TEXT NOT NULL, `lang` TEXT NOT NULL, `code` TEXT NOT NULL, `name` TEXT NOT NULL, `image` TEXT NOT NULL, `tags` TEXT NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "version",
             "columnName": "version",
@@ -21,8 +27,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "code",
+            "columnName": "code",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -46,18 +52,84 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "version",
-            "lang",
             "id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_champions_version_lang_code",
+            "unique": true,
+            "columnNames": [
+              "version",
+              "lang",
+              "code"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_champions_version_lang_code` ON `${TABLE_NAME}` (`version`, `lang`, `code`)"
+          }
+        ]
+      },
+      {
+        "tableName": "profile_icons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `version` TEXT NOT NULL, `lang` TEXT NOT NULL, `code` TEXT NOT NULL, `image` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lang",
+            "columnName": "lang",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_profile_icons_version_lang_code",
+            "unique": true,
+            "columnNames": [
+              "version",
+              "lang",
+              "code"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_profile_icons_version_lang_code` ON `${TABLE_NAME}` (`version`, `lang`, `code`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '435b26b69e4b2ca183a524c2522088b7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '68fcfc02f42aacc8c94bb8322be011a2')"
     ]
   }
 }

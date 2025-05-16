@@ -2,11 +2,13 @@ package com.nei.ichigo.feature.encyclopedia.icons
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -26,7 +28,8 @@ class IconsViewModel @Inject constructor(
                     IconsUiState.Success(
                         version = page.version,
                         lang = page.lang,
-                        icons = page.icons.sortedByDescending { it.id.toInt() }
+                        icons = page.icons.sortedByDescending { it.id.toInt() },
+                        pager = page.pager
                     )
                 },
                 onFailure = {
@@ -49,6 +52,7 @@ class IconsViewModel @Inject constructor(
             val version: String,
             val lang: String,
             val icons: List<ProfileIcon>,
+            val pager: Flow<PagingData<ProfileIcon>>,
         ) : IconsUiState
 
         data object Error : IconsUiState

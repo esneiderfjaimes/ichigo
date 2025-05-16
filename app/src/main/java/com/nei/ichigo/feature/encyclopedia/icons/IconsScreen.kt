@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,6 +42,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
@@ -54,6 +59,9 @@ fun IconsScreen() {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     IconsScreen(state = state)
 }
+
+// TODO: pager don't save scroll position
+const val USE_PAGER = false
 
 @Composable
 private fun IconsScreen(state: IconsUiState) {
@@ -79,12 +87,62 @@ private fun IconsScreen(state: IconsUiState) {
                     start = innerPadding.calculateStartPadding(layoutDirection) + 32.dp,
                     end = innerPadding.calculateEndPadding(layoutDirection) + 32.dp
                 )
+
+                val pagingItems = state.pager.collectAsLazyPagingItems()
                 LazyVerticalGrid(
                     modifier = Modifier,
                     columns = GridCells.Adaptive(minSize = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     contentPadding = contentPadding,
                     content = {
+                        if (USE_PAGER) {
+                            items(
+                                pagingItems.itemCount,
+                                key = { pagingItems[it]?.id ?: it },
+                                contentType = { pagingItems[it]?.id ?: it }
+                            ) { index ->
+                                pagingItems[index]
+                                    ?.let {
+                                        ProfileIconItem(it, state.version, Modifier.animateItem())
+                                    }
+                            }
+
+                            pagingItems.apply {
+                                when {
+                                    loadState.refresh is LoadState.Loading -> item(
+                                        span = { GridItemSpan(maxLineSpan) }
+                                    ) { LoadingSpinner() }
+
+                                    loadState.append is LoadState.Loading -> item(span = {
+                                        GridItemSpan(
+                                            maxLineSpan
+                                        )
+                                    }) { LoadingSpinner() }
+
+                                    loadState.refresh is LoadState.Error -> item(span = {
+                                        GridItemSpan(
+                                            maxLineSpan
+                                        )
+                                    }) { Text("Error") }
+                                }
+                            }
+                            return@LazyVerticalGrid
+                        }
+
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Text(
+                                text = pluralStringResource(
+                                    id = R.plurals.number_of_icons,
+                                    count = state.icons.size,
+                                    state.icons.size
+                                ),
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+
                         items(state.icons) { icon ->
                             ProfileIconItem(icon, state.version, Modifier.animateItem())
                         }
@@ -92,6 +150,18 @@ private fun IconsScreen(state: IconsUiState) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun LoadingSpinner(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(ITEM_SPADING),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
 

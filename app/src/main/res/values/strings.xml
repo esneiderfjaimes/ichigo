@@ -21,6 +21,12 @@
         <item quantity="other">%d champions.</item>
     </plurals>
 
+    <plurals name="number_of_icons">
+        <item quantity="one">%d icon.</item>
+        <item quantity="many">%d icons.</item>
+        <item quantity="other">%d icons.</item>
+    </plurals>
+
     <string name="role_assassin">Assassin</string>
     <string name="role_fighter">Fighter</string>
     <string name="role_mage">Mage</string>

@@ -14,7 +14,7 @@ interface ChampionDao {
 
     @Query(
         """
-        SELECT * FROM champion
+        SELECT * FROM champions
         WHERE version = :version AND lang = :lang
         """
     )
@@ -23,4 +23,3 @@ interface ChampionDao {
         lang: String
     ): List<ChampionEntity>
 }
-

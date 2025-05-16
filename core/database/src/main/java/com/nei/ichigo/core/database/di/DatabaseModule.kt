@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.nei.ichigo.core.database.IchigoDatabase
 import com.nei.ichigo.core.database.dao.ChampionDao
+import com.nei.ichigo.core.database.dao.ProfileIconDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,10 +23,17 @@ internal object DatabaseModule {
         context,
         IchigoDatabase::class.java,
         "ichigo-database",
-    ).build()
+    ).apply {
+        fallbackToDestructiveMigrationOnDowngrade(true)
+    }.build()
 
     @Provides
     fun providesChampionDao(
         database: IchigoDatabase,
     ): ChampionDao = database.championDao()
+
+    @Provides
+    fun providesProfileIconDao(
+        database: IchigoDatabase,
+    ): ProfileIconDao = database.profileIconDao()
 }

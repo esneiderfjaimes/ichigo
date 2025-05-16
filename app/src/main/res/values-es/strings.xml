@@ -21,6 +21,12 @@
         <item quantity="other">%d campeones.</item>
     </plurals>
 
+    <plurals name="number_of_icons">
+        <item quantity="one">%d icono.</item>
+        <item quantity="many">%d iconos.</item>
+        <item quantity="other">%d iconos.</item>
+    </plurals>
+
     <string name="role_assassin">Asesino</string>
     <string name="role_fighter">Luchador</string>
     <string name="role_mage">Mago</string>

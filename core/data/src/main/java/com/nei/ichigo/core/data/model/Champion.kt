@@ -6,14 +6,14 @@ import com.nei.ichigo.core.model.Champion
 fun Champion.asEntity(version: String, lang: String) = ChampionEntity(
     version = version,
     lang = lang,
-    id = id,
+    code = id,
     name = name,
     image = image,
     tags = tags
 )
 
 fun ChampionEntity.asExternalModel() = Champion(
-    id = id,
+    id = code,
     name = name,
     image = image,
     tags = tags

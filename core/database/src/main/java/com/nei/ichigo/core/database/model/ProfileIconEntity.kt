@@ -5,16 +5,14 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "champions",
+    tableName = "profile_icons",
     indices = [Index(value = ["version", "lang", "code"], unique = true)]
 )
-data class ChampionEntity(
+data class ProfileIconEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val version: String,
     val lang: String,
     val code: String,
-    val name: String,
     val image: String,
-    val tags: List<String>,
 )
