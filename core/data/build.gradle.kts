@@ -17,7 +17,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
 
-    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.paging.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

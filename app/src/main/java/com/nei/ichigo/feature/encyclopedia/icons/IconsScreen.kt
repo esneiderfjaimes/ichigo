@@ -61,7 +61,7 @@ fun IconsScreen() {
 }
 
 // TODO: pager don't save scroll position
-const val USE_PAGER = false
+const val USE_PAGER = true
 
 @Composable
 private fun IconsScreen(state: IconsUiState) {
