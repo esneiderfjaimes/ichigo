@@ -1,9 +1,6 @@
 package com.nei.ichigo.core.domain
 
 import android.content.Context
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.map
 import com.nei.ichigo.core.data.model.ProfileIconsPage
 import com.nei.ichigo.core.data.model.asEntity
 import com.nei.ichigo.core.data.model.asExternalModel
@@ -14,7 +11,6 @@ import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
 import com.nei.ichigo.core.network.BuildConfig
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private const val FORCE_FETCH_ICONS = false
@@ -46,10 +42,6 @@ class GetProfileIconsUseCase @Inject constructor(
             version = version,
             lang = lang,
             icons = profileIcons.map(ProfileIconEntity::asExternalModel),
-            pager = Pager(
-                config = PagingConfig(pageSize = 50),
-                pagingSourceFactory = { profileIconDao.getPagingSource(version, lang) }
-            ).flow.map { it.map(ProfileIconEntity::asExternalModel) }
         )
     }
 }

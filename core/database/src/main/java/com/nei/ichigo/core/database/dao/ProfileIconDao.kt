@@ -1,6 +1,5 @@
 package com.nei.ichigo.core.database.dao
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,9 +8,6 @@ import com.nei.ichigo.core.database.model.ProfileIconEntity
 
 @Dao
 interface ProfileIconDao {
-
-    @Query("SELECT * FROM profile_icons WHERE version = :version AND lang = :lang ORDER BY id ASC")
-    fun getPagingSource(version: String, lang: String): PagingSource<Int, ProfileIconEntity>
 
     @Query("SELECT * FROM profile_icons WHERE version = :version AND lang = :lang ORDER BY id ASC")
     fun getProfileIcons(version: String, lang: String): List<ProfileIconEntity>
