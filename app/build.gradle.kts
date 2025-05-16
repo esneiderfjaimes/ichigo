@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.ichigo.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ichigo.hilt)
+    id("kotlinx-serialization")
 }
 
 android {
@@ -24,6 +25,11 @@ android {
             )
         }
     }
+    kotlinOptions {
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+        )
+    }
     buildFeatures {
         compose = true
     }
@@ -44,6 +50,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)

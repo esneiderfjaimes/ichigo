@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.nei.ichigo.feature.encyclopedia.champions.settings
 
 import androidx.compose.animation.AnimatedVisibility
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.automirrored.rounded.Segment
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme

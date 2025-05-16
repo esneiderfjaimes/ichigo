@@ -1,6 +1,4 @@
-@file:OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalCoilApi::class
-)
+@file:OptIn(ExperimentalCoilApi::class)
 
 package com.nei.ichigo.feature.encyclopedia.champions
 

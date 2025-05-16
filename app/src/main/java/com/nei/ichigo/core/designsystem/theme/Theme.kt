@@ -1,4 +1,4 @@
-package com.nei.ichigo.ui.theme
+package com.nei.ichigo.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
