@@ -117,3 +117,15 @@ ichigo-android-library = { id = "ichigo.android.library" }
 ichigo-android-lint = { id = "ichigo.android.lint" }
 ichigo-hilt = { id = "ichigo.hilt" }
 ichigo-jvm-library = { id = "ichigo.library" }
+
+[bundles]
+suppress = [
+    "androidx-tracing-ktx",
+    "kotlin-test",
+    "hilt-android",
+    "hilt-android-testing",
+    "hilt-compiler",
+    "hilt-core",
+    "hilt-ext-compiler",
+    "android-desugarJdkLibs",
+]

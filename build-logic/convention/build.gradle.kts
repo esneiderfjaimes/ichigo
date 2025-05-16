@@ -24,6 +24,8 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+
+    println(libs.bundles.suppress)
 }
 
 tasks {
