@@ -8,20 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,19 +24,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -55,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -72,10 +64,10 @@ import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
-import com.nei.ichigo.feature.encyclopedia.champions.settings.ChampionsSettingsDialog
 
 @Composable
 fun ChampionsScreen() {
@@ -93,7 +85,8 @@ private fun ChampionsScreen(
     onTagSelected: (String?) -> Unit = {}
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         topBar = {
             ChampionsTopAppBar(
                 state = state,
@@ -127,78 +120,47 @@ private fun ChampionsTopAppBar(
     state: ChampionsUiState,
     onTagSelected: (String?) -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing
-                        .only(
-                            WindowInsetsSides.Start + WindowInsetsSides.End + WindowInsetsSides.Top
-                        )
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append("Encyclopedia")
-                    }
-                    if (state is ChampionsUiState.Success) {
-                        val latestVersion = state.version
-                        if (latestVersion.isNotBlank()) withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                                fontSize = MaterialTheme.typography.titleSmall.fontSize
-                            )
-                        ) {
-                            append(" v$latestVersion")
-                        }
-                    }
-                },
-                modifier = Modifier.minimumInteractiveComponentSize(),
-                style = MaterialTheme.typography.headlineSmall,
+    TransparentTopAppBar(text = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
             )
-            Spacer(Modifier.weight(1f))
-            if (state is ChampionsUiState.Success) {
-                var openFilterDialog by rememberSaveable { mutableStateOf(false) }
-                IconButton(onClick = { openFilterDialog = true }) {
-                    BadgedBox(
-                        badge = {
-                            if (state.tagSelected != null) {
-                                Badge()
-                            }
+        ) {
+            append(stringResource(R.string.champions))
+        }
+        if (state is ChampionsUiState.Success) {
+            if (state.version.isNotBlank()) withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    fontSize = MaterialTheme.typography.titleSmall.fontSize
+                )
+            ) {
+                append(" v${state.version}")
+            }
+        }
+    }) {
+        if (state is ChampionsUiState.Success) {
+            var openFilterDialog by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { openFilterDialog = true }) {
+                BadgedBox(
+                    badge = {
+                        if (state.tagSelected != null) {
+                            Badge()
                         }
-                    ) {
-                        Icon(Icons.Rounded.FilterList, contentDescription = null)
                     }
-                }
-
-                if (openFilterDialog) {
-                    ChampionsFilterDialog(
-                        currentTagSelected = state.tagSelected,
-                        champions = state.tags,
-                        onDismiss = { openFilterDialog = false },
-                        onTagSelected = onTagSelected
-                    )
+                ) {
+                    Icon(Icons.Rounded.FilterList, contentDescription = null)
                 }
             }
-            var openSettingsDialog by rememberSaveable { mutableStateOf(false) }
-            IconButton(onClick = { openSettingsDialog = true }) {
-                Icon(Icons.Rounded.Settings, contentDescription = null)
-            }
 
-            if (openSettingsDialog) {
-                ChampionsSettingsDialog(onDismiss = { openSettingsDialog = false })
+            if (openFilterDialog) {
+                ChampionsFilterDialog(
+                    currentTagSelected = state.tagSelected,
+                    champions = state.tags,
+                    onDismiss = { openFilterDialog = false },
+                    onTagSelected = onTagSelected
+                )
             }
         }
     }

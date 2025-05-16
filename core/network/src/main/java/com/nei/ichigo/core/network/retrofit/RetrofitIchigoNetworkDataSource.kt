@@ -2,9 +2,11 @@ package com.nei.ichigo.core.network.retrofit
 
 import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
+import com.nei.ichigo.core.model.ProfileIcon
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import com.nei.ichigo.core.network.model.ChampionResponseServer
-import com.nei.ichigo.core.network.model.ChampionsResponseServer
+import com.nei.ichigo.core.network.model.PageResponseServer
+import com.nei.ichigo.core.network.model.ProfileIconResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import dagger.Lazy
 import okhttp3.Call
@@ -32,14 +34,20 @@ private interface DataDragonApi {
     suspend fun champions(
         @Path("version") version: String,
         @Path("lang") lang: String,
-    ): ChampionsResponseServer
+    ): PageResponseServer<ChampionResponseServer>
 
     @GET("cdn/{version}/data/{lang}/champion/{champKey}.json")
     suspend fun champion(
         @Path("version") version: String,
         @Path("lang") lang: String,
         @Path("champKey") champKey: String,
-    ): ChampionsResponseServer
+    ): PageResponseServer<ChampionResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/profileicon.json")
+    suspend fun profileIcons(
+        @Path("version") version: String,
+        @Path("lang") lang: String,
+    ): PageResponseServer<ProfileIconResponseServer>
 }
 
 @Singleton
@@ -78,5 +86,11 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
         return networkApi.champions(version, lang)
             .data!!.values
             .map(ChampionResponseServer::asExternalModel)
+    }
+
+    override suspend fun getProfileIcons(version: String, lang: String): List<ProfileIcon> {
+        return networkApi.profileIcons(version, lang)
+            .data!!.values
+            .map(ProfileIconResponseServer::asExternalModel)
     }
 }

@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.champions.settings
+package com.nei.ichigo.feature.encyclopedia.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

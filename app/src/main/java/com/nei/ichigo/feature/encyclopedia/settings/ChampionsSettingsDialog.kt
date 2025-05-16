@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.champions.settings
+package com.nei.ichigo.feature.encyclopedia.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
-import com.nei.ichigo.feature.encyclopedia.champions.settings.ChampionsSettingsViewmodel.ChampionsSettingsUiState
+import com.nei.ichigo.feature.encyclopedia.settings.ChampionsSettingsViewmodel.ChampionsSettingsUiState
 
 @Composable
 fun ChampionsSettingsDialog(onDismiss: () -> Unit) {
@@ -38,6 +39,7 @@ fun ChampionsSettingsDialog(onDismiss: () -> Unit) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         modifier = Modifier.padding(24.dp),
+        scrimColor = Color.Transparent,
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         ChampionsSettingsDialogContent(

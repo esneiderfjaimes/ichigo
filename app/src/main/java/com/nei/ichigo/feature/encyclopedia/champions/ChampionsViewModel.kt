@@ -2,7 +2,7 @@ package com.nei.ichigo.feature.encyclopedia.champions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nei.ichigo.core.data.repository.ChampionsRepository
+import com.nei.ichigo.core.domain.GetChampionsUseCase
 import com.nei.ichigo.core.model.Champion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
-    repository: ChampionsRepository
+    getChampionsUseCase: GetChampionsUseCase
 ) : ViewModel() {
     private val tagSelected = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<ChampionsUiState> =
-        combine(repository.getChampionsPage(), tagSelected) { page, tagSelected ->
+        combine(getChampionsUseCase(), tagSelected) { page, tagSelected ->
             val (version, lang, champions) = page.getOrElse {
                 it.printStackTrace()
                 return@combine ChampionsUiState.Error

@@ -11,6 +11,9 @@
     <string name="latest">Última</string>
     <string name="settings">Configuración</string>
     <string name="version">Versión</string>
+    <string name="encyclopedia">Enciclopedia</string>
+    <string name="champions">Campeones</string>
+    <string name="icons">Iconos</string>
 
     <plurals name="number_of_champions">
         <item quantity="one">%d campeón.</item>
