@@ -10,6 +10,7 @@
     <string name="language">Idioma</string>
     <string name="latest">Última</string>
     <string name="settings">Configuración</string>
+    <string name="version">Versión</string>
 
     <plurals name="number_of_champions">
         <item quantity="one">%d campeón.</item>
