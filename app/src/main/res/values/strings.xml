@@ -63,5 +63,8 @@
     <string name="lang_zh_my">Chinese (Malaysia)</string>
     <string name="lang_zh_cn">Chinese (China)</string>
     <string name="lang_zh_tw">Chinese (Taiwan)</string>
+    <string name="paginate_items">Paginate items</string>
+    <string name="select_page">Select Page</string>
+    <string name="page_info">%1$d of %2$d</string>
 
 </resources>

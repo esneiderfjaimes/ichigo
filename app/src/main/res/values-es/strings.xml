@@ -63,5 +63,8 @@
     <string name="lang_zh_my">Chino (Malasia)</string>
     <string name="lang_zh_cn">Chino (China)</string>
     <string name="lang_zh_tw">Chino (Taiwán)</string>
+    <string name="paginate_items">Paginar elementos</string>
+    <string name="select_page">Seleccionar Página</string>
+    <string name="page_info">%1$d de %2$d</string>
 
 </resources>
