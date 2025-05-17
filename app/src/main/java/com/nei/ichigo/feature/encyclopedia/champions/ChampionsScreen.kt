@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoilApi::class)
-
 package com.nei.ichigo.feature.encyclopedia.champions
 
 import androidx.compose.foundation.background
@@ -34,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -56,12 +52,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.ColorImage
-import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.AsyncImagePreviewHandler
-import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
@@ -263,35 +256,19 @@ fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modif
 @Preview
 @Composable
 fun ChampionsScreenPreview() {
-    val previewHandler = AsyncImagePreviewHandler {
-        val randomColor = Color(
-            red = (0..255).random(),
-            green = (0..255).random(),
-            blue = (0..255).random(),
-            alpha = 255
-        )
-        ColorImage(randomColor.toArgb())
-    }
-
-    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+    AsyncImagePreviewProvider {
         ChampionsScreen(
             state = ChampionsUiState.Success(
                 version = "1.0.0",
                 lang = "en_US",
-                listOf(
+                champions = (1..100).map {
                     Champion(
-                        id = "1",
-                        name = "Aatrox",
-                        image = "aatrox.png",
+                        id = it.toString(),
+                        name = "Champ $it",
+                        image = "",
                         tags = emptyList()
-                    ),
-                    Champion(
-                        id = "2",
-                        name = "Aatrox",
-                        image = "aatrox.png",
-                        tags = emptyList()
-                    ),
-                ),
+                    )
+                },
                 tags = emptyList()
             )
         )

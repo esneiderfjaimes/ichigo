@@ -1,7 +1,4 @@
-@file:OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalCoilApi::class
-)
+@file:OptIn(ExperimentalSharedTransitionApi::class)
 
 package com.nei.ichigo.feature.encyclopedia.icons
 
@@ -33,15 +30,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -64,12 +55,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.ColorImage
-import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.AsyncImagePreviewHandler
-import coil3.compose.LocalAsyncImagePreviewHandler
-import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.AsyncImage
+import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
@@ -245,9 +233,8 @@ fun ProfileIconItem(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SubcomposeAsyncImage(
+        AsyncImage(
             model = getProfileIconImage(icon.image, version),
-            contentDescription = null,
             modifier = Modifier
                 .clip(ITEM_SHAPE)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -264,26 +251,6 @@ fun ProfileIconItem(
                     animatedVisibilityScope = this@AnimatedVisibilityScope,
                     clipInOverlayDuringTransition = OverlayClip(ITEM_SHAPE)
                 ),
-            onError = {
-                it.result.throwable.printStackTrace()
-            },
-            error = {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Rounded.Warning,
-                        contentDescription = null,
-                    )
-                }
-            },
-            loading = {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(Modifier.size(24.dp))
-                }
-            }
         )
         Text(
             text = "#" + icon.id,
@@ -303,31 +270,17 @@ fun ProfileIconItem(
 @Preview
 @Composable
 fun IconsScreenPreview() {
-    val previewHandler = AsyncImagePreviewHandler {
-        val randomColor = Color(
-            red = (0..255).random(),
-            green = (0..255).random(),
-            blue = (0..255).random(),
-            alpha = 255
-        )
-        ColorImage(randomColor.toArgb())
-    }
-
-    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+    AsyncImagePreviewProvider {
         IconsScreen(
             state = IconsUiState.Success(
                 version = "1.0.0",
                 lang = "en",
-                icons = listOf(
+                icons = (1..100).map {
                     ProfileIcon(
-                        id = "1",
-                        image = "aatrox.png"
-                    ),
-                    ProfileIcon(
-                        id = "2",
-                        image = "aatrox.png"
-                    ),
-                )
+                        id = it.toString(),
+                        image = ""
+                    )
+                }
             )
         )
     }

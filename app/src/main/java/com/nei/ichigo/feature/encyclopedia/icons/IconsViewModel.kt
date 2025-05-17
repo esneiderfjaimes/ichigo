@@ -26,7 +26,7 @@ class IconsViewModel @Inject constructor(
                     IconsUiState.Success(
                         version = page.version,
                         lang = page.lang,
-                        icons = page.icons.sortedByDescending { it.id.toInt() },
+                        icons = page.icons,
                     )
                 },
                 onFailure = {
