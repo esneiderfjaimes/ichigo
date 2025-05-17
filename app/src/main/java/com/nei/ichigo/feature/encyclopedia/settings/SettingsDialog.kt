@@ -30,11 +30,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
-import com.nei.ichigo.feature.encyclopedia.settings.ChampionsSettingsViewmodel.ChampionsSettingsUiState
+import com.nei.ichigo.feature.encyclopedia.settings.SettingsViewmodel.SettingsUiState
 
 @Composable
-fun ChampionsSettingsDialog(onDismiss: () -> Unit) {
-    val viewmodel: ChampionsSettingsViewmodel = hiltViewModel()
+fun SettingsDialog(onDismiss: () -> Unit) {
+    val viewmodel: SettingsViewmodel = hiltViewModel()
     val state by viewmodel.uiState.collectAsStateWithLifecycle()
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -52,7 +52,7 @@ fun ChampionsSettingsDialog(onDismiss: () -> Unit) {
 
 @Composable
 private fun ChampionsSettingsDialogContent(
-    state: ChampionsSettingsUiState,
+    state: SettingsUiState,
     onLanguageSelected: (String?) -> Unit = {},
     onVersionSelected: (String?) -> Unit = {}
 ) {
@@ -70,15 +70,15 @@ private fun ChampionsSettingsDialogContent(
                 .padding(bottom = 12.dp)
         )
         when (state) {
-            ChampionsSettingsUiState.Error -> {
+            SettingsUiState.Error -> {
                 ErrorScreen()
             }
 
-            ChampionsSettingsUiState.Loading -> {
+            SettingsUiState.Loading -> {
                 LoadingScreen()
             }
 
-            is ChampionsSettingsUiState.Success -> {
+            is SettingsUiState.Success -> {
                 Item(
                     text = stringResource(R.string.version),
                     value = state.version ?: stringResource(R.string.latest),
@@ -153,7 +153,7 @@ fun Item(
 fun ChampionsSettingsDialogContentPreview() {
     Surface {
         ChampionsSettingsDialogContent(
-            state = ChampionsSettingsUiState.Success(
+            state = SettingsUiState.Success(
                 version = null,
                 language = null,
                 versions = emptyList(),
@@ -167,7 +167,7 @@ fun ChampionsSettingsDialogContentPreview() {
 @Composable
 fun ChampionsSettingsDialogContentErrorPreview() {
     Surface {
-        ChampionsSettingsDialogContent(state = ChampionsSettingsUiState.Error)
+        ChampionsSettingsDialogContent(state = SettingsUiState.Error)
     }
 }
 
@@ -175,6 +175,6 @@ fun ChampionsSettingsDialogContentErrorPreview() {
 @Composable
 fun ChampionsSettingsDialogContentLoadingPreview() {
     Surface {
-        ChampionsSettingsDialogContent(state = ChampionsSettingsUiState.Loading)
+        ChampionsSettingsDialogContent(state = SettingsUiState.Loading)
     }
 }

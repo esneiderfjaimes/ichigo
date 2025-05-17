@@ -264,7 +264,13 @@ fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modif
 @Composable
 fun ChampionsScreenPreview() {
     val previewHandler = AsyncImagePreviewHandler {
-        ColorImage(Color.Transparent.toArgb())
+        val randomColor = Color(
+            red = (0..255).random(),
+            green = (0..255).random(),
+            blue = (0..255).random(),
+            alpha = 255
+        )
+        ColorImage(randomColor.toArgb())
     }
 
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {

@@ -28,6 +28,7 @@ android {
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-Xcontext-receivers"
         )
     }
     buildFeatures {

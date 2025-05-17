@@ -19,18 +19,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChampionsSettingsViewmodel @Inject constructor(
+class SettingsViewmodel @Inject constructor(
     repository: ChampionsRepository,
     private val userSettingsRepository: UserSettingsRepository
 ) : ViewModel() {
-    val uiState: StateFlow<ChampionsSettingsUiState> = flow {
+    val uiState: StateFlow<SettingsUiState> = flow {
         val versions = repository.getVersions()
         val languages = repository.getLanguages()
         emit(versions to languages)
-    }.combine<Pair<List<String>, List<String>>, UserSettings, ChampionsSettingsUiState>(
+    }.combine<Pair<List<String>, List<String>>, UserSettings, SettingsUiState>(
         userSettingsRepository.userSettings,
     ) { props, userSettings ->
-        ChampionsSettingsUiState.Success(
+        SettingsUiState.Success(
             version = userSettings.versionSelected,
             versions = props.first,
             language = userSettings.langSelected,
@@ -38,11 +38,11 @@ class ChampionsSettingsViewmodel @Inject constructor(
         )
     }.catch {
         Log.e("ChampionsSettingsView", ": ", it)
-        emit(ChampionsSettingsUiState.Error)
+        emit(SettingsUiState.Error)
     }.flowOn(Dispatchers.IO).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ChampionsSettingsUiState.Loading,
+        initialValue = SettingsUiState.Loading,
     )
 
     fun onLanguageSelected(languageSelected: String?) {
@@ -57,16 +57,16 @@ class ChampionsSettingsViewmodel @Inject constructor(
         }
     }
 
-    sealed interface ChampionsSettingsUiState {
-        data object Loading : ChampionsSettingsUiState
+    sealed interface SettingsUiState {
+        data object Loading : SettingsUiState
         data class Success(
             val version: String?,
             val versions: List<String>,
             val language: String?,
             val languages: List<String>
-        ) : ChampionsSettingsUiState
+        ) : SettingsUiState
 
-        data object Error : ChampionsSettingsUiState
+        data object Error : SettingsUiState
     }
 
 }
