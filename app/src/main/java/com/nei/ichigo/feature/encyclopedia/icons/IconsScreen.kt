@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -41,10 +42,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -93,7 +97,8 @@ fun IconsScreen() {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     IconsScreen(
         state = state,
-        onSelectPage = viewModel::onSelectPage
+        onSelectPage = viewModel::onSelectPage,
+        onPageSizeChange = viewModel::onPageSizeChange
     )
 }
 
@@ -101,6 +106,7 @@ fun IconsScreen() {
 private fun IconsScreen(
     state: IconsUiState,
     onSelectPage: (Int?) -> Unit = {},
+    onPageSizeChange: (Int) -> Unit = {},
 ) {
     SharedTransitionLayout(modifier = Modifier.fillMaxSize()) {
         var selectedProfileIcon by rememberSaveable(stateSaver = IconUi.Saver) {
@@ -109,7 +115,7 @@ private fun IconsScreen(
 
         Scaffold(
             topBar = {
-                IconsTopAppBar(state, onSelectPage)
+                IconsTopAppBar(state, onSelectPage, onPageSizeChange)
             },
             bottomBar = {
                 if (state is IconsUiState.Success) {
@@ -154,6 +160,7 @@ private fun IconsScreen(
 private fun IconsTopAppBar(
     state: IconsUiState,
     onSelectPage: (Int?) -> Unit = {},
+    onPageSizeChange: (Int) -> Unit = {},
 ) {
     TransparentTopAppBar(text = buildAnnotatedString {
         withStyle(
@@ -181,12 +188,12 @@ private fun IconsTopAppBar(
                 Icon(Icons.Rounded.MoreVert, contentDescription = null)
                 DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     fun switchPagination() {
+                        showMenu = false
                         if (state.pageInfo == null) {
                             onSelectPage(0)
                         } else {
                             onSelectPage(null)
                         }
-                        showMenu = false
                     }
 
                     DropdownMenuItem(
@@ -205,6 +212,39 @@ private fun IconsTopAppBar(
                             )
                         }
                     )
+
+                    if (state.pageInfo != null) {
+                        HorizontalDivider()
+                        Text(
+                            stringResource(R.string.icons_per_page),
+                            modifier = Modifier.padding(12.dp),
+                            style = MaterialTheme.typography.titleSmall
+                                .copy(fontWeight = FontWeight.Bold)
+                        )
+
+                        IconsUiState.PageInfo.PAGE_SIZES.forEach { pageSize ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    showMenu = false
+                                    onPageSizeChange(pageSize)
+                                },
+                                text = {
+                                    Text(
+                                        text = pluralStringResource(
+                                            id = R.plurals.number_of_icons,
+                                            count = pageSize,
+                                            pageSize
+                                        )
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (state.pageInfo.pageSize == pageSize) {
+                                        Icon(Icons.Rounded.Check, contentDescription = null)
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -288,6 +328,7 @@ private fun BottomPager(
         Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .windowInsetsPadding(BottomAppBarDefaults.windowInsets)
     ) {
         Surface(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -538,7 +579,8 @@ fun IconsScreenPreview2() {
                 },
                 pageInfo = IconsUiState.PageInfo(
                     pageIndex = 0,
-                    totalPages = 10
+                    totalPages = 10,
+                    pageSize = 10
                 )
             )
         )

@@ -1,10 +1,12 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.core.data.model.ProfileIconsPage
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
+import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState.PageInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -16,21 +18,20 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-
-private const val PAGE_SIZE = 25
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class IconsViewModel @Inject constructor(
     getProfileIconsUseCase: GetProfileIconsUseCase
 ) : ViewModel() {
     private val pageIndex = MutableStateFlow<Int?>(0)
+    private val pageSize = MutableStateFlow(PageInfo.PAGE_SIZE_DEFAULT)
 
     val uiState: StateFlow<IconsUiState> =
-        combine(getProfileIconsUseCase(), pageIndex) { pageResult, pageIndex ->
+        combine(getProfileIconsUseCase(), pageIndex, pageSize) { pageResult, pageIndex, pageSize ->
             pageResult.fold(
                 onSuccess = { page ->
-                    mapper(page, pageIndex)
-
+                    mapper(page, pageIndex, pageSize)
                 },
                 onFailure = {
                     it.printStackTrace()
@@ -46,13 +47,18 @@ class IconsViewModel @Inject constructor(
             initialValue = IconsUiState.Loading,
         )
 
-    private fun mapper(page: ProfileIconsPage, pageIndex: Int?): IconsUiState.Success {
+    private fun mapper(
+        page: ProfileIconsPage,
+        pageIndex: Int?,
+        pageSize: Int
+    ): IconsUiState.Success {
         val (icons, pageInfo) = if (pageIndex != null) {
-            val pageIcons = page.icons.getPage(pageSize = PAGE_SIZE, pageIndex = pageIndex)
-            val totalPages = (page.icons.size + PAGE_SIZE - 1) / PAGE_SIZE
-            pageIcons to IconsUiState.PageInfo(
+            val pageIcons = page.icons.getPage(pageSize = pageSize, pageIndex = pageIndex)
+            val totalPages = (page.icons.size + pageSize - 1) / pageSize
+            pageIcons to PageInfo(
                 pageIndex = pageIndex,
                 totalPages = totalPages,
+                pageSize = pageSize
             )
         } else {
             page.icons to null
@@ -73,11 +79,23 @@ class IconsViewModel @Inject constructor(
     }
 
     fun onSelectPage(page: Int?) {
-        pageIndex.update { page }
+        viewModelScope.launch(Dispatchers.IO) {
+            pageIndex.update { page }
+        }
     }
 
+    fun onPageSizeChange(pageSize: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            this@IconsViewModel.pageSize.update { pageSize }
+        }
+    }
+
+    @Stable
     sealed interface IconsUiState {
+        @Stable
         data object Loading : IconsUiState
+
+        @Stable
         data class Success(
             val version: String,
             val lang: String,
@@ -86,11 +104,19 @@ class IconsViewModel @Inject constructor(
             val pageInfo: PageInfo?
         ) : IconsUiState
 
+        @Stable
         data class PageInfo(
             val pageIndex: Int,
             val totalPages: Int,
-        )
+            val pageSize: Int,
+        ) {
+            companion object {
+                const val PAGE_SIZE_DEFAULT = 25
+                val PAGE_SIZES = listOf(25, 50, 100)
+            }
+        }
 
+        @Stable
         data object Error : IconsUiState
     }
 }
