@@ -91,6 +91,8 @@ import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
+const val PERFORMANCE_MODE = true
+
 @Composable
 fun IconsScreen() {
     val viewModel: IconsViewModel = hiltViewModel()
@@ -302,6 +304,17 @@ private fun SuccessContent(
                 key = { it.id },
                 contentType = { it.id + it.id != selectedProfileIcon?.id }
             ) { icon ->
+                if (PERFORMANCE_MODE) {
+                    ProfileIconItem(
+                        icon = icon,
+                        size = ITEM_SIZE,
+                        version = version
+                    ) {
+                        onSelect(icon)
+                    }
+                    return@items
+                }
+
                 AnimatedVisibility(
                     visible = icon.id != selectedProfileIcon?.id,
                     modifier = Modifier.animateItem()
@@ -309,7 +322,11 @@ private fun SuccessContent(
                     ProfileIconItem(
                         icon = icon,
                         size = ITEM_SIZE,
-                        version = version
+                        version = version,
+                        animationScope = AnimationScope(
+                            animatedVisibilityScope = this,
+                            sharedTransitionScope = this@SharedTransitionScope
+                        )
                     ) {
                         onSelect(icon)
                     }
@@ -444,20 +461,34 @@ fun PagesDialogContent(
     }
 }
 
-context(SharedTransitionScope, AnimatedVisibilityScope)
+class AnimationScope(
+    private val animatedVisibilityScope: AnimatedVisibilityScope,
+    private val sharedTransitionScope: SharedTransitionScope
+) : SharedTransitionScope by sharedTransitionScope,
+    AnimatedVisibilityScope by animatedVisibilityScope {
+}
+
 @Composable
 fun ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
+    animationScope: AnimationScope? = null,
     onClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .padding(ITEM_SPADING)
-            .sharedBounds(
-                sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = this@AnimatedVisibilityScope,
+            .then(
+                if (animationScope != null) {
+                    with(animationScope) {
+                        Modifier
+                            .sharedBounds(
+                                sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
+                                animatedVisibilityScope = this,
+                            )
+                    }
+                } else Modifier
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -474,10 +505,17 @@ fun ProfileIconItem(
                 .padding(BORDER_SIZE)
                 .size(size)
                 .clickable(onClick = onClick)
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = icon.id),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
-                    clipInOverlayDuringTransition = OverlayClip(ITEM_SHAPE)
+                .then(
+                    if (animationScope != null) {
+                        with(animationScope) {
+                            Modifier
+                                .sharedBounds(
+                                    sharedContentState = rememberSharedContentState(key = icon.id),
+                                    animatedVisibilityScope = this,
+                                    clipInOverlayDuringTransition = OverlayClip(ITEM_SHAPE)
+                                )
+                        }
+                    } else Modifier
                 ),
         )
         Text(
@@ -487,10 +525,17 @@ fun ProfileIconItem(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background, CircleShape)
                 .padding(4.dp)
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
-                )
+                .then(
+                    if (animationScope != null) {
+                        with(animationScope) {
+                            Modifier
+                                .sharedBounds(
+                                    sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
+                                    animatedVisibilityScope = this,
+                                )
+                        }
+                    } else Modifier
+                ),
         )
     }
 }
