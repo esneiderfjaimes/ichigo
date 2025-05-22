@@ -1,15 +1,22 @@
 package com.nei.ichigo.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -17,6 +24,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import androidx.window.core.layout.WindowHeightSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.navigateToChampions
@@ -79,23 +88,72 @@ fun NavController.topLevelDestinationNavOptions() = navOptions {
 }
 
 @Composable
+fun calculateFromAdaptiveInfo(): NavigationSuiteType {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    return with(adaptiveInfo) {
+        if (
+            windowPosture.isTabletop ||
+            windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT
+        ) {
+            NavigationSuiteType.NavigationBar
+        } else if (
+            windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
+        ) {
+            // NavigationSuiteType.NavigationDrawer
+            NavigationSuiteType.NavigationRail
+        } else if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {
+            NavigationSuiteType.NavigationRail
+        } else {
+            NavigationSuiteType.NavigationBar
+        }
+    }
+}
+
+@Composable
 fun IchigoApp() {
     val navController = rememberNavController()
     val currentDestination by navController.currentBackStackEntryAsState()
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            Screen.allScreens.forEach { screen ->
-                item(
-                    icon = {
-                        Icon(
-                            imageVector = screen.icon,
-                            contentDescription = null
+    val navSuiteType = calculateFromAdaptiveInfo()
+    NavigationSuiteScaffoldLayout(
+        layoutType = navSuiteType,
+        navigationSuite = {
+            // Custom Navigation Rail with centered items.
+            if (navSuiteType == NavigationSuiteType.NavigationRail) {
+                NavigationRail {
+                    // Adding Spacers before and after the item so they are pushed towards the
+                    // center of the NavigationRail.
+                    Spacer(Modifier.weight(1f))
+                    Screen.allScreens.forEach { screen ->
+                        NavigationRailItem(
+                            icon = {
+                                Icon(
+                                    imageVector = screen.icon,
+                                    contentDescription = null
+                                )
+                            },
+                            label = { Text(stringResource(screen.title)) },
+                            selected = currentDestination?.destination?.route == screen.route,
+                            onClick = { screen.action(navController) }
                         )
-                    },
-                    label = { Text(stringResource(screen.title)) },
-                    selected = currentDestination?.destination?.route == screen.route,
-                    onClick = { screen.action(navController) }
-                )
+                    }
+                    Spacer(Modifier.weight(1f))
+                }
+            } else {
+                NavigationSuite {
+                    Screen.allScreens.forEach { screen ->
+                        item(
+                            icon = {
+                                Icon(
+                                    imageVector = screen.icon,
+                                    contentDescription = null
+                                )
+                            },
+                            label = { Text(stringResource(screen.title)) },
+                            selected = currentDestination?.destination?.route == screen.route,
+                            onClick = { screen.action(navController) }
+                        )
+                    }
+                }
             }
         }
     ) {
