@@ -77,7 +77,7 @@ private fun NavController.topLevelDestinationNavOptions() = navOptions {
 fun IchigoNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = ChampionsRoute,
+        startDestination = IconsRoute,
     ) {
         championsListDetail()
         icons()

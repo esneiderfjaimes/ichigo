@@ -23,19 +23,11 @@ import com.nei.ichigo.navigation.Screen
 fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
     return with(adaptiveInfo) {
-        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-            NavigationSuiteType.NavigationBar
-        } else if (
-            windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM
-        ) {
-            NavigationSuiteType.WideNavigationRailCollapsed
-        } else if (
-            windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
-        ) {
-            NavigationSuiteType.WideNavigationRailExpanded
-            // NavigationSuiteType.NavigationDrawer
-        } else {
-            NavigationSuiteType.NavigationRail
+        when (windowSizeClass.windowWidthSizeClass) {
+            WindowWidthSizeClass.COMPACT -> NavigationSuiteType.NavigationBar
+            WindowWidthSizeClass.MEDIUM -> NavigationSuiteType.WideNavigationRailCollapsed
+            WindowWidthSizeClass.EXPANDED -> NavigationSuiteType.WideNavigationRailExpanded
+            else -> NavigationSuiteType.NavigationRail
         }
     }
 }
