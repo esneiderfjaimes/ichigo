@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -86,6 +87,7 @@ fun NavController.topLevelDestinationNavOptions() = navOptions {
  * check [androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo]
  */
 @Composable
+@Suppress("DEPRECATION")
 fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
     return with(adaptiveInfo) {
@@ -95,12 +97,14 @@ fun calculateFromAdaptiveInfo(): NavigationSuiteType {
         ) {
             NavigationSuiteType.NavigationBar
         } else if (
+            windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM
+        ) {
+            NavigationSuiteType.WideNavigationRailCollapsed
+        } else if (
             windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
         ) {
+            NavigationSuiteType.WideNavigationRailExpanded
             // NavigationSuiteType.NavigationDrawer
-            NavigationSuiteType.NavigationRail
-        } else if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {
-            NavigationSuiteType.NavigationRail
         } else {
             NavigationSuiteType.NavigationBar
         }
@@ -113,7 +117,7 @@ fun IchigoApp() {
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
     NavigationSuiteScaffold(
-        layoutType = navSuiteType,
+        navigationSuiteType = navSuiteType,
         /*
         layoutType = navSuiteType,
         navigationSuite = {
@@ -157,10 +161,10 @@ fun IchigoApp() {
             }
         }
             */
-        navigationSuiteItems = {
+        navigationItems = {
             Screen.allScreens.forEach { screen ->
-                item(
-                    // navigationSuiteType = navSuiteType,
+                NavigationSuiteItem(
+                    navigationSuiteType = navSuiteType,
                     icon = {
                         Icon(
                             imageVector = screen.icon,
