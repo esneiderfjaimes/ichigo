@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nei.ichigo.ui.Screen
+import com.nei.ichigo.navigation.Screen
 
 @Composable
 fun IconsScreenPlaceholder() {
