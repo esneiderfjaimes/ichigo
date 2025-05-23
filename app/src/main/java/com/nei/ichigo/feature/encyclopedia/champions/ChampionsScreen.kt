@@ -3,7 +3,6 @@ package com.nei.ichigo.feature.encyclopedia.champions
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,10 +21,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,8 +49,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.SubcomposeAsyncImage
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
@@ -210,9 +207,8 @@ fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modif
             .padding(ITEM_SPADING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SubcomposeAsyncImage(
+        AsyncImage(
             model = getChampionImage(champion.image, version),
-            contentDescription = null,
             modifier = Modifier
                 .clip(RoundedCornerShape(25))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -223,26 +219,6 @@ fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modif
                 )
                 .padding(BORDER_SIZE)
                 .size(ITEM_SIZE),
-            onError = {
-                it.result.throwable.printStackTrace()
-            },
-            error = {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Rounded.Warning,
-                        contentDescription = null,
-                    )
-                }
-            },
-            loading = {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(Modifier.size(24.dp))
-                }
-            }
         )
         Spacer(Modifier.height(4.dp))
         Text(
