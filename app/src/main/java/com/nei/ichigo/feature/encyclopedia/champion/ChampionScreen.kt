@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +64,7 @@ import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.model.ChampionDetail
@@ -121,26 +123,6 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
                     )
                 }
             }
-            /* TopAppBar(
-                 navigationIcon = {
-                     IconButton(
-                         onClick = onBackPress
-                     ) {
-                         Icon(
-                             imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                             contentDescription = null
-                         )
-                     }
-                 },
-                 title = {}
-             )*/
-            /*   if (state is ChampionUiState.Success) {
-                   val champion = state.champion
-                   AsyncImage(
-                       modifier = Modifier,
-                       model = getChampionSkinImage(champion.id, 0),
-                   )
-               }*/
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
@@ -219,8 +201,10 @@ fun ChampionContent(
                             )
                         ),
                     ),
-                style = MaterialTheme.typography.headlineLarge,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.headlineLarge
+                    .copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center,
+                color = Gold
             )
         }
         HorizontalDivider(
@@ -228,8 +212,8 @@ fun ChampionContent(
                 .sizeIn(maxWidth = 600.dp)
                 .padding(horizontal = 32.dp)
                 .align(Alignment.CenterHorizontally),
-            color = Color(0xFFC28F2C),
-            thickness = 2.dp
+            color = Gold,
+            thickness = BORDER_SIZE
         )
         Text(
             text = champion.title.uppercase(),
@@ -283,7 +267,7 @@ fun ChampionContent(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
                     width = BORDER_SIZE,
-                    color = Color(0xFFC28F2C),
+                    color = Gold,
                     shape = CircleShape
                 )
                 .padding(BORDER_SIZE)
@@ -336,17 +320,19 @@ fun ChampionContent(
             itemSpacing = 8.dp,
             contentPadding = PaddingValues(horizontal = 32.dp)
         ) { index ->
-            val item = champion.skins[index]
+            val skin = champion.skins.getOrNull(index)
+                ?: return@HorizontalMultiBrowseCarousel
             AsyncImage(
                 modifier = Modifier
                     //.height(400.dp)
                     .maskClip(MaterialTheme.shapes.extraLarge)
                     .clickable {
-                        selectedSkin = item.num
+                        selectedSkin = skin.num
                     },
-                model = getChampionSkinImage(champion.id, item.num),
+                model = getChampionSkinImage(champion.id, skin.num),
             )
         }
+        Spacer(Modifier.height(16.dp))
     }
 
     SkinFullscreen(
@@ -407,8 +393,8 @@ fun SkinFullscreen(
 @Composable
 fun ChampionScreenPreview() {
     AsyncImagePreviewProvider(
-        height = 600,
-        width = 1500
+        width = 1215,
+        height = 717
     ) {
         ChampionScreen(
             state = ChampionUiState.Success(
