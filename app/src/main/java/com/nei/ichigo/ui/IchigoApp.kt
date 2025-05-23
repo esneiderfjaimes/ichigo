@@ -1,22 +1,17 @@
 package com.nei.ichigo.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -87,6 +82,9 @@ fun NavController.topLevelDestinationNavOptions() = navOptions {
     restoreState = true
 }
 
+/**
+ * check [androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo]
+ */
 @Composable
 fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
@@ -114,7 +112,9 @@ fun IchigoApp() {
     val navController = rememberNavController()
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
-    NavigationSuiteScaffoldLayout(
+    NavigationSuiteScaffold(
+        layoutType = navSuiteType,
+        /*
         layoutType = navSuiteType,
         navigationSuite = {
             // Custom Navigation Rail with centered items.
@@ -154,6 +154,23 @@ fun IchigoApp() {
                         )
                     }
                 }
+            }
+        }
+            */
+        navigationSuiteItems = {
+            Screen.allScreens.forEach { screen ->
+                item(
+                    // navigationSuiteType = navSuiteType,
+                    icon = {
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = null
+                        )
+                    },
+                    label = { Text(stringResource(screen.title)) },
+                    selected = currentDestination?.destination?.route == screen.route,
+                    onClick = { screen.action(navController) }
+                )
             }
         }
     ) {
