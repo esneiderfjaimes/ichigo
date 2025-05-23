@@ -5,7 +5,6 @@ import com.nei.ichigo.core.data.R
 import com.nei.ichigo.core.data.repository.ChampionsRepository
 import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -16,16 +15,17 @@ abstract class PagerHelper<T>(
     private val championsRepository: ChampionsRepository,
     private val ichigoPreferencesDataSource: IchigoPreferencesDataSource
 ) {
-    operator fun invoke(): Flow<Result<T>> = ichigoPreferencesDataSource.userSettings
-        .map {
-            val lang = getCurrentLang(it.langSelected)
-            val version = getCurrentVersion(it.versionSelected)
-            version to lang
-        }.distinctUntilChanged().map { (version, lang) ->
-            fetchPage(version, lang)
-        }.catch {
-            emit(Result.failure(it))
-        }.flowOn(Dispatchers.IO)
+    protected val flow
+        get() = ichigoPreferencesDataSource.userSettings
+            .map {
+                val lang = getCurrentLang(it.langSelected)
+                val version = getCurrentVersion(it.versionSelected)
+                version to lang
+            }.distinctUntilChanged().map { (version, lang) ->
+                fetchPage(version, lang)
+            }.catch {
+                emit(Result.failure(it))
+            }.flowOn(Dispatchers.IO)
 
     protected abstract suspend fun fetchPage(version: String, lang: String): Result<T>
 

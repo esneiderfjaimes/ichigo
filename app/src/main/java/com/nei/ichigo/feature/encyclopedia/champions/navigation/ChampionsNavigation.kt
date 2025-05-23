@@ -13,8 +13,8 @@ data object ChampionsRoute
 fun NavController.navigateToChampions(navOptions: NavOptions) =
     navigate(route = ChampionsRoute, navOptions)
 
-fun NavGraphBuilder.champions() {
+fun NavGraphBuilder.champions(onChampionClick: (String) -> Unit) {
     composable<ChampionsRoute> {
-        ChampionsScreen()
+        ChampionsScreen(onChampionClick)
     }
 }

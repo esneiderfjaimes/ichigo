@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package com.nei.ichigo.core.designsystem
 
 /*
@@ -21,8 +19,6 @@ package com.nei.ichigo.core.designsystem
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
@@ -257,7 +253,6 @@ fun DetailView(
 }
 
 context(AnimatedVisibilityScope, SharedTransitionScope)
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun GridView(model: MyModel) {
     Box(Modifier.background(lessVibrantPurple)) {
@@ -362,7 +357,6 @@ private val listSnacks = listOf(
 
 val shapeForSharedElement = RoundedCornerShape(16.dp)
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun AnimatedVisibilitySharedElementShortenedExample() {
@@ -377,7 +371,7 @@ private fun AnimatedVisibilitySharedElementShortenedExample() {
                 .fillMaxSize()
                 .background(Color.LightGray.copy(alpha = 0.5f))
                 .padding(16.dp),
-           // verticalArrangement = Arrangement.spacedBy(8.dp)
+            // verticalArrangement = Arrangement.spacedBy(8.dp)
             // [END_EXCLUDE]
         ) {
             items(listSnacks) { snack ->

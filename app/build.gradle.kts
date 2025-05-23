@@ -28,8 +28,11 @@ android {
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+            "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
             "-Xcontext-receivers"
+            // TODO: migrate in Kotlin 2.2 "-Xcontext-parameters"
         )
     }
     buildFeatures {
@@ -39,30 +42,42 @@ android {
 
 dependencies {
 
+    // project
     implementation(projects.core.model)
     implementation(projects.core.data)
 
+    // core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
 
+    // compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.bundles.compose)
+    // > material
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
+    // > adaptive
+    implementation(libs.bundles.compose.adaptive)
+
+    // lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // hilt
+    implementation(libs.hilt.navigation.compose)
+
+    // coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
+    // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 }

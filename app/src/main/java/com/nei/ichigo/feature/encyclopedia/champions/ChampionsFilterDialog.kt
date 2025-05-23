@@ -29,8 +29,10 @@ fun ChampionsFilterDialog(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        /*
         modifier = Modifier.padding(24.dp),
         shape = MaterialTheme.shapes.extraLarge,
+        */
     ) {
         ChampionsFilterDialogContent(
             currentTagSelected = currentTagSelected,
@@ -49,7 +51,7 @@ fun ChampionsFilterDialogContent(
     Column(
         Modifier
             .padding(horizontal = 24.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 24.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(

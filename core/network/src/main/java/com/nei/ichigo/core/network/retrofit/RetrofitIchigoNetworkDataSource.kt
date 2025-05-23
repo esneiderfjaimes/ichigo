@@ -2,12 +2,14 @@ package com.nei.ichigo.core.network.retrofit
 
 import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
+import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.core.model.ProfileIcon
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import com.nei.ichigo.core.network.model.ChampionResponseServer
 import com.nei.ichigo.core.network.model.PageResponseServer
 import com.nei.ichigo.core.network.model.ProfileIconResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
+import com.nei.ichigo.core.network.model.asExternalModelDetail
 import dagger.Lazy
 import okhttp3.Call
 import retrofit2.Converter
@@ -86,6 +88,15 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
         return networkApi.champions(version, lang)
             .data!!.values
             .map(ChampionResponseServer::asExternalModel)
+    }
+
+    override suspend fun getChampion(
+        version: String,
+        lang: String,
+        champKey: String
+    ): ChampionDetail {
+        return networkApi.champion(version, lang, champKey)
+            .data!![champKey]!!.asExternalModelDetail()
     }
 
     override suspend fun getProfileIcons(version: String, lang: String): List<ProfileIcon> {

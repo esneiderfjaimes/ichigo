@@ -28,6 +28,8 @@ class GetChampionsUseCase @Inject constructor(
     championsRepository,
     ichigoPreferencesDataSource
 ) {
+    operator fun invoke() = flow
+
     override suspend fun fetchPage(version: String, lang: String) = kotlin.runCatching {
         val champions: List<Champion> = kotlin.runCatching {
             if (BuildConfig.DEBUG && FORCE_FETCH_CHAMPIONS) {

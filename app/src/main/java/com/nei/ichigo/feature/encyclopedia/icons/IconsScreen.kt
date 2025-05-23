@@ -1,12 +1,9 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package com.nei.ichigo.feature.encyclopedia.icons
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
@@ -88,6 +85,7 @@ import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.ItemCombo
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -465,7 +463,7 @@ fun ProfileIconItem(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
                     width = BORDER_SIZE,
-                    color = Color(0xFFC28F2C),
+                    color = Gold,
                     shape = ITEM_SHAPE
                 )
                 .padding(BORDER_SIZE)

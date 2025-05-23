@@ -2,6 +2,7 @@ package com.nei.ichigo.feature.encyclopedia.champions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -55,24 +55,29 @@ import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
 
 @Composable
-fun ChampionsScreen() {
+fun ChampionsScreen(
+    onChampionClick: (String) -> Unit
+) {
     val viewModel: ChampionsViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     ChampionsScreen(
         state = state,
-        onTagSelected = viewModel::onTagSelected
+        onTagSelected = viewModel::onTagSelected,
+        onChampionClick = onChampionClick
     )
 }
 
 @Composable
 private fun ChampionsScreen(
     state: ChampionsUiState,
-    onTagSelected: (String?) -> Unit = {}
+    onTagSelected: (String?) -> Unit = {},
+    onChampionClick: (String) -> Unit = {}
 ) {
     Scaffold(
         modifier = Modifier
@@ -98,7 +103,8 @@ private fun ChampionsScreen(
                 ChampionsSuccess(
                     champions = state.champions,
                     version = state.version,
-                    innerPadding = innerPadding
+                    innerPadding = innerPadding,
+                    onChampionClick = onChampionClick
                 )
             }
         }
@@ -163,7 +169,8 @@ private val ITEM_SPADING = 4.dp
 private fun ChampionsSuccess(
     champions: List<Champion>,
     version: String,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    onChampionClick: (String) -> Unit
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val contentPadding = PaddingValues(
@@ -192,7 +199,7 @@ private fun ChampionsSuccess(
                 )
             }
             items(champions, key = { it.id }, contentType = { it }) { champion ->
-                ChampionItem(champion, version, Modifier.animateItem())
+                ChampionItem(champion, version, Modifier.animateItem(), onChampionClick)
             }
         }
     )
@@ -201,7 +208,12 @@ private fun ChampionsSuccess(
 private val BORDER_SIZE = 0.75.dp
 
 @Composable
-fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modifier) {
+fun ChampionItem(
+    champion: Champion,
+    version: String,
+    modifier: Modifier = Modifier,
+    onChampionClick: (String) -> Unit
+) {
     Column(
         modifier = modifier
             .padding(ITEM_SPADING),
@@ -214,11 +226,14 @@ fun ChampionItem(champion: Champion, version: String, modifier: Modifier = Modif
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
                     width = BORDER_SIZE,
-                    color = Color(0xFFC28F2C),
+                    color = Gold,
                     shape = RoundedCornerShape(25)
                 )
                 .padding(BORDER_SIZE)
-                .size(ITEM_SIZE),
+                .size(ITEM_SIZE)
+                .clickable {
+                    onChampionClick(champion.id)
+                },
         )
         Spacer(Modifier.height(4.dp))
         Text(
