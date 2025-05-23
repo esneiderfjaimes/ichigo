@@ -26,6 +26,8 @@ class GetProfileIconsUseCase @Inject constructor(
     championsRepository,
     ichigoPreferencesDataSource
 ) {
+    operator fun invoke() = flow
+
     override suspend fun fetchPage(version: String, lang: String) = kotlin.runCatching {
         val count = profileIconDao.countByVersionAndLang(version, lang)
         if (count <= 0 || (BuildConfig.DEBUG && FORCE_FETCH_ICONS)) {

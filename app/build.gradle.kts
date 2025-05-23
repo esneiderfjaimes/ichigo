@@ -28,6 +28,7 @@ android {
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
             "-Xcontext-receivers"
         )
     }
@@ -52,7 +53,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
+
+    // adaptive
+    implementation(libs.compose.adaptive)
+    implementation(libs.compose.adaptive.layout)
+    implementation(libs.compose.adaptive.navigation)
+    implementation(libs.compose.adaptive.navigation.suite)
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)

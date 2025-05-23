@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 import com.nei.ichigo.feature.encyclopedia.settings.SettingsViewmodel.SettingsUiState
 
 @Composable
@@ -38,9 +38,10 @@ fun SettingsDialog(onDismiss: () -> Unit) {
     val state by viewmodel.uiState.collectAsStateWithLifecycle()
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        /*
         modifier = Modifier.padding(24.dp),
-        scrimColor = Color.Transparent,
         shape = MaterialTheme.shapes.extraLarge,
+        */
     ) {
         ChampionsSettingsDialogContent(
             state,
@@ -58,7 +59,7 @@ private fun ChampionsSettingsDialogContent(
 ) {
     Column(
         Modifier
-            .padding(bottom = 16.dp)
+            .padding(bottom = 24.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -97,7 +98,8 @@ private fun ChampionsSettingsDialogContent(
 
                 Item(
                     text = stringResource(R.string.language),
-                    value = state.language ?: stringResource(R.string.automatic),
+                    value = state.language?.let { languageCodeToString(it) }
+                        ?: stringResource(R.string.automatic),
                     bottomSheetContent = { dismiss ->
                         LanguageDialog(
                             selectedLanguage = state.language,

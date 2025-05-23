@@ -51,7 +51,11 @@ fun AsyncImage(model: Any?, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AsyncImagePreviewProvider(content: @Composable () -> Unit) {
+fun AsyncImagePreviewProvider(
+    height: Int = 0,
+    width: Int = 0,
+    content: @Composable () -> Unit
+) {
     val previewHandler = AsyncImagePreviewHandler {
         val randomColor = Color(
             alpha = 128,
@@ -59,7 +63,7 @@ fun AsyncImagePreviewProvider(content: @Composable () -> Unit) {
             green = (0..255).random(),
             blue = (0..255).random()
         )
-        ColorImage(randomColor.toArgb())
+        ColorImage(randomColor.toArgb(), height = height, width = width)
     }
 
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {

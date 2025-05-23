@@ -19,7 +19,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -89,20 +88,10 @@ fun NavController.topLevelDestinationNavOptions() = navOptions {
 fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
     return with(adaptiveInfo) {
-        if (
-            windowPosture.isTabletop ||
-            windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT
-        ) {
+        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
             NavigationSuiteType.NavigationBar
-        } else if (
-            windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED
-        ) {
-            // NavigationSuiteType.NavigationDrawer
-            NavigationSuiteType.NavigationRail
-        } else if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {
-            NavigationSuiteType.NavigationRail
         } else {
-            NavigationSuiteType.NavigationBar
+            NavigationSuiteType.NavigationRail
         }
     }
 }
