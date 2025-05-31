@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_designsystemy_role_assassin">Assassin</string>
+    <string name="core_designsystemy_role_fighter">Fighter</string>
+    <string name="core_designsystemy_role_mage">Mage</string>
+    <string name="core_designsystemy_role_marksman">Marksman</string>
+    <string name="core_designsystemy_role_support">Support</string>
+    <string name="core_designsystemy_role_tank">Tank</string>
+
+    <string name="core_designsystemy_lang_ar_ae">Arabic (United Arab Emirates)</string>
+    <string name="core_designsystemy_lang_cs_cz">Czech (Czech Republic)</string>
+    <string name="core_designsystemy_lang_el_gr">Greek (Greece)</string>
+    <string name="core_designsystemy_lang_pl_pl">Polish (Poland)</string>
+    <string name="core_designsystemy_lang_ro_ro">Romanian (Romania)</string>
+    <string name="core_designsystemy_lang_hu_hu">Hungarian (Hungary)</string>
+    <string name="core_designsystemy_lang_en_gb">English (United Kingdom)</string>
+    <string name="core_designsystemy_lang_de_de">German (Germany)</string>
+    <string name="core_designsystemy_lang_es_es">Spanish (Spain)</string>
+    <string name="core_designsystemy_lang_it_it">Italian (Italy)</string>
+    <string name="core_designsystemy_lang_fr_fr">French (France)</string>
+    <string name="core_designsystemy_lang_ja_jp">Japanese (Japan)</string>
+    <string name="core_designsystemy_lang_ko_kr">Korean (Korea)</string>
+    <string name="core_designsystemy_lang_es_mx">Spanish (Mexico)</string>
+    <string name="core_designsystemy_lang_es_ar">Spanish (Argentina)</string>
+    <string name="core_designsystemy_lang_pt_br">Portuguese (Brazil)</string>
+    <string name="core_designsystemy_lang_en_us">English (United States)</string>
+    <string name="core_designsystemy_lang_en_au">English (Australia)</string>
+    <string name="core_designsystemy_lang_ru_ru">Russian (Russia)</string>
+    <string name="core_designsystemy_lang_tr_tr">Turkish (Turkey)</string>
+    <string name="core_designsystemy_lang_ms_my">Malay (Malaysia)</string>
+    <string name="core_designsystemy_lang_en_ph">English (Republic of the Philippines)</string>
+    <string name="core_designsystemy_lang_en_sg">English (Singapore)</string>
+    <string name="core_designsystemy_lang_th_th">Thai (Thailand)</string>
+    <string name="core_designsystemy_lang_vi_vn">Vietnamese (Viet Nam)</string>
+    <string name="core_designsystemy_lang_id_id">Indonesian (Indonesia)</string>
+    <string name="core_designsystemy_lang_zh_my">Chinese (Malaysia)</string>
+    <string name="core_designsystemy_lang_zh_cn">Chinese (China)</string>
+    <string name="core_designsystemy_lang_zh_tw">Chinese (Taiwan)</string>
+</resources>

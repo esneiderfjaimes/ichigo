@@ -1,30 +1,12 @@
 plugins {
-    alias(libs.plugins.ichigo.android.application)
+    alias(libs.plugins.ichigo.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ichigo.hilt)
-    id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.nei.ichigo"
+    namespace = "com.nei.ichigo.core.designsystem"
 
-    defaultConfig {
-        applicationId = "com.nei.ichigo"
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
@@ -42,9 +24,8 @@ android {
 dependencies {
 
     // project
-    implementation(projects.core.designsystemy)
-    implementation(projects.core.data)
     implementation(projects.core.model)
+    implementation(projects.core.data)
 
     // core
     implementation(libs.androidx.core.ktx)

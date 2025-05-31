@@ -10,10 +10,8 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nei.ichigo.R
 
 @Composable
 fun IchigoFilterChip(text: String, selected: Boolean, onClick: () -> Unit) {
@@ -44,11 +42,11 @@ fun IchigoFilterChip(text: String, selected: Boolean, onClick: () -> Unit) {
 @Preview
 @Composable
 fun IchigoFilterChipPreview() {
-    IchigoFilterChip(text = stringResource(R.string.all), selected = true) {}
+    IchigoFilterChip(text = "All", selected = true) {}
 }
 
 @Preview
 @Composable
 fun IchigoFilterChipPreview2() {
-    IchigoFilterChip(text = stringResource(R.string.all), selected = false) {}
+    IchigoFilterChip(text = "All", selected = false) {}
 }

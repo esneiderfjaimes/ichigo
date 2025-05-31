@@ -76,7 +76,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nei.ichigo.R
 import kotlinx.coroutines.delay
 
 @Preview
@@ -276,7 +275,8 @@ fun GridView(model: MyModel) {
 }
 
 class MyModel {
-    val items = mutableListOf(
+    val items = mutableListOf<Kitty>(
+        /*
         Kitty("Waffle", R.drawable.ic_launcher_foreground, "American Short Hair", 0),
         Kitty("油条", R.drawable.ic_launcher_foreground, "Tabby", 1),
         Kitty("Cowboy", R.drawable.ic_launcher_foreground, "American Short Hair", 2),
@@ -284,6 +284,7 @@ class MyModel {
         Kitty("Unknown", R.drawable.ic_launcher_foreground, "Unknown", 4),
         Kitty("Unknown", R.drawable.ic_launcher_foreground, "Unknown", 5),
         Kitty("YT", R.drawable.ic_launcher_foreground, "Tabby", 6),
+        */
     )
     var selected: Kitty? by mutableStateOf(null)
 }
@@ -346,13 +347,15 @@ private val lessVibrantPurple = Color(0xfff3edf7)
 
 data class Snack(val name: String, val description: String, val image: Int)
 
-private val listSnacks = listOf(
+private val listSnacks = listOf<Snack>(
+    /*
     Snack("Cupcake", "", R.drawable.ic_launcher_foreground),
     Snack("Donut", "", R.drawable.ic_launcher_foreground),
     Snack("Eclair", "", R.drawable.ic_launcher_foreground),
     Snack("Froyo", "", R.drawable.ic_launcher_foreground),
     Snack("Gingerbread", "", R.drawable.ic_launcher_foreground),
     Snack("Honeycomb", "", R.drawable.ic_launcher_foreground),
+    */
 )
 
 val shapeForSharedElement = RoundedCornerShape(16.dp)
