@@ -24,7 +24,7 @@ espressoCore = "3.6.1"
 coil = "3.2.0"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
-converterGson = "2.9.0"
+converterGson = "3.0.0"
 kotlinxSerializationJson = "1.8.0"
 
 androidDesugarJdkLibs = "2.1.5"
