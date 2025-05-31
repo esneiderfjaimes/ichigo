@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.0"
-datastorePreferences = "1.1.6"
+datastorePreferences = "1.1.7"
 kotlin = "2.1.21"
 ksp = "2.1.21-2.0.1"
 
