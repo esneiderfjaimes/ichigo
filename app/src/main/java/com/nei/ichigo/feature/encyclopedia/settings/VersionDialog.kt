@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -35,12 +34,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.component.IchigoDialogContent
+import com.nei.ichigo.core.designsystem.component.IchigoTitleDialog
 import com.nei.ichigo.core.designsystem.component.ItemCombo
+import com.nei.ichigo.core.designsystem.utils.animateScrollSelected
 
 @Composable
 fun VersionDialog(
@@ -54,6 +56,7 @@ fun VersionDialog(
             selectedVersion = selectedVersion,
             versions = versions,
             onVersionSelected = onVersionSelected,
+            onDismiss = onDismiss
         )
     }
 }
@@ -68,87 +71,73 @@ fun VersionDialogContent(
     selectedVersion: String?,
     versions: List<String>,
     onVersionSelected: (String?) -> Unit,
+    onDismiss: () -> Unit = {}
 ) {
     var contentMode by rememberSaveable { mutableStateOf(ContentMode.List) }
-    Surface(
-        shape = MaterialTheme.shapes.extraLarge
-    ) {
-        Column(
-            Modifier
-                .sizeIn(maxHeight = 600.dp)
-        ) {
-            Row(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = stringResource(R.string.select_version),
-                    style = MaterialTheme.typography.titleLarge
-                        .copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(12.dp)
+    IchigoDialogContent(
+        onCloseRequest = onDismiss,
+        title = {
+            IchigoTitleDialog(text = stringResource(R.string.select_version))
+            IconButton(onClick = {
+                contentMode = if (contentMode == ContentMode.List) {
+                    ContentMode.Group
+                } else {
+                    ContentMode.List
+                }
+            }) {
+                Icon(
+                    if (contentMode == ContentMode.List) Icons.AutoMirrored.Rounded.Segment
+                    else Icons.AutoMirrored.Rounded.List,
+                    contentDescription = null
                 )
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
-                    contentMode = if (contentMode == ContentMode.List) {
-                        ContentMode.Group
-                    } else {
-                        ContentMode.List
-                    }
-                }) {
-                    Icon(
-                        if (contentMode == ContentMode.List) Icons.AutoMirrored.Rounded.Segment
-                        else Icons.AutoMirrored.Rounded.List,
-                        contentDescription = null
-                    )
-                }
             }
-
-            when (contentMode) {
-                ContentMode.List -> {
-                    val lazyListState = rememberLazyListState()
-                    LaunchedEffect(Unit) {
-                        if (selectedVersion == null) {
-                            lazyListState.animateScrollToItem(0)
-                        } else {
-                            val indexOf = versions.indexOf(selectedVersion)
-                            if (indexOf == -1) return@LaunchedEffect
-                            lazyListState.animateScrollToItem(indexOf + 1)
-                        }
-                    }
-
-                    LazyColumn(
-                        state = lazyListState,
-                        contentPadding = PaddingValues(bottom = 12.dp)
-                    ) {
-                        item(key = null) {
-                            ItemCombo(
-                                value = stringResource(R.string.latest),
-                                selected = selectedVersion == null,
-                                onClick = { onVersionSelected(null) }
-                            )
-                        }
-                        contentList(
-                            versions = versions,
-                            selectedVersion = selectedVersion,
-                            onVersionSelected = onVersionSelected
-                        )
-                    }
+        }
+    ) {
+        when (contentMode) {
+            ContentMode.List -> {
+                val lazyListState = rememberLazyListState()
+                LaunchedEffect(Unit) {
+                    lazyListState.animateScrollSelected(selectedVersion, versions)
                 }
 
-                ContentMode.Group -> {
-                    Column(
-                        Modifier
-                            .verticalScroll(rememberScrollState())
-                    ) {
+                LazyColumn(
+                    state = lazyListState,
+                    contentPadding = PaddingValues(bottom = 12.dp),
+                    modifier = Modifier.clip(
+                        shape = MaterialTheme.shapes.extraLarge
+                    )
+                ) {
+                    item(key = null) {
                         ItemCombo(
                             value = stringResource(R.string.latest),
                             selected = selectedVersion == null,
                             onClick = { onVersionSelected(null) }
                         )
-                        ContentGroup(
-                            versions = versions,
-                            selectedVersion = selectedVersion,
-                            onVersionSelected = onVersionSelected
-                        )
-                        Spacer(Modifier.height(12.dp))
                     }
+                    contentList(
+                        versions = versions,
+                        selectedVersion = selectedVersion,
+                        onVersionSelected = onVersionSelected
+                    )
+                }
+            }
+
+            ContentMode.Group -> {
+                Column(
+                    Modifier
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    ItemCombo(
+                        value = stringResource(R.string.latest),
+                        selected = selectedVersion == null,
+                        onClick = { onVersionSelected(null) }
+                    )
+                    ContentGroup(
+                        versions = versions,
+                        selectedVersion = selectedVersion,
+                        onVersionSelected = onVersionSelected
+                    )
+                    Spacer(Modifier.height(12.dp))
                 }
             }
         }
@@ -183,11 +172,7 @@ fun ContentGroup(
         Surface(
             shape = MaterialTheme.shapes.large,
             onClick = {
-                expandedGroupId = if (expandedGroupId == header) {
-                    null
-                } else {
-                    header
-                }
+                expandedGroupId = if (expandedGroupId == header) null else header
             },
             tonalElevation = if (expandedGroupId == header) 2.dp else 0.dp
         ) {

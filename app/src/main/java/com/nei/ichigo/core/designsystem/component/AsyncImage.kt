@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
@@ -22,11 +23,16 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage
 
 @Composable
-fun AsyncImage(model: Any?, modifier: Modifier = Modifier) {
+fun AsyncImage(
+    model: Any?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit
+) {
     SubcomposeAsyncImage(
         model = model,
         contentDescription = null,
         modifier = modifier,
+        contentScale = contentScale,
         onError = {
             it.result.throwable.printStackTrace()
         },

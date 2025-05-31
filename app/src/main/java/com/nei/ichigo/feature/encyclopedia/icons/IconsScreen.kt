@@ -82,10 +82,13 @@ import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
+import com.nei.ichigo.core.designsystem.component.IchigoDialogContent
+import com.nei.ichigo.core.designsystem.component.IchigoTitleDialog
 import com.nei.ichigo.core.designsystem.component.ItemCombo
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.theme.Gold
+import com.nei.ichigo.core.designsystem.utils.animateScrollSelected
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -394,7 +397,8 @@ fun PagesDialog(
             onSelectPage = {
                 onSelectPage(it)
                 onDismiss()
-            }
+            },
+            onDismiss = onDismiss
         )
     }
 }
@@ -403,27 +407,21 @@ fun PagesDialog(
 fun PagesDialogContent(
     pageInfo: IconsUiState.PageInfo,
     onSelectPage: (Int) -> Unit,
+    onDismiss: () -> Unit = {}
 ) {
     val pages = (1..pageInfo.totalPages).toList()
-    Surface(
-        shape = MaterialTheme.shapes.extraLarge
+    IchigoDialogContent(
+        onCloseRequest = onDismiss,
+        title = { IchigoTitleDialog(text = stringResource(R.string.select_page)) }
     ) {
         Column(
             Modifier
                 .sizeIn(maxHeight = 600.dp)
         ) {
-            Text(
-                text = stringResource(R.string.select_page),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(24.dp)
-            )
-
             val lazyListState = rememberLazyListState()
 
             LaunchedEffect(Unit) {
-                val indexOf = pages.indexOf(pageInfo.pageIndex + 1)
-                if (indexOf == -1) return@LaunchedEffect
-                lazyListState.animateScrollToItem(indexOf)
+                lazyListState.animateScrollSelected(pageInfo.pageIndex + 1, pages)
             }
 
             LazyColumn(

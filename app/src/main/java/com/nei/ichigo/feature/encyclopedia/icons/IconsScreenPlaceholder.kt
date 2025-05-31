@@ -14,18 +14,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nei.ichigo.R
 import com.nei.ichigo.navigation.Screen
 
 @Composable
-fun IconsScreenPlaceholder() {
+fun IconsScreenPlaceholder(onClick: () -> Unit = {}) {
     Box(Modifier.systemBarsPadding()) {
         Surface(
-            Modifier
+            modifier = Modifier
                 .padding(32.dp),
             tonalElevation = 4.dp,
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
+            onClick = onClick
         ) {
             Column(
                 modifier = Modifier
@@ -38,7 +41,7 @@ fun IconsScreenPlaceholder() {
                     contentDescription = null,
                     modifier = Modifier.size(48.dp)
                 )
-                Text("Select a champion")
+                Text(stringResource(R.string.select_a_champion))
             }
         }
     }

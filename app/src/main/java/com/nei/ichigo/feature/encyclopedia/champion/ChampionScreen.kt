@@ -9,8 +9,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -52,7 +54,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,13 +64,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
+import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
+import com.nei.ichigo.core.designsystem.utils.roleToString
 import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.core.model.Skin
 import com.nei.ichigo.feature.encyclopedia.champion.ChampionViewModel.ChampionUiState
@@ -110,7 +117,7 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
                     .windowInsetsPadding(
                         WindowInsets.safeDrawing
                             .only(
-                                WindowInsetsSides.Start + WindowInsetsSides.End + WindowInsetsSides.Top
+                                /*WindowInsetsSides.Start + WindowInsetsSides.End +*/ WindowInsetsSides.Top
                             )
                     ),
             ) {
@@ -178,14 +185,16 @@ fun ChampionContent(
     ) {
         Box(
             modifier = Modifier
-                //.align(Alignment.CenterHorizontally)
                 .animateContentSize(),
         ) {
             AsyncImage(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .sizeIn(maxWidth = 600.dp)
                     .padding(bottom = 16.dp)
                     .align(Alignment.Center),
                 model = getChampionSkinImage(champion.id, 0),
+                contentScale = ContentScale.FillWidth
             )
             Text(
                 text = champion.name,
@@ -223,46 +232,10 @@ fun ChampionContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(4.dp)
         )
-
-        /*
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = getChampionImage(champion.image, version),
-                modifier = Modifier
-                    .clip(RoundedCornerShape(25))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .border(
-                        width = BORDER_SIZE,
-                        color = Color(0xFFC28F2C),
-                        shape = RoundedCornerShape(25)
-                    )
-                    .padding(BORDER_SIZE)
-                    .size(ITEM_SIZE),
-            )
-            Column(
-                Modifier.padding(horizontal = 16.dp),
-            ) {
-                Text(
-                    text = champion.name,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    text = champion.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        }
-        */
         Spacer(Modifier.height(16.dp))
         AsyncImage(
             model = getChampionImage(champion.image, version),
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(
@@ -274,6 +247,26 @@ fun ChampionContent(
                 .size(ITEM_SIZE)
                 .align(Alignment.CenterHorizontally),
         )
+        Spacer(Modifier.height(16.dp))
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            champion.tags.forEach { tag ->
+                IchigoFilterChip(
+                    text = roleToString(tag),
+                    selected = false,
+                    onClick = {}
+                )
+            }
+
+            IchigoFilterChip(
+                text = champion.parType,
+                selected = false,
+                onClick = {}
+            )
+        }
         Spacer(Modifier.height(16.dp))
         var expanded by remember { mutableStateOf(false) }
         Surface(
@@ -289,7 +282,7 @@ fun ChampionContent(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "About",
+                    text = stringResource(R.string.about),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(Modifier.height(8.dp))
@@ -305,7 +298,7 @@ fun ChampionContent(
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "Skins",
+            text = stringResource(R.string.skins),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
@@ -324,7 +317,6 @@ fun ChampionContent(
                 ?: return@HorizontalMultiBrowseCarousel
             AsyncImage(
                 modifier = Modifier
-                    //.height(400.dp)
                     .maskClip(MaterialTheme.shapes.extraLarge)
                     .clickable {
                         selectedSkin = skin.num
@@ -393,8 +385,8 @@ fun SkinFullscreen(
 @Composable
 fun ChampionScreenPreview() {
     AsyncImagePreviewProvider(
-        width = 1215,
-        height = 717
+        width = 1215 / 2,
+        height = 717 / 2
     ) {
         ChampionScreen(
             state = ChampionUiState.Success(
@@ -407,12 +399,12 @@ fun ChampionScreenPreview() {
                         Skin(id = "2", num = 2, name = "Aatrox", chromas = false)
                     ),
                     image = "",
-                    tags = emptyList(),
+                    tags = listOf("Assassin", "Fighter"),
                     title = "Title",
-                    blurb = "Blurb",
-                    parType = "ParType",
-                    stats = mapOf(),
-                    lore = "Lore"
+                    parType = "Mana",
+                    lore = "Lore",
+                    allyTips = listOf(),
+                    enemyTips = listOf(),
                 )
             ),
         )

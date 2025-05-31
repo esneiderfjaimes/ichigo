@@ -13,8 +13,8 @@ data class ChampionResponseServer(
     @SerializedName("version") val version: String?,
     @SerializedName("key") val key: String?,
     @SerializedName("title") val title: String?,
-    @SerializedName("blurb") val blurb: String?,
     /*
+    @SerializedName("blurb") val blurb: String?,
     @SerializedName("info") val info: InfoRS?,
     */
     @SerializedName("partype") val parType: String?,
@@ -24,9 +24,9 @@ data class ChampionResponseServer(
     @SerializedName("skins") val skins: List<SkinResponseServer>?,
 
     @SerializedName("lore") val lore: String?,
-    /*
     @SerializedName("allytips") val allyTips: List<String>?,
     @SerializedName("enemytips") val enemyTips: List<String>?,
+    /*
     @SerializedName("spells") val spells: List<SpellRS>?,
     @SerializedName("passive") val passive: PassiveRS?,
     @SerializedName("recommended") val recommended: List<RecommendedRS>?,
@@ -53,11 +53,11 @@ fun ChampionResponseServer.asExternalModelDetail() = ChampionDetail(
     image = image!!.full!!,
     tags = tags!!,
     title = title!!,
-    blurb = blurb!!,
     parType = parType!!,
-    stats = stats!!,
     skins = skins!!.map(SkinResponseServer::asExternalModel),
-    lore = lore!!
+    lore = lore!!,
+    allyTips = allyTips!!,
+    enemyTips = enemyTips!!
 )
 
 fun SkinResponseServer.asExternalModel() = Skin(

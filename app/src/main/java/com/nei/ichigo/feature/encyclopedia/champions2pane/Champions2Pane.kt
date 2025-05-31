@@ -29,12 +29,9 @@ fun Champions2PaneScreen() {
 
     fun onChampionClick(championId: String) {
         scope.launch {
-            val newChampionId =
-                if (scaffoldNavigator.currentDestination?.contentKey == championId) null
-                else championId
             scaffoldNavigator.navigateTo(
                 ListDetailPaneScaffoldRole.Detail,
-                newChampionId
+                championId
             )
         }
     }
@@ -58,7 +55,8 @@ fun Champions2PaneScreen() {
         },
         detailPane = {
             AnimatedPane {
-                scaffoldNavigator.currentDestination?.contentKey?.let { championId ->
+                val championId = scaffoldNavigator.currentDestination?.contentKey
+                if (championId != null) {
                     ChampionScreen(
                         championId = championId,
                         onBackPress = {
@@ -67,7 +65,15 @@ fun Champions2PaneScreen() {
                             }
                         }
                     )
-                } ?: IconsScreenPlaceholder()
+                } else {
+                    IconsScreenPlaceholder(
+                        onClick = {
+                            scope.launch {
+                                scaffoldNavigator.navigateBack()
+                            }
+                        }
+                    )
+                }
             }
         },
         paneExpansionState = paneExpansionState,

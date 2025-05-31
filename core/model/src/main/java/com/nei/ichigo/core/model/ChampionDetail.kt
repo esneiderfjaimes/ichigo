@@ -6,11 +6,11 @@ data class ChampionDetail(
     val image: String,
     val tags: List<String>,
     val title: String,
-    val blurb: String,
     val parType: String,
-    val stats: Map<String, Double>,
     val skins: List<Skin>,
     val lore: String,
+    val allyTips: List<String>?,
+    val enemyTips: List<String>?,
 )
 
 data class Skin(
