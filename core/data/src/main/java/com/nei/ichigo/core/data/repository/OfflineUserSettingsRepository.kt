@@ -2,6 +2,7 @@ package com.nei.ichigo.core.data.repository
 
 import android.util.Log
 import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
+import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.core.model.UserSettings
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,16 @@ internal class OfflineUserSettingsRepository @Inject constructor(
 
     override val userSettings: Flow<UserSettings>
         get() = ichigoPreferencesDataSource.userSettings
+
+    override suspend fun saveDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
+        Log.d(TAG, "saveDarkThemeConfig: $darkThemeConfig")
+        ichigoPreferencesDataSource.saveUserDarkThemeConfig(darkThemeConfig)
+    }
+
+    override suspend fun saveUseDynamicColor(useDynamicColor: Boolean) {
+        Log.d(TAG, "saveUseDynamicColor: $useDynamicColor")
+        ichigoPreferencesDataSource.saveUserUseDynamicColor(useDynamicColor)
+    }
 
     override suspend fun saveVersionSelected(version: String?) {
         Log.d(TAG, "saveVersionSelected: $version")

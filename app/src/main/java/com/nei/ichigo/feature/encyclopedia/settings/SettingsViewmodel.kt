@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.core.data.repository.ChampionsRepository
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
+import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.core.model.UserSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,8 @@ class SettingsViewmodel @Inject constructor(
         userSettingsRepository.userSettings,
     ) { props, userSettings ->
         SettingsUiState.Success(
+            darkThemeConfig = userSettings.darkThemeConfig,
+            useDynamicColor = userSettings.useDynamicColor,
             version = userSettings.versionSelected,
             versions = props.first,
             language = userSettings.langSelected,
@@ -57,9 +60,23 @@ class SettingsViewmodel @Inject constructor(
         }
     }
 
+    fun onDarkThemeSelected(darkThemeConfig: DarkThemeConfig) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userSettingsRepository.saveDarkThemeConfig(darkThemeConfig)
+        }
+    }
+
+    fun onUseDynamicColorSelected(useDynamicColor: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userSettingsRepository.saveUseDynamicColor(useDynamicColor)
+        }
+    }
+
     sealed interface SettingsUiState {
         data object Loading : SettingsUiState
         data class Success(
+            val darkThemeConfig: DarkThemeConfig,
+            val useDynamicColor: Boolean,
             val version: String?,
             val versions: List<String>,
             val language: String?,

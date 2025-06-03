@@ -1,11 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.champion
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -107,6 +102,7 @@ private val BORDER_SIZE = 2.dp
 
 @Composable
 private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {}) {
+    var selectedSkin by rememberSaveable { mutableStateOf<Int?>(null) }
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -117,7 +113,8 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
                     .windowInsetsPadding(
                         WindowInsets.safeDrawing
                             .only(
-                                /*WindowInsetsSides.Start + WindowInsetsSides.End +*/ WindowInsetsSides.Top
+                                /*WindowInsetsSides.Start + WindowInsetsSides.End +*/
+                                WindowInsetsSides.Top
                             )
                     ),
             ) {
@@ -165,10 +162,24 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
                         .fillMaxSize()
                         .padding(contentPadding),
                     champion = champion,
-                    version = version
+                    version = version,
+                    onSkinClick = { indexSkin ->
+                        selectedSkin = indexSkin
+                    }
                 )
             }
         }
+    }
+
+    if (state is ChampionUiState.Success) {
+        SkinFullscreen(
+            championId = state.champion.id,
+            skins = state.champion.skins,
+            selectedSkin = selectedSkin,
+            onSelectSkin = { indexSkin ->
+                selectedSkin = indexSkin
+            }
+        )
     }
 }
 
@@ -176,9 +187,9 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
 fun ChampionContent(
     modifier: Modifier,
     champion: ChampionDetail,
-    version: String
+    version: String,
+    onSkinClick: (Int) -> Unit = {}
 ) {
-    var selectedSkin by rememberSaveable { mutableStateOf<Int?>(null) }
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -307,79 +318,23 @@ fun ChampionContent(
             state = rememberCarouselState { champion.skins.count() },
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 8.dp),
+                .wrapContentHeight(),
             preferredItemWidth = 250.dp,
             itemSpacing = 8.dp,
-            contentPadding = PaddingValues(horizontal = 32.dp)
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp),
         ) { index ->
             val skin = champion.skins.getOrNull(index)
                 ?: return@HorizontalMultiBrowseCarousel
             AsyncImage(
                 modifier = Modifier
                     .maskClip(MaterialTheme.shapes.extraLarge)
-                    .clickable {
-                        selectedSkin = skin.num
-                    },
+                    .clickable { onSkinClick(index) },
                 model = getChampionSkinImage(champion.id, skin.num),
             )
         }
         Spacer(Modifier.height(16.dp))
     }
-
-    SkinFullscreen(
-        championId = champion.id,
-        currentSkinNum = selectedSkin,
-        requestClose = { selectedSkin = null }
-    )
 }
-
-// context(SharedTransitionScope)
-@Composable
-fun SkinFullscreen(
-    championId: String,
-    currentSkinNum: Int?,
-    requestClose: () -> Unit
-) {
-    AnimatedContent(
-        targetState = currentSkinNum,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
-        label = "SkinFullscreen"
-    ) { skinNum ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (skinNum != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = requestClose
-                        )
-                        .background(Color.Black.copy(alpha = 0.5f))
-                )
-
-                AsyncImage(
-                    modifier = Modifier
-                        .padding(32.dp)
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .clickable(onClick = requestClose),
-                    //.height(400.dp),
-                    model = getChampionSkinImage(championId, skinNum),
-                )
-
-                BackHandler {
-                    requestClose()
-                }
-            }
-        }
-    }
-}
-
 
 @Preview
 @Composable
@@ -396,7 +351,8 @@ fun ChampionScreenPreview() {
                     name = "Aatrox",
                     skins = listOf(
                         Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
-                        Skin(id = "2", num = 2, name = "Aatrox", chromas = false)
+                        Skin(id = "2", num = 2, name = "Aatrox", chromas = false),
+                        Skin(id = "3", num = 3, name = "Aatrox", chromas = false),
                     ),
                     image = "",
                     tags = listOf("Assassin", "Fighter"),

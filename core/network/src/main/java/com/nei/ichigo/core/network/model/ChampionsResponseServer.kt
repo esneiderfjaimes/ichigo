@@ -54,15 +54,15 @@ fun ChampionResponseServer.asExternalModelDetail() = ChampionDetail(
     tags = tags!!,
     title = title!!,
     parType = parType!!,
-    skins = skins!!.map(SkinResponseServer::asExternalModel),
+    skins = skins!!.map { it.asExternalModel(name) },
     lore = lore!!,
     allyTips = allyTips!!,
     enemyTips = enemyTips!!
 )
 
-fun SkinResponseServer.asExternalModel() = Skin(
+fun SkinResponseServer.asExternalModel(championName: String) = Skin(
     id = id!!,
     num = num!!,
-    name = name!!,
+    name = if (name!!.equals("default", true)) championName else name,
     chromas = chromas!!
 )

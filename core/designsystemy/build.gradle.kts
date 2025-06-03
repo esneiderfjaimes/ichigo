@@ -12,6 +12,7 @@ android {
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
             "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
+            "-opt-in=coil3.annotation.ExperimentalCoilApi",
             "-Xcontext-receivers",
             // TODO: migrate in Kotlin 2.2 "-Xcontext-parameters"
         )
@@ -23,13 +24,8 @@ android {
 
 dependencies {
 
-    // project
-    implementation(projects.core.model)
-    implementation(projects.core.data)
-
     // core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
 
     // compose
     implementation(platform(libs.compose.bom))
@@ -39,15 +35,6 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     // > adaptive
     implementation(libs.bundles.compose.adaptive)
-
-    // lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // navigation
-    implementation(libs.androidx.navigation.compose)
-
-    // hilt
-    implementation(libs.hilt.navigation.compose)
 
     // coil
     implementation(libs.coil.compose)

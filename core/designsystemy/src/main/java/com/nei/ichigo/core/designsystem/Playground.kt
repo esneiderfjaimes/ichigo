@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.nei.ichigo.core.designsystem
 
 /*
@@ -23,6 +25,8 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -33,6 +37,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,20 +70,28 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.changedToUp
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -515,5 +530,179 @@ fun SnackContents(
                 .padding(8.dp),
             style = MaterialTheme.typography.titleSmall
         )
+    }
+}
+
+@Composable
+fun ZoomableBox(
+    modifier: Modifier = Modifier,
+    maxZoom: Float = 5f,
+    minZoom: Float = 1f,
+    doubleTapZoom: Float = 2f,
+    content: @Composable (Modifier) -> Unit
+) {
+    val scale = remember { Animatable(1f) }
+    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val coroutineScope = rememberCoroutineScope()
+    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+        coroutineScope.launch {
+            val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
+            scale.snapTo(newScale)
+            offset.snapTo(offset.value + offsetChange)
+        }
+    }
+
+
+    // Detect end of gesture and animate back
+    LaunchedEffect(transformableState.isTransformInProgress) {
+        if (!transformableState.isTransformInProgress) {
+            if (scale.value <= 1f) {
+                scale.animateTo(1f, animationSpec = tween(300))
+                offset.animateTo(Offset.Zero, animationSpec = tween(300))
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        coroutineScope.launch {
+                            if (scale.value > 1f) {
+                                scale.animateTo(1f, animationSpec = tween(300))
+                                offset.animateTo(Offset.Zero, animationSpec = tween(300))
+                            } else {
+                                scale.animateTo(doubleTapZoom, animationSpec = tween(300))
+                            }
+                        }
+                    }
+                )
+            }
+            .graphicsLayer(
+                scaleX = scale.value,
+                scaleY = scale.value,
+                translationX = offset.value.x,
+                translationY = offset.value.y
+            )
+            .transformable(state = transformableState)
+            .clipToBounds()
+    ) {
+        content(Modifier.fillMaxSize())
+    }
+}
+
+@Composable
+fun ZoomableBox3(
+    modifier: Modifier = Modifier,
+    maxZoom: Float = 5f,
+    minZoom: Float = 1f,
+    doubleTapZoom: Float = 2f,
+    content: @Composable (Modifier) -> Unit
+) {
+    val scale = remember { Animatable(1f) }
+    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+        coroutineScope.launch {
+            val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
+            scale.snapTo(newScale)
+            offset.snapTo(offset.value + offsetChange)
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        coroutineScope.launch {
+                            if (scale.value > 1f) {
+                                scale.animateTo(1f, animationSpec = tween(300))
+                                offset.animateTo(Offset.Zero, animationSpec = tween(300))
+                            } else {
+                                scale.animateTo(doubleTapZoom, animationSpec = tween(300))
+                            }
+                        }
+                    }
+                )
+            }
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        if (event.changes.all { it.changedToUp() }) {
+                            // On gesture end
+                            if (scale.value <= 1f) {
+                                coroutineScope.launch {
+                                    scale.animateTo(1f, animationSpec = tween(300))
+                                    offset.animateTo(Offset.Zero, animationSpec = tween(300))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .graphicsLayer(
+                scaleX = scale.value,
+                scaleY = scale.value,
+                translationX = offset.value.x,
+                translationY = offset.value.y
+            )
+            .transformable(state = transformableState)
+            .clipToBounds()
+    ) {
+        content(Modifier.fillMaxSize())
+    }
+}
+
+@Composable
+fun ZoomableBox2(
+    modifier: Modifier = Modifier,
+    maxZoom: Float = 5f,
+    minZoom: Float = 1f,
+    doubleTapZoom: Float = 2f,
+    content: @Composable (Modifier) -> Unit
+) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    val transformableState =
+        rememberTransformableState { zoomChange, offsetChange, _ ->
+            val newScale = (scale * zoomChange).coerceIn(minZoom, maxZoom)
+            scale = newScale
+            offset += offsetChange
+        }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        coroutineScope.launch {
+                            if (scale > 1f) {
+                                scale = 1f
+                                offset = Offset.Zero
+                            } else {
+                                scale = doubleTapZoom
+                            }
+                        }
+                    }
+                )
+            }
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                translationX = offset.x,
+                translationY = offset.y
+            )
+            .transformable(state = transformableState)
+            .clipToBounds()
+    ) {
+        content(Modifier.fillMaxSize())
     }
 }

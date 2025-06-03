@@ -16,33 +16,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -50,12 +39,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,14 +67,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
-import com.nei.ichigo.core.designsystem.component.IchigoDialogContent
-import com.nei.ichigo.core.designsystem.component.IchigoTitleDialog
-import com.nei.ichigo.core.designsystem.component.ItemCombo
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.theme.Gold
-import com.nei.ichigo.core.designsystem.utils.animateScrollSelected
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -120,7 +104,11 @@ private fun IconsScreen(
             },
             bottomBar = {
                 if (state is IconsUiState.Success) {
-                    state.pageInfo?.let { BottomPager(it, onSelectPage) }
+                    state.pageInfo?.let {
+                        BottomPager(it) {
+                            onSelectPage(it)
+                        }
+                    }
                 }
             },
             contentWindowInsets = WindowInsets.safeDrawing
@@ -223,7 +211,7 @@ private fun IconsTopAppBar(
                                 .copy(fontWeight = FontWeight.Bold)
                         )
 
-                        IconsUiState.PageInfo.PAGE_SIZES.forEach { pageSize ->
+                        IconsUiState.PAGE_SIZES.forEach { pageSize ->
                             DropdownMenuItem(
                                 onClick = {
                                     showMenu = false
@@ -239,7 +227,7 @@ private fun IconsTopAppBar(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (state.pageInfo.pageSize == pageSize) {
+                                    if (state.pageSize == pageSize) {
                                         Icon(Icons.Rounded.Check, contentDescription = null)
                                     }
                                 }
@@ -318,126 +306,6 @@ private fun SuccessContent(
             }
         }
     )
-}
-
-@Composable
-private fun BottomPager(
-    pageInfo: IconsUiState.PageInfo,
-    onSelectPage: (Int) -> Unit
-) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .windowInsetsPadding(BottomAppBarDefaults.windowInsets)
-    ) {
-        Surface(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            tonalElevation = 8.dp,
-            shape = CircleShape,
-        ) {
-            Row {
-                IconButton(
-                    onClick = {
-                        onSelectPage(pageInfo.pageIndex - 1)
-                    },
-                    enabled = pageInfo.pageIndex > 0
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                        contentDescription = null
-                    )
-                }
-
-                var showPageDialog by remember { mutableStateOf(false) }
-                TextButton(onClick = {
-                    showPageDialog = true
-                }) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.page_info,
-                            pageInfo.pageIndex + 1,
-                            pageInfo.totalPages
-                        )
-                    )
-                }
-                if (showPageDialog) {
-                    PagesDialog(
-                        pageInfo = pageInfo,
-                        onSelectPage = onSelectPage,
-                        onDismiss = { showPageDialog = false }
-                    )
-                }
-
-                IconButton(
-                    onClick = {
-                        onSelectPage(pageInfo.pageIndex + 1)
-                    },
-                    enabled = pageInfo.pageIndex < pageInfo.totalPages - 1
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                        contentDescription = null
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PagesDialog(
-    pageInfo: IconsUiState.PageInfo,
-    onSelectPage: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    BasicAlertDialog(onDismissRequest = onDismiss) {
-        PagesDialogContent(
-            pageInfo = pageInfo,
-            onSelectPage = {
-                onSelectPage(it)
-                onDismiss()
-            },
-            onDismiss = onDismiss
-        )
-    }
-}
-
-@Composable
-fun PagesDialogContent(
-    pageInfo: IconsUiState.PageInfo,
-    onSelectPage: (Int) -> Unit,
-    onDismiss: () -> Unit = {}
-) {
-    val pages = (1..pageInfo.totalPages).toList()
-    IchigoDialogContent(
-        onCloseRequest = onDismiss,
-        title = { IchigoTitleDialog(text = stringResource(R.string.select_page)) }
-    ) {
-        Column(
-            Modifier
-                .sizeIn(maxHeight = 600.dp)
-        ) {
-            val lazyListState = rememberLazyListState()
-
-            LaunchedEffect(Unit) {
-                lazyListState.animateScrollSelected(pageInfo.pageIndex + 1, pages)
-            }
-
-            LazyColumn(
-                state = lazyListState,
-                contentPadding = PaddingValues(bottom = 12.dp)
-            ) {
-                items(pages, key = { it }) { page ->
-                    ItemCombo(
-                        value = page.toString(),
-                        selected = page == pageInfo.pageIndex + 1,
-                        onClick = { onSelectPage(page - 1) }
-                    )
-                }
-            }
-        }
-    }
 }
 
 context(SharedTransitionScope, AnimatedVisibilityScope)
@@ -551,7 +419,8 @@ fun IconsScreenPreview() {
                         image = ""
                     )
                 },
-                pageInfo = null
+                pageInfo = null,
+                pageSize = 20
             )
         )
     }
@@ -573,11 +442,11 @@ fun IconsScreenPreview2() {
                         image = ""
                     )
                 },
-                pageInfo = IconsUiState.PageInfo(
+                pageInfo = PageInfo(
                     pageIndex = 0,
-                    totalPages = 10,
-                    pageSize = 10
-                )
+                    totalPages = 10
+                ),
+                pageSize = 20
             )
         )
     }

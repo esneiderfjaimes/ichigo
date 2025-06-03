@@ -2,16 +2,11 @@ package com.nei.ichigo.feature.encyclopedia.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,14 +22,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +35,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.IchigoDialogContent
 import com.nei.ichigo.core.designsystem.component.IchigoTitleDialog
 import com.nei.ichigo.core.designsystem.component.ItemCombo
-import com.nei.ichigo.core.designsystem.utils.animateScrollSelected
+import com.nei.ichigo.core.designsystem.component.SelectListContent
 
 @Composable
 fun VersionDialog(
@@ -95,31 +88,13 @@ fun VersionDialogContent(
     ) {
         when (contentMode) {
             ContentMode.List -> {
-                val lazyListState = rememberLazyListState()
-                LaunchedEffect(Unit) {
-                    lazyListState.animateScrollSelected(selectedVersion, versions)
-                }
-
-                LazyColumn(
-                    state = lazyListState,
-                    contentPadding = PaddingValues(bottom = 12.dp),
-                    modifier = Modifier.clip(
-                        shape = MaterialTheme.shapes.extraLarge
-                    )
-                ) {
-                    item(key = null) {
-                        ItemCombo(
-                            value = stringResource(R.string.latest),
-                            selected = selectedVersion == null,
-                            onClick = { onVersionSelected(null) }
-                        )
-                    }
-                    contentList(
-                        versions = versions,
-                        selectedVersion = selectedVersion,
-                        onVersionSelected = onVersionSelected
-                    )
-                }
+                SelectListContent(
+                    selectedItem = selectedVersion,
+                    items = versions,
+                    itemLabelNull = { stringResource(R.string.latest) },
+                    itemLabel = { it },
+                    onSelectItem = onVersionSelected
+                )
             }
 
             ContentMode.Group -> {
@@ -141,20 +116,6 @@ fun VersionDialogContent(
                 }
             }
         }
-    }
-}
-
-fun LazyListScope.contentList(
-    versions: List<String>,
-    selectedVersion: String?,
-    onVersionSelected: (String?) -> Unit
-) {
-    items(versions, key = { it }) { version ->
-        ItemCombo(
-            value = version,
-            selected = version == selectedVersion,
-            onClick = { onVersionSelected(version) }
-        )
     }
 }
 

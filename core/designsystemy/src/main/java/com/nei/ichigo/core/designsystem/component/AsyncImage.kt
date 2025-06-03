@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoilApi::class)
-
 package com.nei.ichigo.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
@@ -17,7 +15,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage

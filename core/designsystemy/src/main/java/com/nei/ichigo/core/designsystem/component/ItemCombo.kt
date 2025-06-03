@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -35,15 +36,19 @@ fun ItemCombo(value: String, selected: Boolean, onClick: () -> Unit) {
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 24.dp)
+                modifier = Modifier
+                    .padding(start = 24.dp)
+                    .padding(vertical = 8.dp)
+                    .weight(1f)
             )
             if (selected) {
-                Spacer(Modifier.weight(1f))
                 Icon(
                     Icons.Rounded.Check,
                     contentDescription = null,
                     modifier = Modifier.padding(end = 24.dp)
                 )
+            } else {
+                Spacer(modifier = Modifier.width(24.dp))
             }
         }
     }

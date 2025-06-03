@@ -1,20 +1,13 @@
 package com.nei.ichigo.feature.encyclopedia.settings
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.IchigoDialogContent
 import com.nei.ichigo.core.designsystem.component.IchigoTitleDialog
-import com.nei.ichigo.core.designsystem.component.ItemCombo
-import com.nei.ichigo.core.designsystem.utils.animateScrollSelected
+import com.nei.ichigo.core.designsystem.component.SelectListContent
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 
 @Composable
@@ -45,31 +38,13 @@ fun LanguageDialogContent(
         onCloseRequest = onDismiss,
         title = { IchigoTitleDialog(text = stringResource(R.string.select_language)) },
     ) {
-        val lazyListState = rememberLazyListState()
-        LaunchedEffect(Unit) {
-            lazyListState.animateScrollSelected(selectedLanguage, languages)
-        }
-
-        LazyColumn(
-            state = lazyListState,
-            contentPadding = PaddingValues(bottom = 12.dp)
-        ) {
-            item(key = null) {
-                ItemCombo(
-                    stringResource(R.string.automatic),
-                    selected = selectedLanguage == null,
-                    onClick = { onLanguageSelected(null) }
-                )
-            }
-
-            items(languages.sorted(), key = { it }) { languageCode ->
-                ItemCombo(
-                    value = languageCodeToString(languageCode),
-                    selected = languageCode == selectedLanguage,
-                    onClick = { onLanguageSelected(languageCode) }
-                )
-            }
-        }
+        SelectListContent(
+            selectedItem = selectedLanguage,
+            items = languages,
+            itemLabelNull = { stringResource(R.string.automatic) },
+            itemLabel = { languageCodeToString(it) },
+            onSelectItem = onLanguageSelected
+        )
     }
 }
 
