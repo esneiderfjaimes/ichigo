@@ -120,6 +120,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version = "1.0.0" }
 
 # Plugins defined by this project
 ichigo-android-application = { id = "ichigo.android.application" }

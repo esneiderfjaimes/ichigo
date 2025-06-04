@@ -7,6 +7,20 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.version.catalog.update) apply true
+}
+
+versionCatalogUpdate {
+    keep {
+        // keep versions without any library or plugin reference
+        keepUnusedVersions.set(true)
+    }
+}
+
+tasks.register("runVersionCatalogUpdate") {
+    dependsOn("versionCatalogUpdate")
+    group = "custom"
+    description = "Runs the versionCatalogUpdate task"
 }
 
 tasks.register<Copy>("installGitHooks") {
