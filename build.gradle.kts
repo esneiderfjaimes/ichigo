@@ -7,26 +7,26 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.version.catalog.update) apply true
+
+    // extras
     alias(libs.plugins.githooks)
-    id("com.github.ben-manes.versions") version "0.52.0"
+    alias(libs.plugins.littlerobots.version.catalog.update) apply true
+    alias(libs.plugins.benmanes.versions) apply true
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
-    // Ignora versiones no estables (alfa, beta, rc, etc.)
     rejectVersionIf {
         isNonStable(candidate.version) && !isNonStable(currentVersion)
     }
 
-    // Puedes incluir/excluir por grupo o nombre
     checkForGradleUpdate = true
-    outputFormatter = "json" // también: "plain", "xml", "html", "text"
-    outputDir = "dependencyUpdates"
+    outputFormatter = "json" // "plain", "xml", "html", "text"
+    // outputDir = "dependencyUpdates"
 }
 
-// Función utilitaria
 fun isNonStable(version: String): Boolean {
     val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex() // e.g. 1.2.3, v1.2.3, 1.0.0-r
