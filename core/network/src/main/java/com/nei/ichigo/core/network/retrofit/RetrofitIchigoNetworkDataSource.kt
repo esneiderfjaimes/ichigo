@@ -11,6 +11,8 @@ import com.nei.ichigo.core.network.model.ProfileIconResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import com.nei.ichigo.core.network.model.asExternalModelDetail
 import dagger.Lazy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -69,23 +71,30 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
     }
 
     override suspend fun getLanguages() = kotlin.runCatching {
-        networkApi.languages().also {
-            if (it.isEmpty()) {
-                throw IllegalStateException("No languages found")
+        withContext(Dispatchers.IO) {
+            networkApi.languages().also {
+                if (it.isEmpty()) {
+                    throw IllegalStateException("No languages found")
+                }
             }
         }
     }
 
     override suspend fun getVersions() = kotlin.runCatching {
-        networkApi.versions().filter { !it.contains("lolpatch") }.also {
-            if (it.isEmpty()) {
-                throw IllegalStateException("No versions found")
+        withContext(Dispatchers.IO) {
+            networkApi.versions().filter { !it.contains("lolpatch") }.also {
+                if (it.isEmpty()) {
+                    throw IllegalStateException("No versions found")
+                }
             }
         }
     }
 
-    override suspend fun getChampions(version: String, lang: String): List<Champion> {
-        return networkApi.champions(version, lang)
+    override suspend fun getChampions(
+        version: String,
+        lang: String
+    ): List<Champion> = withContext(Dispatchers.IO) {
+        networkApi.champions(version, lang)
             .data!!.values
             .map(ChampionResponseServer::asExternalModel)
     }
@@ -94,13 +103,18 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
         version: String,
         lang: String,
         champKey: String
-    ): ChampionDetail {
-        return networkApi.champion(version, lang, champKey)
-            .data!![champKey]!!.asExternalModelDetail()
+    ): ChampionDetail = withContext(Dispatchers.IO) {
+        val responseServer = networkApi.champion(version, lang, champKey)
+            .data?.get(champKey)
+        requireNotNull(responseServer) { "Champion not found: $champKey" }
+        responseServer.asExternalModelDetail()
     }
 
-    override suspend fun getProfileIcons(version: String, lang: String): List<ProfileIcon> {
-        return networkApi.profileIcons(version, lang)
+    override suspend fun getProfileIcons(
+        version: String,
+        lang: String
+    ): List<ProfileIcon> = withContext(Dispatchers.IO) {
+        networkApi.profileIcons(version, lang)
             .data!!.values
             .map(ProfileIconResponseServer::asExternalModel)
     }

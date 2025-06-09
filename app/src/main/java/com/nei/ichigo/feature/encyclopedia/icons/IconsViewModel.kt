@@ -4,9 +4,10 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.core.data.model.ProfileIconsPage
+import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
-import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState.PageInfo
+import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState.Companion.PAGE_SIZE_DEFAULT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ class IconsViewModel @Inject constructor(
     getProfileIconsUseCase: GetProfileIconsUseCase
 ) : ViewModel() {
     private val pageIndex = MutableStateFlow<Int?>(0)
-    private val pageSize = MutableStateFlow(PageInfo.PAGE_SIZE_DEFAULT)
+    private val pageSize = MutableStateFlow(PAGE_SIZE_DEFAULT)
 
     val uiState: StateFlow<IconsUiState> =
         combine(getProfileIconsUseCase(), pageIndex, pageSize) { pageResult, pageIndex, pageSize ->
@@ -57,8 +58,7 @@ class IconsViewModel @Inject constructor(
             val totalPages = (page.icons.size + pageSize - 1) / pageSize
             pageIcons to PageInfo(
                 pageIndex = pageIndex,
-                totalPages = totalPages,
-                pageSize = pageSize
+                totalPages = totalPages
             )
         } else {
             page.icons to null
@@ -68,7 +68,8 @@ class IconsViewModel @Inject constructor(
             lang = page.lang,
             icons = icons.map(ProfileIcon::toUi),
             totalIcons = page.icons.size,
-            pageInfo = pageInfo
+            pageInfo = pageInfo,
+            pageSize = pageSize
         )
     }
 
@@ -101,22 +102,16 @@ class IconsViewModel @Inject constructor(
             val lang: String,
             val icons: List<IconUi>,
             val totalIcons: Int,
-            val pageInfo: PageInfo?
+            val pageInfo: PageInfo?,
+            val pageSize: Int,
         ) : IconsUiState
 
         @Stable
-        data class PageInfo(
-            val pageIndex: Int,
-            val totalPages: Int,
-            val pageSize: Int,
-        ) {
-            companion object {
-                const val PAGE_SIZE_DEFAULT = 25
-                val PAGE_SIZES = listOf(25, 50, 100)
-            }
-        }
-
-        @Stable
         data object Error : IconsUiState
+
+        companion object {
+            const val PAGE_SIZE_DEFAULT = 25
+            val PAGE_SIZES = listOf(25, 50, 100)
+        }
     }
 }

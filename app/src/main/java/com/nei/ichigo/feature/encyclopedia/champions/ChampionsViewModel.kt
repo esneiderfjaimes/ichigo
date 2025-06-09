@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.core.domain.GetChampionsUseCase
@@ -24,6 +25,7 @@ class ChampionsViewModel @Inject constructor(
 
     val uiState: StateFlow<ChampionsUiState> =
         combine(getChampionsUseCase(), tagSelected) { page, tagSelected ->
+            Log.i("ChampionsViewModel", "page: $page")
             val (version, lang, champions) = page.getOrElse {
                 it.printStackTrace()
                 return@combine ChampionsUiState.Error
@@ -45,7 +47,9 @@ class ChampionsViewModel @Inject constructor(
                 champions = championsFiltered,
                 tagSelected = tagSelected,
                 tags = sortedUniqueTags
-            )
+            ).also {
+                Log.i("ChampionsViewModel", "championsFiltered: $championsFiltered")
+            }
         }.catch {
             it.printStackTrace()
             emit(ChampionsUiState.Error)

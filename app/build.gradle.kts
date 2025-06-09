@@ -43,8 +43,9 @@ android {
 dependencies {
 
     // project
-    implementation(projects.core.model)
+    implementation(projects.core.designsystemy)
     implementation(projects.core.data)
+    implementation(projects.core.model)
 
     // core
     implementation(libs.androidx.core.ktx)
@@ -58,6 +59,7 @@ dependencies {
     implementation(libs.compose.material.icons.extended)
     // > adaptive
     implementation(libs.bundles.compose.adaptive)
+    implementation(libs.androidx.core.splashscreen)
 
     // lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -67,10 +69,6 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.navigation.compose)
-
-    // coil
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
 
     // test
     testImplementation(libs.junit)

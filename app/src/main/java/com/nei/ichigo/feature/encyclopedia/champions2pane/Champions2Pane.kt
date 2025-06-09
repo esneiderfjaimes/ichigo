@@ -14,6 +14,7 @@ import com.nei.ichigo.feature.encyclopedia.champion.ChampionScreen
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsScreen
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.IconsScreenPlaceholder
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.championsListDetail() {
@@ -28,13 +29,10 @@ fun Champions2PaneScreen() {
     val scope = rememberCoroutineScope()
 
     fun onChampionClick(championId: String) {
-        scope.launch {
-            val newChampionId =
-                if (scaffoldNavigator.currentDestination?.contentKey == championId) null
-                else championId
+        scope.launch(Dispatchers.IO) {
             scaffoldNavigator.navigateTo(
                 ListDetailPaneScaffoldRole.Detail,
-                newChampionId
+                championId
             )
         }
     }
@@ -42,7 +40,7 @@ fun Champions2PaneScreen() {
     val paneExpansionState = rememberPaneExpansionState()
 
     LaunchedEffect(Unit) {
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
             paneExpansionState.setFirstPaneProportion(0.5f)
         }
     }
@@ -58,16 +56,25 @@ fun Champions2PaneScreen() {
         },
         detailPane = {
             AnimatedPane {
-                scaffoldNavigator.currentDestination?.contentKey?.let { championId ->
+                val championId = scaffoldNavigator.currentDestination?.contentKey
+                if (championId != null) {
                     ChampionScreen(
                         championId = championId,
                         onBackPress = {
-                            scope.launch {
+                            scope.launch(Dispatchers.IO) {
                                 scaffoldNavigator.navigateBack()
                             }
                         }
                     )
-                } ?: IconsScreenPlaceholder()
+                } else {
+                    IconsScreenPlaceholder(
+                        onClick = {
+                            scope.launch(Dispatchers.IO) {
+                                scaffoldNavigator.navigateBack()
+                            }
+                        }
+                    )
+                }
             }
         },
         paneExpansionState = paneExpansionState,
