@@ -1,5 +1,6 @@
 package com.nei.ichigo.core.designsystem.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -15,9 +16,14 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
+import coil3.ImageLoader
 import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.request.crossfade
+import coil3.util.DebugLogger
+import com.nei.ichigo.core.designsystem.BuildConfig
 
 @Composable
 fun AsyncImage(
@@ -81,5 +87,18 @@ fun AsyncImagePreviewProvider(
 
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         content()
+    }
+}
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun loadImageLoaderFactory() {
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context).apply {
+            crossfade(true)
+            if (BuildConfig.DEBUG) {
+                logger(DebugLogger())
+            }
+        }.build()
     }
 }
