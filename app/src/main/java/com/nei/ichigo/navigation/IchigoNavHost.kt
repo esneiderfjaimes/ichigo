@@ -22,6 +22,8 @@ import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
 import com.nei.ichigo.feature.encyclopedia.settings.navigation.EncyclopediaSettingsRoute
 import com.nei.ichigo.feature.encyclopedia.settings.navigation.encyclopediaSettings
 import com.nei.ichigo.feature.encyclopedia.settings.navigation.navigateToEncyclopediaSettings
+import com.nei.ichigo.feature.licenses.navigation.licencesScreen
+import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
 
 sealed class Screen(
     val route: String,
@@ -55,7 +57,8 @@ sealed class Screen(
         title = R.string.settings,
         icon = Icons.Default.Settings,
         action = {
-            navigateToEncyclopediaSettings(navOptions { launchSingleTop = true })
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToEncyclopediaSettings(navOptions)
         }
     )
 
@@ -81,6 +84,7 @@ fun IchigoNavHost(navController: NavHostController) {
     ) {
         championsListDetail()
         icons()
-        encyclopediaSettings(onDismiss = { navController.popBackStack() })
+        encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
+        licencesScreen(onBackPress = { navController.popBackStack() })
     }
 }

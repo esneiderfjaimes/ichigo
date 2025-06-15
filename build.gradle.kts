@@ -15,6 +15,7 @@ plugins {
     alias(libs.plugins.githooks)
     alias(libs.plugins.littlerobots.version.catalog.update) apply true
     alias(libs.plugins.benmanes.versions) apply true
+    alias(libs.plugins.aboutlibraries) apply true
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {

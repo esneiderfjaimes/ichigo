@@ -54,11 +54,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,6 +70,8 @@ import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.component.appendTitle
+import com.nei.ichigo.core.designsystem.component.appendVersion
 import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
@@ -152,23 +152,9 @@ private fun IconsTopAppBar(
     onPageSizeChange: (Int) -> Unit = {},
 ) {
     TransparentTopAppBar(text = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-        ) {
-            append(stringResource(R.string.icons))
-        }
+        appendTitle(stringResource(R.string.icons))
         if (state is IconsUiState.Success) {
-            if (state.version.isNotBlank()) withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    fontSize = MaterialTheme.typography.titleSmall.fontSize
-                )
-            ) {
-                append(" v${state.version}")
-            }
+            appendVersion(" v${state.version}")
         }
     }) {
         if (state is IconsUiState.Success) {

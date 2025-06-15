@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ichigo.hilt)
     id("kotlinx-serialization")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 android {
@@ -36,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,6 +70,10 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.navigation.compose)
+
+    // about libraries
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
 
     // test
     testImplementation(libs.junit)
