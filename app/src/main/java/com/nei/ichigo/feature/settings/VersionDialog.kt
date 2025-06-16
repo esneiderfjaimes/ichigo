@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.settings
+package com.nei.ichigo.feature.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column

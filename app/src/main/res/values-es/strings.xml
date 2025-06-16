@@ -34,4 +34,12 @@
     <string name="select_a_champion">Selecciona un campeón</string>
     <string name="select_skin">Select skin</string>
     <string name="licenses">Licencias</string>
+
+    <string name="appearance">Apariencia</string>
+    <string name="use_dynamic_colors">Usar colores dinámicos</string>
+    <string name="dark_theme">Tema oscuro</string>
+    <string name="default_system_theme">Tema por defecto del sistema</string>
+    <string name="light">Claro</string>
+    <string name="dark">Oscuro</string>
+    <string name="data_dragon_provided_by_riot_games">Datos de DDragon proporcionados por Riot Games</string>
 </resources>

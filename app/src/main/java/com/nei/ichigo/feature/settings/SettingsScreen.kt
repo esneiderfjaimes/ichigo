@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.settings
+package com.nei.ichigo.feature.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -54,7 +55,7 @@ import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.theme.supportsDynamicTheming
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 import com.nei.ichigo.core.model.DarkThemeConfig
-import com.nei.ichigo.feature.encyclopedia.settings.SettingsViewmodel.SettingsUiState
+import com.nei.ichigo.feature.settings.SettingsViewmodel.SettingsUiState
 
 @Composable
 fun SettingsScreen(onLicenseClick: () -> Unit = {}) {
@@ -136,12 +137,12 @@ fun SuccessContent(
     onLicenseClick: () -> Unit = {},
 ) {
     SectionTitle(
-        text = "Appearance",
+        text = stringResource(R.string.appearance),
     )
 
     if (supportsDynamicTheming()) {
         Item(
-            text = "Use dynamic colors",
+            text = stringResource(R.string.use_dynamic_colors),
             onClick = { onUseDynamicColorSelected(!state.useDynamicColor) },
         ) {
             Switch(
@@ -153,7 +154,7 @@ fun SuccessContent(
 
     var expanded by rememberSaveable { mutableStateOf(false) }
     Item(
-        text = "Dark theme",
+        text = stringResource(R.string.dark_theme),
         onClick = { expanded = !expanded },
     ) {
         IconToggleButton(
@@ -166,14 +167,17 @@ fun SuccessContent(
             )
         }
     }
-    AnimatedVisibility(visible = expanded) {
+    AnimatedVisibility(
+        visible = expanded,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Column {
             DarkThemeConfig.entries.forEach { config ->
                 Item(
                     text = when (config) {
-                        DarkThemeConfig.FOLLOW_SYSTEM -> "Default system theme"
-                        DarkThemeConfig.LIGHT -> "Light"
-                        DarkThemeConfig.DARK -> "Dark"
+                        DarkThemeConfig.FOLLOW_SYSTEM -> stringResource(R.string.default_system_theme)
+                        DarkThemeConfig.LIGHT -> stringResource(R.string.light)
+                        DarkThemeConfig.DARK -> stringResource(R.string.dark)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     onClick = { onDarkThemeSelected(config) },
@@ -197,7 +201,7 @@ fun SuccessContent(
     Spacer(modifier = Modifier.height(12.dp))
 
     SectionTitle(
-        text = "Data provided by Riot Games",
+        text = stringResource(R.string.data_dragon_provided_by_riot_games),
     )
 
     ItemListSelector(

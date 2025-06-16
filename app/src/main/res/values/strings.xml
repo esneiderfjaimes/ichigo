@@ -34,4 +34,11 @@
     <string name="select_a_champion">Select a champion</string>
     <string name="select_skin">Select skin</string>
     <string name="licenses">Licenses</string>
+    <string name="appearance">Appearance</string>
+    <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="default_system_theme">Default system theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="data_dragon_provided_by_riot_games">Data Dragon provided by Riot Games</string>
 </resources>

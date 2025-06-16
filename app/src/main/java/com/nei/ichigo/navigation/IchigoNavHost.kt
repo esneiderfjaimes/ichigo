@@ -19,11 +19,11 @@ import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.EncyclopediaSettingsRoute
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.encyclopediaSettings
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.navigateToEncyclopediaSettings
 import com.nei.ichigo.feature.licenses.navigation.licencesScreen
 import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
+import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
+import com.nei.ichigo.feature.settings.navigation.encyclopediaSettings
+import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
 sealed class Screen(
     val route: String,

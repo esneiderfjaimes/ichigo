@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.settings
+package com.nei.ichigo.feature.settings
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

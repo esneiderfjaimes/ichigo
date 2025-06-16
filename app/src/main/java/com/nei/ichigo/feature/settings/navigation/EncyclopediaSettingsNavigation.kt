@@ -1,10 +1,10 @@
-package com.nei.ichigo.feature.encyclopedia.settings.navigation
+package com.nei.ichigo.feature.settings.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.nei.ichigo.feature.encyclopedia.settings.SettingsScreen
+import com.nei.ichigo.feature.settings.SettingsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

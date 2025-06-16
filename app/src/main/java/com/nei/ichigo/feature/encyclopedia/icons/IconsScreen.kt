@@ -154,7 +154,7 @@ private fun IconsTopAppBar(
     TransparentTopAppBar(text = buildAnnotatedString {
         appendTitle(stringResource(R.string.icons))
         if (state is IconsUiState.Success) {
-            appendVersion(" v${state.version}")
+            appendVersion(state.version)
         }
     }) {
         if (state is IconsUiState.Success) {
