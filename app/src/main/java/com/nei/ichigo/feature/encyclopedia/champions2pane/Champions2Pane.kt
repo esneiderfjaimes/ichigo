@@ -17,6 +17,8 @@ import com.nei.ichigo.feature.encyclopedia.icons.IconsScreenPlaceholder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val SUPPORT_PANE_CHAMPION = false
+
 fun NavGraphBuilder.championsListDetail() {
     composable<ChampionsRoute> {
         Champions2PaneScreen()

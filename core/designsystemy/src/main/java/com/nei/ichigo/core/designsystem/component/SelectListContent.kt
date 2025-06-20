@@ -43,7 +43,9 @@ fun <T> SelectListContent(
     val lazyListState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
+        //  withContext(Dispatchers.IO) {
         lazyListState.animateScrollSelected(selectedItem, items)
+        //   }
     }
 
     LazyColumn(

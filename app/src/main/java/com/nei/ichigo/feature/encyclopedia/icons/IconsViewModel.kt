@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,6 +54,10 @@ class IconsViewModel @Inject constructor(
         pageIndex: Int?,
         pageSize: Int
     ): IconsUiState.Success {
+        Log.d(
+            "IconsViewModel",
+            "mapper() called with: page = $page, pageIndex = $pageIndex, pageSize = $pageSize"
+        )
         val (icons, pageInfo) = if (pageIndex != null) {
             val pageIcons = page.icons.getPage(pageSize = pageSize, pageIndex = pageIndex)
             val totalPages = (page.icons.size + pageSize - 1) / pageSize
@@ -85,10 +90,21 @@ class IconsViewModel @Inject constructor(
         }
     }
 
-    fun onPageSizeChange(pageSize: Int) {
+    fun onPageSizeChange(newPageSize: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            this@IconsViewModel.pageSize.update { pageSize }
+            val previousIndex = pageIndex.value
+            if (previousIndex != null) {
+                val oldPageSize = this@IconsViewModel.pageSize.value
+                val newPageIndex = recalculatePageIndex(previousIndex, oldPageSize, newPageSize)
+                pageIndex.update { newPageIndex }
+            }
+            pageSize.update { newPageSize }
         }
+    }
+
+    private fun recalculatePageIndex(previousIndex: Int, oldPageSize: Int, newPageSize: Int): Int {
+        val itemPosition = previousIndex * oldPageSize
+        return itemPosition / newPageSize
     }
 
     @Stable

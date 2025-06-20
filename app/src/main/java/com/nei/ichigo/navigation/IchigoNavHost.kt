@@ -13,8 +13,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.nei.ichigo.R
+import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
+import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
+import com.nei.ichigo.feature.encyclopedia.champions.navigation.champions
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.navigateToChampions
+import com.nei.ichigo.feature.encyclopedia.champions2pane.SUPPORT_PANE_CHAMPION
 import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
@@ -82,7 +86,12 @@ fun IchigoNavHost(navController: NavHostController) {
         navController = navController,
         startDestination = ChampionsRoute,
     ) {
-        championsListDetail()
+        if (SUPPORT_PANE_CHAMPION) {
+            championsListDetail()
+        } else {
+            champions(onChampionClick = { navController.navigateToChampion(it) })
+            champion(onBackPress = { navController.popBackStack() })
+        }
         icons()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })

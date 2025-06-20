@@ -13,7 +13,7 @@ import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-private const val FORCE_FETCH_ICONS = false
+private const val FORCE_FETCH_ICONS = true
 
 class GetProfileIconsUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -32,18 +32,17 @@ class GetProfileIconsUseCase @Inject constructor(
         val count = profileIconDao.countByVersionAndLang(version, lang)
         if (count <= 0 || (BuildConfig.DEBUG && FORCE_FETCH_ICONS)) {
             val allIcons = networkDataSource.getProfileIcons(version, lang)
-            val entities = allIcons
-                .sortedByDescending { it.id.toInt() }
-                .map { it.asEntity(version, lang) }
+            val entities = allIcons.map { it.asEntity(version, lang) }
             profileIconDao.insertAll(entities)
         }
 
         val profileIcons = profileIconDao.getProfileIcons(version, lang)
-
         ProfileIconsPage(
             version = version,
             lang = lang,
-            icons = profileIcons.map(ProfileIconEntity::asExternalModel),
+            icons = profileIcons
+                .sortedByDescending { it.code.toInt() }
+                .map(ProfileIconEntity::asExternalModel),
         )
     }
 }

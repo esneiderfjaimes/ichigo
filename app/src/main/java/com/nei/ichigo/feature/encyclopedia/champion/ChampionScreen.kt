@@ -42,7 +42,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,15 +93,22 @@ fun ChampionScreen(
     onBackPress: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    ChampionScreen(state = state, onBackPress = onBackPress)
+    ChampionScreen(
+        state = state,
+        updateSelectedSkin = viewModel::updateSelectedSkin,
+        onBackPress = onBackPress
+    )
 }
 
 private val ITEM_SIZE = 80.dp
 private val BORDER_SIZE = 2.dp
 
 @Composable
-private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {}) {
-    var selectedSkin by rememberSaveable { mutableStateOf<Int?>(null) }
+private fun ChampionScreen(
+    state: ChampionUiState,
+    updateSelectedSkin: (Int?) -> Unit = {},
+    onBackPress: () -> Unit = {}
+) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -164,7 +170,7 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
                     champion = champion,
                     version = version,
                     onSkinClick = { indexSkin ->
-                        selectedSkin = indexSkin
+                        updateSelectedSkin(indexSkin)
                     }
                 )
             }
@@ -175,10 +181,8 @@ private fun ChampionScreen(state: ChampionUiState, onBackPress: () -> Unit = {})
         SkinFullscreen(
             championId = state.champion.id,
             skins = state.champion.skins,
-            selectedSkin = selectedSkin,
-            onSelectSkin = { indexSkin ->
-                selectedSkin = indexSkin
-            }
+            selectedSkin = state.selectedSkin,
+            onSelectSkin = updateSelectedSkin
         )
     }
 }

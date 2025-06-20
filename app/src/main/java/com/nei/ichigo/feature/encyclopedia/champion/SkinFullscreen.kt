@@ -69,7 +69,7 @@ fun SkinFullscreen(
                     )
                 }
 
-                val skin = skins[selectedSkin]
+                val skin = skins.getOrNull(selectedSkin) ?: return@Box
 
                 Scaffold(
                     topBar = {

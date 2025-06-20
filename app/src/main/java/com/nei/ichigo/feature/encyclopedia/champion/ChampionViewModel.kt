@@ -8,16 +8,21 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = ChampionViewModel.Factory::class)
 class ChampionViewModel @AssistedInject constructor(
     getChampionUseCase: GetChampionUseCase,
     @Assisted val championId: String,
 ) : ViewModel() {
+
+    private val _selectedSkin = MutableStateFlow<Int?>(null)
+
     val uiState: StateFlow<ChampionUiState> = championUiState(
         championId = championId,
         getChampionUseCase = getChampionUseCase
@@ -28,24 +33,31 @@ class ChampionViewModel @AssistedInject constructor(
     )
 
     private fun championUiState(championId: String, getChampionUseCase: GetChampionUseCase) =
-        getChampionUseCase.invoke(championId).map { result ->
-            result.fold(
-                onSuccess = { page ->
-                    ChampionUiState.Success(
-                        page.champion,
-                        page.version
-                    )
-                },
-                onFailure = { ChampionUiState.Error }
-            )
-        }
+        getChampionUseCase.invoke(championId)
+            .combine(_selectedSkin) { result, selectedSkin ->
+                result.fold(
+                    onSuccess = { page ->
+                        ChampionUiState.Success(
+                            page.champion,
+                            page.version,
+                            selectedSkin
+                        )
+                    },
+                    onFailure = { ChampionUiState.Error }
+                )
+            }
+
+    fun updateSelectedSkin(skinId: Int?) {
+        _selectedSkin.update { skinId }
+    }
 
     sealed interface ChampionUiState {
         data object Loading : ChampionUiState
         data object Error : ChampionUiState
         data class Success(
             val champion: ChampionDetail,
-            val version: String
+            val version: String,
+            val selectedSkin: Int? = null
         ) : ChampionUiState
     }
 

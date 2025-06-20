@@ -26,7 +26,7 @@ fun IchigoDialogContent(
 ) {
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
-        modifier = Modifier.padding(32.dp)
+        modifier = Modifier.padding(12.dp)
     ) {
         Column(
             Modifier
