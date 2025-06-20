@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -50,7 +49,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -228,7 +226,7 @@ private fun IconsTopAppBar(
 
 private val BORDER_SIZE = 0.75.dp
 
-private val ITEM_SIZE = 70.dp
+internal val ITEM_SIZE = 70.dp
 
 private val ITEM_SPADING = 4.dp
 private val ITEM_SHAPE = RoundedCornerShape(25)
@@ -300,7 +298,7 @@ fun ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
-    onClick: () -> Unit = {}
+    onClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = Modifier
@@ -323,7 +321,13 @@ fun ProfileIconItem(
                 )
                 .padding(BORDER_SIZE)
                 .size(size)
-                .clickable(onClick = onClick)
+                .then(
+                    other = if (onClick != null) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    }
+                )
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = icon.id),
                     animatedVisibilityScope = this@AnimatedVisibilityScope,
@@ -360,33 +364,15 @@ fun IconDetails(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
         ) {
             if (icon != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = requestClose
-                        )
-                        .background(Color.Black.copy(alpha = 0.5f))
-                )
-
-                ProfileIconItem(
+                IconFullscreen(
                     icon = icon,
                     version = version,
-                    size = ITEM_SIZE * 2,
-                    onClick = requestClose
+                    requestClose = requestClose
                 )
-
-                BackHandler {
-                    requestClose()
-                }
             }
         }
-
     }
 }
 

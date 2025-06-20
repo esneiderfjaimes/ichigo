@@ -41,4 +41,6 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="data_dragon_provided_by_riot_games">Data Dragon provided by Riot Games</string>
+    <string name="icon">Icon</string>
+    <string name="skin">Skin</string>
 </resources>

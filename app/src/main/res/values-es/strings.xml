@@ -14,6 +14,7 @@
     <string name="encyclopedia">Enciclopedia</string>
     <string name="champions">Campeones</string>
     <string name="icons">Iconos</string>
+    <string name="icon">Icono</string>
 
     <plurals name="number_of_champions">
         <item quantity="one">%d campeón.</item>
@@ -31,6 +32,7 @@
     <string name="icons_per_page">Iconos por página</string>
     <string name="about">Acerca de</string>
     <string name="skins">Aspectos</string>
+    <string name="skin">Aspecto</string>
     <string name="select_a_champion">Selecciona un campeón</string>
     <string name="select_skin">Select skin</string>
     <string name="licenses">Licencias</string>
