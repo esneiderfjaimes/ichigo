@@ -17,3 +17,7 @@ fun getChampionSkinLoadingImage(championName: String, number: Int): String =
 
 fun getProfileIconImage(iconId: String, version: String): String =
     "https://ddragon.leagueoflegends.com/cdn/$version/img/profileicon/$iconId"
+
+// https://ddragon.leagueoflegends.com/cdn/15.12.1/img/item/3110.png
+fun getItemImage(iconId: String, version: String): String =
+    "https://ddragon.leagueoflegends.com/cdn/$version/img/item/$iconId"

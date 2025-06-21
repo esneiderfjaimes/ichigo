@@ -2,8 +2,7 @@ package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,6 +22,9 @@ import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
+import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
+import com.nei.ichigo.feature.encyclopedia.items.navigation.items
+import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
 import com.nei.ichigo.feature.licenses.navigation.licencesScreen
 import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
 import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
@@ -39,7 +41,7 @@ sealed class Screen(
     data object Champions : Screen(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
-        icon = Icons.Default.Face,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
@@ -49,10 +51,21 @@ sealed class Screen(
     data object ProfileIcons : Screen(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
-        icon = Icons.Default.Image,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
+        }
+    )
+
+
+    data object Items : Screen(
+        route = ItemsRoute.javaClass.name,
+        title = R.string.items,
+        icon = Icons.Default.Circle,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToItems(navOptions)
         }
     )
 
@@ -67,7 +80,7 @@ sealed class Screen(
     )
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Settings)
+        val allScreens = listOf(Champions, ProfileIcons, Items, Settings)
     }
 }
 
@@ -93,6 +106,7 @@ fun IchigoNavHost(navController: NavHostController) {
             champion(onBackPress = { navController.popBackStack() })
         }
         icons()
+        items()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }

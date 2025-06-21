@@ -18,6 +18,6 @@ suspend fun <T> LazyListState.animateScrollSelected(selected: T?, list: List<T>)
     } ?: return
 
     if (index >= 0 && index < layoutInfo.totalItemsCount - 1) {
-        animateScrollToItem(index)
+        requestScrollToItem(index)
     }
 }

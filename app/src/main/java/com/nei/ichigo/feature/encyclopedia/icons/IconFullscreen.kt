@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 
 context(SharedTransitionScope, AnimatedVisibilityScope)
 @Composable
@@ -53,10 +54,10 @@ fun IconFullscreen(
                         )
                     }
                 },
-                actions = {
-                    FilledTonalIconButton(onClick = requestClose) {
+                navigationIcon = {
+                    IconButton(onClick = requestClose) {
                         Icon(
-                            imageVector = Icons.Default.Close,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
                             contentDescription = "Close"
                         )
                     }
@@ -71,7 +72,7 @@ fun IconFullscreen(
             contentAlignment = Alignment.Center
         ) {
             ZoomableBox3(
-                modifier = Modifier,
+                modifier = Modifier.fillMaxSize(),
                 maxZoom = 5f,
                 minZoom = 1f,
                 doubleTapZoom = 2f,
@@ -79,7 +80,7 @@ fun IconFullscreen(
                     ProfileIconItem(
                         icon = icon,
                         version = version,
-                        size = ITEM_SIZE * 2,
+                        size = DEFAULT_ITEM_SIZE * 2,
                     )
                 }
             )

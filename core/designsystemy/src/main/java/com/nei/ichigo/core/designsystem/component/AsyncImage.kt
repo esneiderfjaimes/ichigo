@@ -63,9 +63,10 @@ fun AsyncImage(
 fun AsyncImagePreviewProvider(
     width: Int = 0,
     height: Int = 0,
+    color: Color? = null,
     content: @Composable () -> Unit
 ) {
-    val randomColor = Color(
+    val randomColor = color ?: Color(
         alpha = 128,
         red = (0..255).random(),
         green = (0..255).random(),

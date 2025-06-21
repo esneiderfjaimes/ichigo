@@ -27,6 +27,12 @@
         <item quantity="other">%d icons.</item>
     </plurals>
 
+    <plurals name="number_of_items">
+        <item quantity="one">%d item.</item>
+        <item quantity="many">%d items.</item>
+        <item quantity="other">%d items.</item>
+    </plurals>
+
     <string name="paginate_items">Paginate items</string>
     <string name="icons_per_page">Icons per page</string>
     <string name="about">About</string>
@@ -43,4 +49,5 @@
     <string name="data_dragon_provided_by_riot_games">Data Dragon provided by Riot Games</string>
     <string name="icon">Icon</string>
     <string name="skin">Skin</string>
+    <string name="items">Items</string>
 </resources>
