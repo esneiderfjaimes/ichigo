@@ -3,9 +3,11 @@ package com.nei.ichigo.core.network.retrofit
 import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.core.model.ChampionDetail
+import com.nei.ichigo.core.model.Item
 import com.nei.ichigo.core.model.ProfileIcon
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import com.nei.ichigo.core.network.model.ChampionResponseServer
+import com.nei.ichigo.core.network.model.ItemResponseServer
 import com.nei.ichigo.core.network.model.PageResponseServer
 import com.nei.ichigo.core.network.model.ProfileIconResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
@@ -52,6 +54,12 @@ private interface DataDragonApi {
         @Path("version") version: String,
         @Path("lang") lang: String,
     ): PageResponseServer<ProfileIconResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/item.json")
+    suspend fun items(
+        @Path("version") version: String,
+        @Path("lang") lang: String,
+    ): PageResponseServer<ItemResponseServer>
 }
 
 @Singleton
@@ -117,5 +125,15 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
         networkApi.profileIcons(version, lang)
             .data!!.values
             .map(ProfileIconResponseServer::asExternalModel)
+    }
+
+    override suspend fun getItems(version: String, lang: String): List<Item> {
+        return withContext(Dispatchers.IO) {
+            networkApi.items(version, lang)
+                .data!!
+                .map { (id, item) ->
+                    item.asExternalModel(id)
+                }
+        }
     }
 }

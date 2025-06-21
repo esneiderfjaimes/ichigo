@@ -23,6 +23,9 @@ import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
+import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
+import com.nei.ichigo.feature.encyclopedia.items.navigation.items
+import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
 import com.nei.ichigo.feature.licenses.navigation.licencesScreen
 import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
 import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
@@ -56,6 +59,17 @@ sealed class Screen(
         }
     )
 
+
+    data object Items : Screen(
+        route = ItemsRoute.javaClass.name,
+        title = R.string.items,
+        icon = Icons.Default.Image,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToItems(navOptions)
+        }
+    )
+
     data object Settings : Screen(
         route = EncyclopediaSettingsRoute.javaClass.name,
         title = R.string.settings,
@@ -67,7 +81,7 @@ sealed class Screen(
     )
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Settings)
+        val allScreens = listOf(Champions, ProfileIcons, Items, Settings)
     }
 }
 
@@ -93,6 +107,7 @@ fun IchigoNavHost(navController: NavHostController) {
             champion(onBackPress = { navController.popBackStack() })
         }
         icons()
+        items()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }
