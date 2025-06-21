@@ -5,8 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +13,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -34,8 +33,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -46,17 +45,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
-import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
+import com.nei.ichigo.core.designsystem.component.IchigoImage
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.component.appendVersion
-import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getItemImage
-import com.nei.ichigo.core.model.Gold
-import com.nei.ichigo.core.model.Item
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -97,12 +95,10 @@ private fun ItemsTopAppBar(
     })
 }
 
-val BORDER_SIZE = 0.75.dp
-val ITEM_SIZE = 70.dp
-val IMAGE_PADDING = 8.dp
-val ITEM_SPADING = 4.dp
-val ITEM_SHAPE = RoundedCornerShape(25)
-val GRID_MIN_SIZE = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2) + (IMAGE_PADDING * 2)
+val EXTRA_WIDTH = 16.dp
+val ITEM_PADDING = 4.dp
+val ITEM_SHAPE = RectangleShape
+val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (ITEM_PADDING * 2) + EXTRA_WIDTH
 
 @Composable
 private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValues) {
@@ -145,75 +141,26 @@ private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValu
                 contentType = { it }
             ) { id ->
                 val item = state.itemsMap[id] ?: return@items
-                Column(
-                    modifier = Modifier
-                        .padding(ITEM_SPADING),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        model = getItemImage(item.image, state.version),
-                        modifier = Modifier
-                            .clip(ITEM_SHAPE)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .border(
-                                width = BORDER_SIZE,
-                                color = Gold,
-                                shape = ITEM_SHAPE
-                            )
-                            .padding(BORDER_SIZE)
-                            .size(ITEM_SIZE)
-                            .clickable { currentItemId = item.id },
-                    )
-                    Text(
-                        item.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Center
-                    )
-                    DropdownMenu(
-                        expanded = currentItemId == item.id,
-                        onDismissRequest = { currentItemId = null },
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(8.dp)
-                        ) {
-                            ItemPossibility(item, state.itemsMap, state.version) { id ->
-                                if (id == item.id) return@ItemPossibility
-                                scope.launch {
-                                    val index = state.itemsOrder.indexOf(id)
-                                    lazyGridState.animateScrollToItem(index)
-                                    currentItemId = id
-                                }
-                            }
-
-                            Text(
-                                text = item.name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(4.dp)
-                            )
-
-                            if (item.description.isNotBlank()) {
-                                Text(
-                                    item.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-
-                            ItemRecipeTree(item, state.itemsMap, state.version) { id ->
-                                if (id == item.id) return@ItemRecipeTree
-                                scope.launch {
-                                    val index = state.itemsOrder.indexOf(id)
-                                    lazyGridState.animateScrollToItem(index)
-                                    currentItemId = id
-                                }
-                            }
+                Item(
+                    item = item,
+                    version = state.version,
+                    onLongClick = { currentItemId = it }
+                )
+                PopUpRecipes(
+                    item = item,
+                    itemsMap = state.itemsMap,
+                    version = state.version,
+                    currentItemId = currentItemId,
+                    onDismissRequest = { currentItemId = null },
+                    scrollToItem = {
+                        scope.launch {
+                            val index = state.itemsOrder.indexOf(it)
+                            if (index != -1) return@launch
+                            lazyGridState.animateScrollToItem(index)
+                            currentItemId = it
                         }
                     }
-                }
+                )
             }
         }
     )
@@ -237,21 +184,80 @@ private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValu
     }
 }
 
-fun genItemPreview(id: String, from: List<String> = emptyList()) = Item(
+@Composable
+fun Item(
+    item: ItemUi,
+    version: String,
+    onClick: (String) -> Unit = {},
+    onLongClick: (String) -> Unit = {},
+) {
+    Column(
+        modifier = Modifier
+            .padding(ITEM_PADDING),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IchigoImage(
+            model = getItemImage(item.image, version),
+            modifier = Modifier.combinedClickable(
+                onClick = { onClick(item.id) },
+                onLongClick = { onLongClick(item.id) }
+            ),
+            shape = ITEM_SHAPE,
+        )
+        Text(
+            item.name,
+            modifier = Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun PopUpRecipes(
+    item: ItemUi,
+    itemsMap: Map<String, ItemUi>,
+    version: String,
+    currentItemId: String?,
+    onDismissRequest: () -> Unit,
+    scrollToItem: (String) -> Unit
+) {
+    DropdownMenu(
+        expanded = currentItemId == item.id,
+        onDismissRequest = onDismissRequest,
+        shape = RoundedCornerShape(8.dp),
+        tonalElevation = 4.dp
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            ItemPossibility(item, itemsMap, version) { id ->
+                if (id == item.id) return@ItemPossibility
+                scrollToItem(id)
+            }
+
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(4.dp)
+            )
+
+            ItemRecipeTree(item, itemsMap, version) { id ->
+                if (id == item.id) return@ItemRecipeTree
+                scrollToItem(id)
+            }
+        }
+    }
+}
+
+fun genItemPreview(id: String, from: List<String> = emptyList()) = ItemUi(
     id = id,
     name = "Item $id",
-    plaintext = "Item $id",
-    description = "Item $id",
     image = "",
     from = from,
     into = emptyList(),
-    maps = emptySet(),
-    gold = Gold(
-        base = 0,
-        purchasable = false,
-        total = 0,
-        sell = 0
-    )
 )
 
 @Preview

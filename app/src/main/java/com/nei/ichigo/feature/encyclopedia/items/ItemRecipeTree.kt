@@ -1,8 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.items
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,28 +8,28 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_BORDER_WIDTH
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
+import com.nei.ichigo.core.designsystem.component.IchigoImage
 import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getItemImage
-import com.nei.ichigo.core.model.Item
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
 
-private val ITEM_RECIPE_TREE_SIZE = ITEM_SIZE * 0.75f
+private val ITEM_RECIPE_TREE_SIZE = DEFAULT_ITEM_SIZE * 0.75f
 private val ITEM_RECIPE_TREE_SPACING = 8.dp
 private val DECOR_HEIGHT = 4.dp
-private val BORDER_TOTAL_SIZE = BORDER_SIZE * 2
-private val DECOR_WIDTH = ITEM_RECIPE_TREE_SIZE + BORDER_TOTAL_SIZE + ITEM_RECIPE_TREE_SPACING
+private val BORDER_TOTAL_SIZE = DEFAULT_ITEM_BORDER_WIDTH * 2
+private val DECOR_WIDTH = ITEM_RECIPE_TREE_SIZE + ITEM_RECIPE_TREE_SPACING
 
 enum class Decoration {
     SINGLE,
@@ -42,8 +40,8 @@ enum class Decoration {
 
 @Composable
 fun ItemRecipeTree(
-    item: Item,
-    itemsMap: Map<String, Item>,
+    item: ItemUi,
+    itemsMap: Map<String, ItemUi>,
     version: String,
     decoration: Decoration? = null,
     onClick: (String) -> Unit,
@@ -104,8 +102,8 @@ fun ItemRecipeTree(
 
 @Composable
 fun ItemPossibility(
-    item: Item,
-    itemsMap: Map<String, Item>,
+    item: ItemUi,
+    itemsMap: Map<String, ItemUi>,
     version: String,
     onClick: (String) -> Unit,
 ) {
@@ -138,20 +136,13 @@ fun ItemPossibility(
 }
 
 @Composable
-fun ItemTree(item: Item, version: String, onClick: (String) -> Unit = {}) {
-    AsyncImage(
+fun ItemTree(item: ItemUi, version: String, onClick: (String) -> Unit = {}) {
+    IchigoImage(
         model = getItemImage(item.image, version),
         modifier = Modifier
-            .clip(ITEM_SHAPE)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .border(
-                width = BORDER_SIZE,
-                color = Gold,
-                shape = ITEM_SHAPE
-            )
-            .padding(BORDER_SIZE)
-            .size(ITEM_RECIPE_TREE_SIZE)
             .clickable { onClick(item.id) },
+        shape = ITEM_SHAPE,
+        size = ITEM_RECIPE_TREE_SIZE
     )
 }
 
