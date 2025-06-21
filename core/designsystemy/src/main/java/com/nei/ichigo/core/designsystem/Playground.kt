@@ -652,7 +652,8 @@ fun ZoomableBox3(
                 translationY = offset.value.y
             )
             .transformable(state = transformableState)
-            .clipToBounds()
+            .clipToBounds(),
+        contentAlignment = Alignment.Center
     ) {
         content(Modifier.fillMaxSize())
     }

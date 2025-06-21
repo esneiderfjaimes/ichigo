@@ -2,8 +2,7 @@ package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,7 +41,7 @@ sealed class Screen(
     data object Champions : Screen(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
-        icon = Icons.Default.Face,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
@@ -52,7 +51,7 @@ sealed class Screen(
     data object ProfileIcons : Screen(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
-        icon = Icons.Default.Image,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
@@ -63,7 +62,7 @@ sealed class Screen(
     data object Items : Screen(
         route = ItemsRoute.javaClass.name,
         title = R.string.items,
-        icon = Icons.Default.Image,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToItems(navOptions)

@@ -301,8 +301,6 @@ private fun ItemPopUpPreview() {
         "5" to genItemPreview(id = "5"),
         "6" to genItemPreview(id = "6"),
         "7" to genItemPreview(id = "7"),
-        "8" to genItemPreview(id = "8"),
-        "9" to genItemPreview(id = "9"),
     )
     AsyncImagePreviewProvider {
         Surface {
@@ -313,32 +311,5 @@ private fun ItemPopUpPreview() {
                 scrollToItem = {}
             )
         }
-    }
-}
-
-
-@Preview
-@Composable
-private fun ItemRecipeTreePreview() {
-    val map = mapOf(
-        "1" to genItemPreview(
-            id = "1",
-            listOf("2", "3")
-        ),
-        "2" to genItemPreview(
-            id = "2",
-            from = listOf("5", "6", "7"),
-        ),
-        "3" to genItemPreview(
-            id = "3",
-            from = listOf("4"),
-        ),
-        "4" to genItemPreview(id = "4"),
-        "5" to genItemPreview(id = "5"),
-        "6" to genItemPreview(id = "6"),
-        "7" to genItemPreview(id = "7"),
-    )
-    AsyncImagePreviewProvider {
-        ItemRecipeTree(map["1"]!!, map, "1.0.0") {}
     }
 }

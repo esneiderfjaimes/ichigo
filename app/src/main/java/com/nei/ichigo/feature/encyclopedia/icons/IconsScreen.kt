@@ -58,6 +58,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
@@ -312,6 +313,7 @@ fun ProfileIconItem(
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
                     animatedVisibilityScope = this@AnimatedVisibilityScope,
+                    clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                 ),
             size = size,
         )

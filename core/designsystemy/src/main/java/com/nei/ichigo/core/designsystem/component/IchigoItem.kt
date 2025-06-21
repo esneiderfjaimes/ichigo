@@ -26,7 +26,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import com.nei.ichigo.core.designsystem.theme.Gold
 
 val DEFAULT_ITEM_PADDING = 4.dp
-val DEFAULT_ITEM_SIZE = 70.dp
+val DEFAULT_ITEM_SIZE = 75.dp
 val DEFAULT_ITEM_SHAPE = RoundedCornerShape(25)
 val DEFAULT_ITEM_BORDER_WIDTH = 0.75.dp
 
@@ -40,12 +40,14 @@ fun IchigoItemImage(
 ) {
     AsyncImage(
         model = model,
-        modifier = modifier
-            // first limit image size
-            .size(size)
+        modifier = Modifier
             // add background
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
+            // add other modifiers
+            .then(modifier)
+            // first limit image size
+            .size(size)
             // add border
             .border(
                 width = borderWidth,
