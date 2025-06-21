@@ -8,8 +8,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +19,10 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.MoreVert
@@ -48,7 +43,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -61,16 +55,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
-import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
+import com.nei.ichigo.core.designsystem.component.IchigoItemImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.component.appendVersion
-import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -224,13 +220,7 @@ private fun IconsTopAppBar(
     }
 }
 
-private val BORDER_SIZE = 0.75.dp
-
-internal val ITEM_SIZE = 70.dp
-
-private val ITEM_SPADING = 4.dp
-private val ITEM_SHAPE = RoundedCornerShape(25)
-private val GRID_MIN_SIZE = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2)
+private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
 context(SharedTransitionScope)
 @Composable
@@ -281,7 +271,7 @@ private fun SuccessContent(
                 ) {
                     ProfileIconItem(
                         icon = icon,
-                        size = ITEM_SIZE,
+                        size = DEFAULT_ITEM_SIZE,
                         version = version
                     ) {
                         onSelect(icon)
@@ -302,25 +292,16 @@ fun ProfileIconItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(ITEM_SPADING)
+            .padding(DEFAULT_ITEM_PADDING)
             .sharedBounds(
                 sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
                 animatedVisibilityScope = this@AnimatedVisibilityScope,
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
+        IchigoItemImage(
             model = getProfileIconImage(icon.image, version),
             modifier = Modifier
-                .clip(ITEM_SHAPE)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(
-                    width = BORDER_SIZE,
-                    color = Gold,
-                    shape = ITEM_SHAPE
-                )
-                .padding(BORDER_SIZE)
-                .size(size)
                 .then(
                     other = if (onClick != null) {
                         Modifier.clickable(onClick = onClick)
@@ -329,18 +310,14 @@ fun ProfileIconItem(
                     }
                 )
                 .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = icon.id),
+                    sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
                     animatedVisibilityScope = this@AnimatedVisibilityScope,
-                    clipInOverlayDuringTransition = OverlayClip(ITEM_SHAPE)
                 ),
+            size = size,
         )
-        Text(
+        IchigoItemLabel(
             text = "#" + icon.id,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.background, CircleShape)
-                .padding(4.dp)
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
                     animatedVisibilityScope = this@AnimatedVisibilityScope,

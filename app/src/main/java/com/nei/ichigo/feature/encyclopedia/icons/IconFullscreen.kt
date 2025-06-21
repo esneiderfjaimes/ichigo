@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 
 context(SharedTransitionScope, AnimatedVisibilityScope)
 @Composable
@@ -79,7 +80,7 @@ fun IconFullscreen(
                     ProfileIconItem(
                         icon = icon,
                         version = version,
-                        size = ITEM_SIZE * 2,
+                        size = DEFAULT_ITEM_SIZE * 2,
                     )
                 }
             )

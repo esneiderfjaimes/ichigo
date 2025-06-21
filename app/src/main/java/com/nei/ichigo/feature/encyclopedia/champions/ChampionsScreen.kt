@@ -1,27 +1,21 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material3.Badge
@@ -38,7 +32,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -49,14 +42,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
-import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
+import com.nei.ichigo.core.designsystem.component.IchigoItemImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.component.appendVersion
-import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
@@ -150,8 +145,7 @@ private fun ChampionsTopAppBar(
     }
 }
 
-private val ITEM_SIZE = 70.dp
-private val ITEM_SPADING = 4.dp
+private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
 @Composable
 private fun ChampionsSuccess(
@@ -169,7 +163,7 @@ private fun ChampionsSuccess(
     )
     LazyVerticalGrid(
         modifier = Modifier,
-        columns = GridCells.Adaptive(minSize = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2)),
+        columns = GridCells.Adaptive(minSize = GRID_MIN_SIZE),
         horizontalArrangement = Arrangement.SpaceAround,
         contentPadding = contentPadding,
         content = {
@@ -193,8 +187,6 @@ private fun ChampionsSuccess(
     )
 }
 
-private val BORDER_SIZE = 0.75.dp
-
 @Composable
 fun ChampionItem(
     champion: Champion,
@@ -204,30 +196,18 @@ fun ChampionItem(
 ) {
     Column(
         modifier = modifier
-            .padding(ITEM_SPADING),
+            .padding(DEFAULT_ITEM_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
+        IchigoItemImage(
             model = getChampionImage(champion.image, version),
             modifier = Modifier
-                .clip(RoundedCornerShape(25))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(
-                    width = BORDER_SIZE,
-                    color = Gold,
-                    shape = RoundedCornerShape(25)
-                )
-                .padding(BORDER_SIZE)
-                .size(ITEM_SIZE)
                 .clickable {
                     onChampionClick(champion.id)
                 },
         )
-        Spacer(Modifier.height(4.dp))
-        Text(
+        IchigoItemLabel(
             text = champion.name,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
         )
     }
 }

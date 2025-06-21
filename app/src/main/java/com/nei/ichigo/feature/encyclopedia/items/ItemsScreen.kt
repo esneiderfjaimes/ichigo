@@ -13,22 +13,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,8 +42,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
-import com.nei.ichigo.core.designsystem.component.IchigoImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.appendTitle
@@ -55,7 +53,6 @@ import com.nei.ichigo.core.designsystem.component.appendVersion
 import com.nei.ichigo.core.designsystem.utils.getItemImage
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
-import kotlinx.coroutines.launch
 
 @Composable
 fun ItemsScreen() {
@@ -96,9 +93,8 @@ private fun ItemsTopAppBar(
 }
 
 val EXTRA_WIDTH = 16.dp
-val ITEM_PADDING = 4.dp
 val ITEM_SHAPE = RectangleShape
-val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (ITEM_PADDING * 2) + EXTRA_WIDTH
+val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2) + EXTRA_WIDTH
 
 @Composable
 private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValues) {
@@ -111,7 +107,6 @@ private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValu
     )
 
     val lazyGridState = rememberLazyGridState()
-    val scope = rememberCoroutineScope()
     var currentItemId by rememberSaveable { mutableStateOf<String?>(null) }
 
     LazyVerticalGrid(
@@ -144,21 +139,16 @@ private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValu
                 Item(
                     item = item,
                     version = state.version,
-                    onLongClick = { currentItemId = it }
-                )
-                PopUpRecipes(
-                    item = item,
                     itemsMap = state.itemsMap,
-                    version = state.version,
                     currentItemId = currentItemId,
+                    onClick = { currentItemId = it },
+                    onLongClick = { currentItemId = it },
                     onDismissRequest = { currentItemId = null },
-                    scrollToItem = {
-                        scope.launch {
-                            val index = state.itemsOrder.indexOf(it)
-                            if (index != -1) return@launch
-                            lazyGridState.animateScrollToItem(index)
-                            currentItemId = it
-                        }
+                    scrollToItem = scrollToItem@{ it ->
+                        val index = state.itemsOrder.indexOf(it)
+                        if (index == -1) return@scrollToItem
+                        currentItemId = it
+                        lazyGridState.requestScrollToItem(index)
                     }
                 )
             }
@@ -188,15 +178,19 @@ private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValu
 fun Item(
     item: ItemUi,
     version: String,
-    onClick: (String) -> Unit = {},
-    onLongClick: (String) -> Unit = {},
+    itemsMap: Map<String, ItemUi>,
+    currentItemId: String?,
+    onDismissRequest: () -> Unit,
+    onClick: (String) -> Unit,
+    scrollToItem: (String) -> Unit,
+    onLongClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
-            .padding(ITEM_PADDING),
+            .padding(DEFAULT_ITEM_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IchigoImage(
+        IchigoItemImage(
             model = getItemImage(item.image, version),
             modifier = Modifier.combinedClickable(
                 onClick = { onClick(item.id) },
@@ -204,60 +198,30 @@ fun Item(
             ),
             shape = ITEM_SHAPE,
         )
-        Text(
-            item.name,
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
+        IchigoItemLabel(
+            text = item.name,
+        )
+        ItemPopUp(
+            item = item,
+            itemsMap = itemsMap,
+            version = version,
+            currentItemId = currentItemId,
+            onDismissRequest = onDismissRequest,
+            scrollToItem = scrollToItem
         )
     }
 }
 
-@Composable
-fun PopUpRecipes(
-    item: ItemUi,
-    itemsMap: Map<String, ItemUi>,
-    version: String,
-    currentItemId: String?,
-    onDismissRequest: () -> Unit,
-    scrollToItem: (String) -> Unit
-) {
-    DropdownMenu(
-        expanded = currentItemId == item.id,
-        onDismissRequest = onDismissRequest,
-        shape = RoundedCornerShape(8.dp),
-        tonalElevation = 4.dp
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            ItemPossibility(item, itemsMap, version) { id ->
-                if (id == item.id) return@ItemPossibility
-                scrollToItem(id)
-            }
-
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(4.dp)
-            )
-
-            ItemRecipeTree(item, itemsMap, version) { id ->
-                if (id == item.id) return@ItemRecipeTree
-                scrollToItem(id)
-            }
-        }
-    }
-}
-
-fun genItemPreview(id: String, from: List<String> = emptyList()) = ItemUi(
+fun genItemPreview(
+    id: String,
+    from: List<String> = emptyList(),
+    into: List<String> = emptyList()
+) = ItemUi(
     id = id,
     name = "Item $id",
     image = "",
     from = from,
-    into = emptyList(),
+    into = into,
 )
 
 @Preview
