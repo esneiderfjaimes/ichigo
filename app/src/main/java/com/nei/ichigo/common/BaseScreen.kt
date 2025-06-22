@@ -2,6 +2,7 @@ package com.nei.ichigo.common
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -21,9 +22,13 @@ import com.nei.ichigo.core.designsystem.component.appendVersion
 fun <T> BaseScreen(
     state: UiState<T>,
     topBar: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable (state: T, innerPadding: PaddingValues) -> Unit
 ) {
-    Scaffold(topBar = topBar) { innerPadding ->
+    Scaffold(
+        topBar = topBar,
+        bottomBar = bottomBar
+    ) { innerPadding ->
         when (state) {
             UiState.Error -> {
                 ErrorScreen(
@@ -52,13 +57,17 @@ fun <T> BaseScreen(
 fun <T : PageUI> BaseTopAppBar(
     state: UiState<T>,
     @StringRes title: Int,
+    actions: @Composable (RowScope.() -> Unit) = {}
 ) {
-    TransparentTopAppBar(text = buildAnnotatedString {
-        appendTitle(stringResource(title))
-        if (state is UiState.Success) {
-            appendVersion(state.content.version)
-        }
-    })
+    TransparentTopAppBar(
+        text = buildAnnotatedString {
+            appendTitle(stringResource(title))
+            if (state is UiState.Success) {
+                appendVersion(state.content.version)
+            }
+        },
+        actions = actions
+    )
 }
 
 @Preview

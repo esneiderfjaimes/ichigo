@@ -1,6 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.spells
 
-import com.nei.ichigo.common.BaseViewModel
+import com.nei.ichigo.common.BaseResultViewModel
 import com.nei.ichigo.common.PageUI
 import com.nei.ichigo.core.data.model.Page
 import com.nei.ichigo.core.domain.GetSpellsUseCase
@@ -11,11 +11,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SpellsViewModel @Inject constructor(
     getSpellsUseCase: GetSpellsUseCase,
-) : BaseViewModel<Page<Spell>, SpellsViewModel.SpellsUiState>(getSpellsUseCase()) {
+) : BaseResultViewModel<Page<Spell>, SpellsViewModel.SpellsUiState>() {
+
+    override val flow = getSpellsUseCase()
 
     private val modes = setOf("ARAM", "CLASSIC")
 
-    override fun mapper(page: Page<Spell>): SpellsUiState {
+    override fun mapperResult(page: Page<Spell>): SpellsUiState {
         val spells = page.data.asSequence()
             .let {
                 if (modes.isNotEmpty()) {

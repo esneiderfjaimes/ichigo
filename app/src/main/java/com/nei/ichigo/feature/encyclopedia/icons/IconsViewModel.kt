@@ -2,58 +2,44 @@ package com.nei.ichigo.feature.encyclopedia.icons
 
 import android.util.Log
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nei.ichigo.common.Base2ViewModel
+import com.nei.ichigo.common.PageUI
 import com.nei.ichigo.core.data.model.ProfileIconsPage
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
+import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState.Companion.PAGE_SIZE_DEFAULT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class IconsViewModel @Inject constructor(
     getProfileIconsUseCase: GetProfileIconsUseCase
-) : ViewModel() {
+) : Base2ViewModel<IconsUiState>() {
+
     private val pageIndex = MutableStateFlow<Int?>(0)
     private val pageSize = MutableStateFlow(PAGE_SIZE_DEFAULT)
 
-    val uiState: StateFlow<IconsUiState> =
-        combine(getProfileIconsUseCase(), pageIndex, pageSize) { pageResult, pageIndex, pageSize ->
-            pageResult.fold(
-                onSuccess = { page ->
-                    mapper(page, pageIndex, pageSize)
-                },
-                onFailure = {
-                    it.printStackTrace()
-                    IconsUiState.Error
-                }
-            )
-        }.catch {
-            it.printStackTrace()
-            emit(IconsUiState.Error)
-        }.flowOn(Dispatchers.IO).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = IconsUiState.Loading,
-        )
+    override val flow = combine(
+        flow = getProfileIconsUseCase(),
+        flow2 = pageIndex,
+        flow3 = pageSize,
+        transform = ::mapper
+    )
 
     private fun mapper(
-        page: ProfileIconsPage,
+        pageResult: Result<ProfileIconsPage>,
         pageIndex: Int?,
         pageSize: Int
-    ): IconsUiState.Success {
+    ): IconsUiState {
+        val page = pageResult.getOrThrow()
         Log.d(
             "IconsViewModel",
             "mapper() called with: page = $page, pageIndex = $pageIndex, pageSize = $pageSize"
@@ -68,13 +54,13 @@ class IconsViewModel @Inject constructor(
         } else {
             page.icons to null
         }
-        return IconsUiState.Success(
-            version = page.version,
-            lang = page.lang,
+        return IconsUiState(
             icons = icons.map(ProfileIcon::toUi),
             totalIcons = page.icons.size,
             pageInfo = pageInfo,
-            pageSize = pageSize
+            pageSize = pageSize,
+            version = page.version,
+            lang = page.lang
         )
     }
 
@@ -108,23 +94,14 @@ class IconsViewModel @Inject constructor(
     }
 
     @Stable
-    sealed interface IconsUiState {
-        @Stable
-        data object Loading : IconsUiState
-
-        @Stable
-        data class Success(
-            val version: String,
-            val lang: String,
-            val icons: List<IconUi>,
-            val totalIcons: Int,
-            val pageInfo: PageInfo?,
-            val pageSize: Int,
-        ) : IconsUiState
-
-        @Stable
-        data object Error : IconsUiState
-
+    data class IconsUiState(
+        val icons: List<IconUi>,
+        val totalIcons: Int,
+        val pageInfo: PageInfo?,
+        val pageSize: Int,
+        override val version: String,
+        override val lang: String,
+    ) : PageUI {
         companion object {
             const val PAGE_SIZE_DEFAULT = 25
             val PAGE_SIZES = listOf(25, 50, 100)

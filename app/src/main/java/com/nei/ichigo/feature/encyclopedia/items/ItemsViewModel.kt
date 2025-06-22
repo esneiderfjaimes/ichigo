@@ -1,7 +1,7 @@
 package com.nei.ichigo.feature.encyclopedia.items
 
 import androidx.core.text.HtmlCompat
-import com.nei.ichigo.common.BaseViewModel
+import com.nei.ichigo.common.BaseResultViewModel
 import com.nei.ichigo.common.PageUI
 import com.nei.ichigo.core.data.model.ItemsPage
 import com.nei.ichigo.core.domain.GetItemsUseCase
@@ -13,11 +13,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     getItemsUseCase: GetItemsUseCase
-) : BaseViewModel<ItemsPage, ItemsUiState>(getItemsUseCase()) {
+) : BaseResultViewModel<ItemsPage, ItemsUiState>() {
+
+    override val flow = getItemsUseCase.invoke()
 
     val mapsFilter = setOf<String>("11")
 
-    override fun mapper(page: ItemsPage): ItemsUiState {
+    override fun mapperResult(page: ItemsPage): ItemsUiState {
         val items = page.icons
             .asSequence()
             .let { seq ->
