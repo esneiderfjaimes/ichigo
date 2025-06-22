@@ -1,12 +1,15 @@
 package com.nei.ichigo.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -38,6 +41,7 @@ fun IchigoApp() {
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
     NavigationSuiteScaffold(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
         layoutType = navSuiteType,
         navigationSuiteItems = {
             Screen.allScreens.forEach { screen ->

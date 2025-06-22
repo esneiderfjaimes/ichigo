@@ -4,14 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -23,7 +18,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,24 +28,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
+import com.nei.ichigo.common.BaseScreen
+import com.nei.ichigo.common.BaseTopAppBar
+import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
-import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
-import com.nei.ichigo.core.designsystem.component.LoadingScreen
-import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
-import com.nei.ichigo.core.designsystem.component.appendTitle
-import com.nei.ichigo.core.designsystem.component.appendVersion
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
@@ -71,60 +61,40 @@ fun ChampionsScreen(
 
 @Composable
 private fun ChampionsScreen(
-    state: ChampionsUiState,
+    state: UiState<out ChampionsUiState>,
     onTagSelected: (String?) -> Unit = {},
     onChampionClick: (String) -> Unit = {}
 ) {
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+    BaseScreen(
+        state = state,
         topBar = {
             ChampionsTopAppBar(
                 state = state,
                 onTagSelected = onTagSelected
             )
         },
-        contentWindowInsets = WindowInsets.safeDrawing
-            .only(WindowInsetsSides.Top)
-    ) { innerPadding ->
-        when (state) {
-            ChampionsUiState.Error -> {
-                ErrorScreen(Modifier.padding(innerPadding))
-            }
-
-            ChampionsUiState.Loading -> {
-                LoadingScreen(Modifier.padding(innerPadding))
-            }
-
-            is ChampionsUiState.Success -> {
-                ChampionsSuccess(
-                    champions = state.champions,
-                    version = state.version,
-                    innerPadding = innerPadding,
-                    onChampionClick = onChampionClick
-                )
-            }
-        }
+    ) { state, innerPadding ->
+        ChampionsSuccess(
+            champions = state.champions,
+            version = state.version,
+            innerPadding = innerPadding,
+            onChampionClick = onChampionClick
+        )
     }
 }
 
 @Composable
 private fun ChampionsTopAppBar(
-    state: ChampionsUiState,
+    state: UiState<out ChampionsUiState>,
     onTagSelected: (String?) -> Unit
 ) {
-    TransparentTopAppBar(text = buildAnnotatedString {
-        appendTitle(stringResource(R.string.champions))
-        if (state is ChampionsUiState.Success) {
-            appendVersion(state.version)
-        }
-    }) {
-        if (state is ChampionsUiState.Success) {
+    BaseTopAppBar(state, R.string.champions) {
+        if (state is UiState.Success) {
             var openFilterDialog by rememberSaveable { mutableStateOf(false) }
             IconButton(onClick = { openFilterDialog = true }) {
                 BadgedBox(
                     badge = {
-                        if (state.tagSelected != null) {
+                        if (state.content.tagSelected != null) {
                             Badge()
                         }
                     }
@@ -135,8 +105,8 @@ private fun ChampionsTopAppBar(
 
             if (openFilterDialog) {
                 ChampionsFilterDialog(
-                    currentTagSelected = state.tagSelected,
-                    champions = state.tags,
+                    currentTagSelected = state.content.tagSelected,
+                    champions = state.content.tags,
                     onDismiss = { openFilterDialog = false },
                     onTagSelected = onTagSelected
                 )
@@ -217,31 +187,20 @@ fun ChampionItem(
 fun ChampionsScreenPreview() {
     AsyncImagePreviewProvider {
         ChampionsScreen(
-            state = ChampionsUiState.Success(
-                version = "1.0.0",
-                lang = "en_US",
-                champions = (1..100).map {
-                    Champion(
-                        id = it.toString(),
-                        name = "Champ $it",
-                        image = "",
-                        tags = emptyList()
-                    )
-                },
-                tags = emptyList()
+            state = UiState.Success(
+                ChampionsUiState(
+                    version = "1.0.0",
+                    champions = (1..100).map {
+                        Champion(
+                            id = it.toString(),
+                            name = "Champ $it",
+                            image = "",
+                            tags = emptyList()
+                        )
+                    },
+                    tags = emptyList()
+                )
             )
         )
     }
-}
-
-@Preview
-@Composable
-fun ChampionsScreenErrorPreview() {
-    ChampionsScreen(state = ChampionsUiState.Error)
-}
-
-@Preview
-@Composable
-fun ChampionsScreenLoadingPreview() {
-    ChampionsScreen(state = ChampionsUiState.Loading)
 }

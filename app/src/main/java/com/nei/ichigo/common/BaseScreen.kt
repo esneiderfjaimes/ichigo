@@ -54,7 +54,7 @@ fun <T> BaseScreen(
 }
 
 @Composable
-fun <T : PageUI> BaseTopAppBar(
+fun <T : PageUiState> BaseTopAppBar(
     state: UiState<T>,
     @StringRes title: Int,
     actions: @Composable (RowScope.() -> Unit) = {}

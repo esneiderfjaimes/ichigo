@@ -347,8 +347,7 @@ fun IconsScreenPreview() {
                     totalIcons = 100,
                     pageInfo = null,
                     pageSize = 20,
-                    version = "1.0.0",
-                    lang = "en"
+                    version = "1.0.0"
                 )
             )
         )
@@ -375,8 +374,7 @@ fun IconsScreenPreview2() {
                         totalPages = 10
                     ),
                     pageSize = 20,
-                    version = "1.0.0",
-                    lang = "en"
+                    version = "1.0.0"
                 )
             )
         )

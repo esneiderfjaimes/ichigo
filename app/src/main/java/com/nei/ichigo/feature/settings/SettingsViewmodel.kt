@@ -1,21 +1,16 @@
 package com.nei.ichigo.feature.settings
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.core.data.repository.ChampionsRepository
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
-import com.nei.ichigo.core.model.UserSettings
+import com.nei.ichigo.feature.settings.SettingsViewmodel.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,15 +18,17 @@ import javax.inject.Inject
 class SettingsViewmodel @Inject constructor(
     repository: ChampionsRepository,
     private val userSettingsRepository: UserSettingsRepository
-) : ViewModel() {
-    val uiState: StateFlow<SettingsUiState> = flow {
-        val versions = repository.getVersions()
-        val languages = repository.getLanguages()
-        emit(versions to languages)
-    }.combine<Pair<List<String>, List<String>>, UserSettings, SettingsUiState>(
-        userSettingsRepository.userSettings,
+) : Base2ViewModel<SettingsUiState>() {
+
+    override val flow: Flow<SettingsUiState> = combine(
+        flow<Pair<List<String>, List<String>>> {
+            val versions = repository.getVersions()
+            val languages = repository.getLanguages()
+            emit(versions to languages)
+        },
+        userSettingsRepository.userSettings
     ) { props, userSettings ->
-        SettingsUiState.Success(
+        SettingsUiState(
             darkThemeConfig = userSettings.darkThemeConfig,
             useDynamicColor = userSettings.useDynamicColor,
             version = userSettings.versionSelected,
@@ -39,14 +36,7 @@ class SettingsViewmodel @Inject constructor(
             language = userSettings.langSelected,
             languages = props.second
         )
-    }.catch {
-        Log.e("ChampionsSettingsView", ": ", it)
-        emit(SettingsUiState.Error)
-    }.flowOn(Dispatchers.IO).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SettingsUiState.Loading,
-    )
+    }
 
     fun onLanguageSelected(languageSelected: String?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -72,18 +62,12 @@ class SettingsViewmodel @Inject constructor(
         }
     }
 
-    sealed interface SettingsUiState {
-        data object Loading : SettingsUiState
-        data class Success(
-            val darkThemeConfig: DarkThemeConfig,
-            val useDynamicColor: Boolean,
-            val version: String?,
-            val versions: List<String>,
-            val language: String?,
-            val languages: List<String>
-        ) : SettingsUiState
-
-        data object Error : SettingsUiState
-    }
-
+    data class SettingsUiState(
+        val darkThemeConfig: DarkThemeConfig,
+        val useDynamicColor: Boolean,
+        val version: String?,
+        val versions: List<String>,
+        val language: String?,
+        val languages: List<String>
+    )
 }

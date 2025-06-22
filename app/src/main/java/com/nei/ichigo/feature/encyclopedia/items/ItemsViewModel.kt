@@ -2,7 +2,7 @@ package com.nei.ichigo.feature.encyclopedia.items
 
 import androidx.core.text.HtmlCompat
 import com.nei.ichigo.common.BaseResultViewModel
-import com.nei.ichigo.common.PageUI
+import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.core.data.model.ItemsPage
 import com.nei.ichigo.core.domain.GetItemsUseCase
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
@@ -53,8 +53,7 @@ class ItemsViewModel @Inject constructor(
         return ItemsUiState(
             itemsOrder = itemsOrder,
             itemsMap = itemsMap,
-            version = page.version,
-            lang = page.lang
+            version = page.version
         )
     }
 
@@ -62,8 +61,7 @@ class ItemsViewModel @Inject constructor(
         val itemsOrder: List<String>,
         val itemsMap: Map<String, ItemUi>,
         override val version: String,
-        override val lang: String,
-    ) : PageUI {
+    ) : PageUiState {
         data class ItemUi(
             val id: String,
             val name: String,

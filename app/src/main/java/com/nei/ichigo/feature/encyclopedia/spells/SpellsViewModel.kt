@@ -1,7 +1,7 @@
 package com.nei.ichigo.feature.encyclopedia.spells
 
 import com.nei.ichigo.common.BaseResultViewModel
-import com.nei.ichigo.common.PageUI
+import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.core.data.model.Page
 import com.nei.ichigo.core.domain.GetSpellsUseCase
 import com.nei.ichigo.core.model.Spell
@@ -29,13 +29,11 @@ class SpellsViewModel @Inject constructor(
         return SpellsUiState(
             spells = spells,
             version = page.version,
-            lang = page.lang,
         )
     }
 
     data class SpellsUiState(
         val spells: List<Spell>,
         override val version: String,
-        override val lang: String,
-    ) : PageUI
+    ) : PageUiState
 }

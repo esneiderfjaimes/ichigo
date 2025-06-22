@@ -6,7 +6,6 @@ sealed interface UiState<T> {
     data object Error : UiState<Nothing>
 }
 
-interface PageUI {
+interface PageUiState {
     val version: String
-    val lang: String
 }

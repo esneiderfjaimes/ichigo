@@ -1,11 +1,9 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.common.Base2ViewModel
-import com.nei.ichigo.common.PageUI
-import com.nei.ichigo.core.data.model.ProfileIconsPage
+import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
@@ -31,19 +29,8 @@ class IconsViewModel @Inject constructor(
         flow = getProfileIconsUseCase(),
         flow2 = pageIndex,
         flow3 = pageSize,
-        transform = ::mapper
-    )
-
-    private fun mapper(
-        pageResult: Result<ProfileIconsPage>,
-        pageIndex: Int?,
-        pageSize: Int
-    ): IconsUiState {
+    ) { pageResult, pageIndex, pageSize ->
         val page = pageResult.getOrThrow()
-        Log.d(
-            "IconsViewModel",
-            "mapper() called with: page = $page, pageIndex = $pageIndex, pageSize = $pageSize"
-        )
         val (icons, pageInfo) = if (pageIndex != null) {
             val pageIcons = page.icons.getPage(pageSize = pageSize, pageIndex = pageIndex)
             val totalPages = (page.icons.size + pageSize - 1) / pageSize
@@ -54,13 +41,12 @@ class IconsViewModel @Inject constructor(
         } else {
             page.icons to null
         }
-        return IconsUiState(
+        IconsUiState(
             icons = icons.map(ProfileIcon::toUi),
             totalIcons = page.icons.size,
             pageInfo = pageInfo,
             pageSize = pageSize,
-            version = page.version,
-            lang = page.lang
+            version = page.version
         )
     }
 
@@ -100,8 +86,7 @@ class IconsViewModel @Inject constructor(
         val pageInfo: PageInfo?,
         val pageSize: Int,
         override val version: String,
-        override val lang: String,
-    ) : PageUI {
+    ) : PageUiState {
         companion object {
             const val PAGE_SIZE_DEFAULT = 25
             val PAGE_SIZES = listOf(25, 50, 100)

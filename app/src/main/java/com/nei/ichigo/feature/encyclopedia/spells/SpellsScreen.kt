@@ -170,7 +170,6 @@ private fun SpellsScreenPreview() {
                         )
                     },
                     version = "1.0",
-                    lang = "en_US",
                 )
             )
         )

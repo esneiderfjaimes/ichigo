@@ -216,7 +216,6 @@ fun ItemsScreenPreview() {
                         )
                     }.associateBy { it.id },
                     version = "1.0.0",
-                    lang = "en",
                 )
             )
         )
