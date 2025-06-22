@@ -25,6 +25,9 @@ import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
 import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
 import com.nei.ichigo.feature.encyclopedia.items.navigation.items
 import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
 import com.nei.ichigo.feature.licenses.navigation.licencesScreen
 import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
 import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
@@ -69,6 +72,16 @@ sealed class Screen(
         }
     )
 
+    data object Spells : Screen(
+        route = SpellsRoute.javaClass.name,
+        title = R.string.spells,
+        icon = Icons.Default.Circle,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToSpells(navOptions)
+        }
+    )
+
     data object Settings : Screen(
         route = EncyclopediaSettingsRoute.javaClass.name,
         title = R.string.settings,
@@ -80,7 +93,7 @@ sealed class Screen(
     )
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Items, Settings)
+        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Settings)
     }
 }
 
@@ -97,7 +110,7 @@ private fun NavController.topLevelDestinationNavOptions() = navOptions {
 fun IchigoNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = ChampionsRoute,
+        startDestination = Screen.allScreens.first().route,
     ) {
         if (SUPPORT_PANE_CHAMPION) {
             championsListDetail()
@@ -107,6 +120,7 @@ fun IchigoNavHost(navController: NavHostController) {
         }
         icons()
         items()
+        spells()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }

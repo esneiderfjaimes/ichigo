@@ -29,9 +29,15 @@
     </plurals>
 
     <plurals name="number_of_items">
-        <item quantity="one">%d item.</item>
-        <item quantity="many">%d items.</item>
-        <item quantity="other">%d items.</item>
+        <item quantity="one">%d objeto.</item>
+        <item quantity="many">%d objetos.</item>
+        <item quantity="other">%d objetos.</item>
+    </plurals>
+
+    <plurals name="number_of_spells">
+        <item quantity="one">%d hechizo.</item>
+        <item quantity="many">%d hechizos.</item>
+        <item quantity="other">%d hechizos.</item>
     </plurals>
 
     <string name="paginate_items">Paginar elementos</string>
@@ -50,5 +56,8 @@
     <string name="light">Claro</string>
     <string name="dark">Oscuro</string>
     <string name="data_dragon_provided_by_riot_games">Datos de DDragon proporcionados por Riot Games</string>
-    <string name="items">Items</string>
+    <string name="items">Objetos</string>
+    <string name="spells">Hechizos</string>
+    <string name="cooldown_seconds">Enfriamiento: %1$s segundos</string>
+    <string name="summoner_level">NIVEL DE INVOCADOR %1$s</string>
 </resources>
