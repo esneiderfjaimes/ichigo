@@ -11,7 +11,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SpellsViewModel @Inject constructor(
     getSpellsUseCase: GetSpellsUseCase,
-) : BaseViewModel<Spell, SpellsViewModel.SpellsUiState>(getSpellsUseCase()) {
+) : BaseViewModel<Page<Spell>, SpellsViewModel.SpellsUiState>(getSpellsUseCase()) {
+
     private val modes = setOf("ARAM", "CLASSIC")
 
     override fun mapper(page: Page<Spell>): SpellsUiState {
@@ -24,9 +25,9 @@ class SpellsViewModel @Inject constructor(
             .sortedWith(compareBy<Spell> { it.summonerLevel }.thenBy { it.name })
             .toList()
         return SpellsUiState(
+            spells = spells,
             version = page.version,
             lang = page.lang,
-            spells = spells,
         )
     }
 

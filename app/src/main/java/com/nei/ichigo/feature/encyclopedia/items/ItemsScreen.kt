@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,26 +32,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
+import com.nei.ichigo.common.BaseScreen
+import com.nei.ichigo.common.BaseTopAppBar
+import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
-import com.nei.ichigo.core.designsystem.component.LoadingScreen
-import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
-import com.nei.ichigo.core.designsystem.component.appendTitle
-import com.nei.ichigo.core.designsystem.component.appendVersion
 import com.nei.ichigo.core.designsystem.utils.getItemImage
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
-import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.ItemUi
 
 @Composable
 fun ItemsScreen() {
@@ -64,32 +60,13 @@ fun ItemsScreen() {
 }
 
 @Composable
-private fun ItemsScreen(state: ItemsUiState) {
-    Scaffold(
-        topBar = { ItemsTopAppBar(state) }
-    ) { innerPadding ->
-        when (state) {
-            ItemsUiState.Loading -> {
-                LoadingScreen(Modifier.padding(innerPadding))
-            }
-
-            is ItemsUiState.Success -> {
-                SuccessScreen(state, innerPadding)
-            }
-        }
+private fun ItemsScreen(state: UiState<out ItemsUiState>) {
+    BaseScreen(
+        state = state,
+        topBar = { BaseTopAppBar(state, R.string.items) }
+    ) { state, innerPadding ->
+        SuccessScreen(state, innerPadding)
     }
-}
-
-@Composable
-private fun ItemsTopAppBar(
-    state: ItemsUiState,
-) {
-    TransparentTopAppBar(text = buildAnnotatedString {
-        appendTitle(stringResource(R.string.items))
-        if (state is ItemsUiState.Success) {
-            appendVersion(state.version)
-        }
-    })
 }
 
 val EXTRA_WIDTH = 16.dp
@@ -97,7 +74,7 @@ val ITEM_SHAPE = RectangleShape
 val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2) + EXTRA_WIDTH
 
 @Composable
-private fun SuccessScreen(state: ItemsUiState.Success, innerPadding: PaddingValues) {
+private fun SuccessScreen(state: ItemsUiState, innerPadding: PaddingValues) {
     val layoutDirection = LocalLayoutDirection.current
     val contentPadding = PaddingValues(
         top = innerPadding.calculateTopPadding(),
@@ -229,16 +206,18 @@ fun genItemPreview(
 fun ItemsScreenPreview() {
     AsyncImagePreviewProvider {
         ItemsScreen(
-            state = ItemsUiState.Success(
-                itemsOrder = List(15) { it.toString() },
-                itemsMap = List(15) { index ->
-                    genItemPreview(
-                        index.toString(),
-                        listOf("1", "2", "3"),
-                    )
-                }.associateBy { it.id },
-                version = "1.0.0",
-                lang = "en",
+            state = UiState.Success<ItemsUiState>(
+                ItemsUiState(
+                    itemsOrder = List(15) { it.toString() },
+                    itemsMap = List(15) { index ->
+                        genItemPreview(
+                            index.toString(),
+                            listOf("1", "2", "3"),
+                        )
+                    }.associateBy { it.id },
+                    version = "1.0.0",
+                    lang = "en",
+                )
             )
         )
     }

@@ -11,13 +11,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +27,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
+import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 
 context(SharedTransitionScope, AnimatedVisibilityScope)
 @Composable
@@ -41,7 +41,7 @@ fun IconFullscreen(
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.5f)),
         topBar = {
-            TopAppBar(
+            TransparentTopAppBar(
                 title = {
                     Column {
                         Text(
@@ -57,7 +57,7 @@ fun IconFullscreen(
                 navigationIcon = {
                     IconButton(onClick = requestClose) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                             contentDescription = "Close"
                         )
                     }

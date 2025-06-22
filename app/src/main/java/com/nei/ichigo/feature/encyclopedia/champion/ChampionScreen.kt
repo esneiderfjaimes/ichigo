@@ -10,17 +10,14 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -62,6 +59,7 @@ import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
@@ -111,26 +109,17 @@ private fun ChampionScreen(
         modifier = Modifier
             .fillMaxSize(),
         topBar = {
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing
-                            .only(
-                                /*WindowInsetsSides.Start + WindowInsetsSides.End +*/
-                                WindowInsetsSides.Top
-                            )
-                    ),
-            ) {
-                FilledTonalIconButton(
-                    onClick = onBackPress
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                        contentDescription = null
-                    )
-                }
-            }
+            TransparentTopAppBar(
+                navigationIcon = {
+                    FilledTonalIconButton(onClick = onBackPress) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                            contentDescription = null
+                        )
+                    }
+                },
+                alpha = 0f
+            )
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
