@@ -1,12 +1,15 @@
 package com.nei.ichigo.core.network.di
 
+import android.content.Context
 import androidx.tracing.trace
 import com.nei.ichigo.core.network.BuildConfig
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
+import com.nei.ichigo.core.network.retrofit.JsonDiskCacheInterceptor
 import com.nei.ichigo.core.network.retrofit.RetrofitIchigoNetworkDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -27,7 +30,9 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun okHttpCallFactory(): Call.Factory = trace("OkHttpClient") {
+    fun okHttpCallFactory(
+        @ApplicationContext context: Context,
+    ): Call.Factory = trace("OkHttpClient") {
         OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor()
@@ -36,6 +41,9 @@ internal object NetworkModule {
                             setLevel(HttpLoggingInterceptor.Level.BODY)
                         }
                     },
+            )
+            .addInterceptor(
+                JsonDiskCacheInterceptor(context)
             )
             .build()
     }
