@@ -12,6 +12,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +39,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.common.onSuccess
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
@@ -40,6 +47,7 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.utils.getSpellImage
 import com.nei.ichigo.core.model.Spell
+import com.nei.ichigo.feature.encyclopedia.spells.SpellsViewModel.SpellsUiState
 
 @Composable
 fun SpellsScreen() {
@@ -47,14 +55,18 @@ fun SpellsScreen() {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     SpellsScreen(
         state = state,
+        onTagSelected = viewModel::onTagSelected
     )
 }
 
 @Composable
-private fun SpellsScreen(state: UiState<out SpellsViewModel.SpellsUiState>) {
+private fun SpellsScreen(
+    state: UiState<out SpellsUiState>,
+    onTagSelected: (String?) -> Unit = {},
+) {
     BaseScreen(
         state = state,
-        topBar = { BaseTopAppBar(state, R.string.spells) },
+        topBar = { SpellsTopAppBar(state, onTagSelected) },
     ) { state, innerPadding ->
         SpellsContent(state = state, innerPadding = innerPadding)
     }
@@ -66,8 +78,8 @@ val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2) + EXTRA_WIDTH
 
 @Composable
 private fun SpellsContent(
-    state: SpellsViewModel.SpellsUiState,
-    innerPadding: PaddingValues
+    state: SpellsUiState,
+    innerPadding: PaddingValues,
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val contentPadding = PaddingValues(
@@ -118,6 +130,37 @@ private fun SpellsContent(
     )
 }
 
+@Composable
+fun SpellsTopAppBar(
+    uiState: UiState<out SpellsUiState>,
+    onTagSelected: (String?) -> Unit = {},
+) {
+    BaseTopAppBar(uiState, R.string.spells, actions = {
+        uiState.onSuccess { state ->
+            var openFilterDialog by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { openFilterDialog = true }) {
+                BadgedBox(
+                    badge = {
+                        if (state.filteredModes.isNotEmpty()) {
+                            Badge()
+                        }
+                    }
+                ) {
+                    Icon(Icons.Rounded.FilterList, contentDescription = null)
+                }
+            }
+
+            if (openFilterDialog) {
+                SpellsFilterDialog(
+                    modesSelected = state.filteredModes,
+                    modes = state.modesAvailable,
+                    onDismiss = { openFilterDialog = false },
+                    onTagSelected = onTagSelected
+                )
+            }
+        }
+    })
+}
 
 @Composable
 fun ItemSpell(
@@ -156,7 +199,7 @@ private fun SpellsScreenPreview() {
     AsyncImagePreviewProvider {
         SpellsScreen(
             state = UiState.Success(
-                SpellsViewModel.SpellsUiState(
+                SpellsUiState(
                     spells = List(10) {
                         Spell(
                             id = "$it",
@@ -170,6 +213,8 @@ private fun SpellsScreenPreview() {
                         )
                     },
                     version = "1.0",
+                    filteredModes = emptySet(),
+                    modesAvailable = emptyList(),
                 )
             )
         )

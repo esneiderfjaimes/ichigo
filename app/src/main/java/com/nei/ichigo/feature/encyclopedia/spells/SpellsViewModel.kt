@@ -1,39 +1,67 @@
 package com.nei.ichigo.feature.encyclopedia.spells
 
-import com.nei.ichigo.common.BaseResultViewModel
+import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.common.PageUiState
-import com.nei.ichigo.core.data.model.Page
+import com.nei.ichigo.common.utils.and
 import com.nei.ichigo.core.domain.GetSpellsUseCase
 import com.nei.ichigo.core.model.Spell
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class SpellsViewModel @Inject constructor(
     getSpellsUseCase: GetSpellsUseCase,
-) : BaseResultViewModel<Page<Spell>, SpellsViewModel.SpellsUiState>() {
+) : Base2ViewModel<SpellsViewModel.SpellsUiState>() {
 
-    override val flow = getSpellsUseCase()
+    private val modes = MutableStateFlow(setOf("ARAM", "CLASSIC"))
 
-    private val modes = setOf("ARAM", "CLASSIC")
+    override val flow = combine(
+        flow = getSpellsUseCase().map { pageResult ->
+            val page = pageResult.getOrThrow()
+            val spells = page.data.asSequence()
+                .sortedWith(compareBy<Spell> { it.summonerLevel }.thenBy { it.name })
 
-    override fun mapperResult(page: Page<Spell>): SpellsUiState {
-        val spells = page.data.asSequence()
-            .let {
-                if (modes.isNotEmpty()) {
-                    it.filter { it.modes.any { mode -> mode in modes } }
-                } else it
-            }
-            .sortedWith(compareBy<Spell> { it.summonerLevel }.thenBy { it.name })
-            .toList()
-        return SpellsUiState(
+            val modesAvailable = spells
+                .map { it.modes }
+                .flatten()
+                .distinct()
+                .sorted()
+
+            spells.toList() to modesAvailable.toList() and page.version
+        },
+        flow2 = modes
+    ) { (spells, modesAvailable, version), modes ->
+        val spells = if (modes.isNotEmpty()) {
+            spells.filter { it.modes.any { mode -> mode in modes } }
+        } else spells
+
+        SpellsUiState(
             spells = spells,
-            version = page.version,
+            modesAvailable = modesAvailable,
+            filteredModes = modes,
+            version = version,
         )
+    }
+
+    fun onTagSelected(mode: String?) {
+        val mode = mode?.uppercase()
+        modes.update { modes ->
+            when {
+                mode == null -> emptySet()
+                modes.contains(mode) -> modes - mode
+                else -> modes + mode
+            }
+        }
     }
 
     data class SpellsUiState(
         val spells: List<Spell>,
+        val modesAvailable: List<String>,
+        val filteredModes: Set<String>,
         override val version: String,
     ) : PageUiState
 }

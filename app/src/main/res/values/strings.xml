@@ -59,4 +59,5 @@
     <string name="spells">Spells</string>
     <string name="cooldown_seconds">Cooldown: %1$s seconds</string>
     <string name="summoner_level">SUMMONER LEVEL %1$s</string>
+    <string name="filter_by_mode">Filter by mode</string>
 </resources>

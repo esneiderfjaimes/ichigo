@@ -14,14 +14,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun IchigoFilterChip(text: String, selected: Boolean, onClick: () -> Unit) {
+fun IchigoFilterChip(
+    text: String,
+    selected: Boolean,
+    enabled: Boolean = !selected,
+    onClick: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .clip(RoundedCornerShape(50))
             .clickable(
                 interactionSource = null,
                 indication = ripple(),
-                enabled = !selected,
+                enabled = enabled,
                 onClick = onClick
             ),
         color = if (selected) MaterialTheme.colorScheme.primary

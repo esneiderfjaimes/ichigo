@@ -6,6 +6,14 @@ sealed interface UiState<T> {
     data object Error : UiState<Nothing>
 }
 
+inline fun <T> UiState<T>.onSuccess(action: (T) -> Unit): UiState<T> =
+    if (this is UiState.Success) {
+        action(this.content)
+        this
+    } else {
+        this
+    }
+
 interface PageUiState {
     val version: String
 }
