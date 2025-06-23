@@ -57,10 +57,9 @@ fun TransparentTopAppBar(
                     scrolledContainerColor = colors.containerColor.copy(alpha = alpha),
                 )
             },
-        windowInsets = WindowInsets.safeDrawing
-            .only(
-                WindowInsetsSides.Start + WindowInsetsSides.End + WindowInsetsSides.Top
-            )
+        windowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.End + WindowInsetsSides.Top
+        )
     )
 }
 

@@ -61,4 +61,5 @@
     <string name="cooldown_seconds">Enfriamiento: %1$s segundos</string>
     <string name="summoner_level">NIVEL DE INVOCADOR %1$s</string>
     <string name="filter_by_mode">Filtrar por modo</string>
+    <string name="more">Mas</string>
 </resources>
