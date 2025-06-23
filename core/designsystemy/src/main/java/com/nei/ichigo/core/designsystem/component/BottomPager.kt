@@ -139,11 +139,11 @@ fun PagesDialogContent(
         onCloseRequest = onDismiss,
         title = { IchigoTitleDialog(text = title()) }
     ) {
-        SelectListContent(
+        SelectGridContent(
             selectedItem = pageInfo.pageIndex,
             items = indexes,
             itemLabel = itemLabel,
-            onSelectItem = onSelectPage
+            onSelectItem = { onSelectPage(it!!) }
         )
     }
 }
