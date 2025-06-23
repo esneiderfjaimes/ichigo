@@ -1,78 +1,56 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.nei.ichigo.common.Base2ViewModel
+import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.core.domain.GetChampionsUseCase
 import com.nei.ichigo.core.model.Champion
+import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
     getChampionsUseCase: GetChampionsUseCase
-) : ViewModel() {
-    private val tagSelected = MutableStateFlow<String?>(null)
+) : Base2ViewModel<ChampionsUiState>() {
 
-    val uiState: StateFlow<ChampionsUiState> =
-        combine(getChampionsUseCase(), tagSelected) { page, tagSelected ->
-            Log.i("ChampionsViewModel", "page: $page")
-            val (version, lang, champions) = page.getOrElse {
-                it.printStackTrace()
-                return@combine ChampionsUiState.Error
-            }
-            val sortedUniqueTags = champions
-                .flatMap { it.tags }
-                .distinct()
-                .sorted()
+    private val _tagSelected = MutableStateFlow<String?>(null)
 
-            val championsFiltered = if (tagSelected != null) {
-                champions.filter { it.tags.contains(tagSelected) }
-            } else {
-                champions
-            }
+    override val flow = combine(
+        getChampionsUseCase(),
+        _tagSelected
+    ) { pageResult, tagSelected ->
+        val page = pageResult.getOrThrow()
+        val (version, lang, champions) = page
+        val sortedUniqueTags = champions
+            .flatMap { it.tags }
+            .distinct()
+            .sorted()
 
-            ChampionsUiState.Success(
-                version = version,
-                lang = lang,
-                champions = championsFiltered,
-                tagSelected = tagSelected,
-                tags = sortedUniqueTags
-            ).also {
-                Log.i("ChampionsViewModel", "championsFiltered: $championsFiltered")
-            }
-        }.catch {
-            it.printStackTrace()
-            emit(ChampionsUiState.Error)
-        }.flowOn(Dispatchers.IO).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ChampionsUiState.Loading,
+        val championsFiltered = if (tagSelected != null) {
+            champions.filter { it.tags.contains(tagSelected) }
+        } else {
+            champions
+        }
+
+        ChampionsUiState(
+            version = version,
+            champions = championsFiltered,
+            tagSelected = tagSelected,
+            tags = sortedUniqueTags
         )
+    }
 
     fun onTagSelected(tagSelected: String?) {
-        this.tagSelected.update { tagSelected }
+        _tagSelected.update { tagSelected }
     }
 
-    sealed interface ChampionsUiState {
-        data object Loading : ChampionsUiState
-        data class Success(
-            val version: String,
-            val lang: String,
-            val champions: List<Champion>,
-            val tagSelected: String? = null,
-            val tags: List<String>
-        ) : ChampionsUiState
-
-        data object Error : ChampionsUiState
-    }
+    data class ChampionsUiState(
+        override val version: String,
+        val champions: List<Champion>,
+        val tagSelected: String? = null,
+        val tags: List<String>
+    ) : PageUiState
 }

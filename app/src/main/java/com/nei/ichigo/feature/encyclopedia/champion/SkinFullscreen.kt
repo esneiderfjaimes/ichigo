@@ -12,13 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,13 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.PageInfo
+import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.model.Skin
 
@@ -73,7 +72,7 @@ fun SkinFullscreen(
 
                 Scaffold(
                     topBar = {
-                        TopAppBar(
+                        TransparentTopAppBar(
                             title = {
                                 Column {
                                     Text(skin.name, style = MaterialTheme.typography.titleLarge)
@@ -86,7 +85,7 @@ fun SkinFullscreen(
                             navigationIcon = {
                                 IconButton(onClick = { onSelectSkin(null) }) {
                                     Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                                         contentDescription = "Close"
                                     )
                                 }
@@ -125,7 +124,6 @@ fun SkinFullscreen(
                             content = { modifier ->
                                 AsyncImage(
                                     modifier = modifier
-                                        .padding(16.dp)
                                         .padding(innerPadding)
                                         .clip(MaterialTheme.shapes.extraLarge),
                                     /*   .clickable(onClick = requestClose)*/

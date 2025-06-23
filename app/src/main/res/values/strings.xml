@@ -33,6 +33,12 @@
         <item quantity="other">%d items.</item>
     </plurals>
 
+    <plurals name="number_of_spells">
+        <item quantity="one">%d spell.</item>
+        <item quantity="many">%d spells.</item>
+        <item quantity="other">%d spells.</item>
+    </plurals>
+
     <string name="paginate_items">Paginate items</string>
     <string name="icons_per_page">Icons per page</string>
     <string name="about">About</string>
@@ -50,4 +56,9 @@
     <string name="icon">Icon</string>
     <string name="skin">Skin</string>
     <string name="items">Items</string>
+    <string name="spells">Spells</string>
+    <string name="cooldown_seconds">Cooldown: %1$s seconds</string>
+    <string name="summoner_level">SUMMONER LEVEL %1$s</string>
+    <string name="filter_by_mode">Filter by mode</string>
+    <string name="more">More</string>
 </resources>

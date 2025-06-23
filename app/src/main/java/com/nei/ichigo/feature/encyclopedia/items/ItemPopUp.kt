@@ -31,7 +31,7 @@ import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getItemImage
-import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.ItemUi
 
 private val ITEM_RECIPE_TREE_SIZE = DEFAULT_ITEM_SIZE * 0.75f
 private val ITEM_RECIPE_TREE_SPACING = 8.dp

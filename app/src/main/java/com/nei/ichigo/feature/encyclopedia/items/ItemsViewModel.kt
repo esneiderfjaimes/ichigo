@@ -1,44 +1,25 @@
 package com.nei.ichigo.feature.encyclopedia.items
 
 import androidx.core.text.HtmlCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.nei.ichigo.common.BaseResultViewModel
+import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.core.data.model.ItemsPage
 import com.nei.ichigo.core.domain.GetItemsUseCase
-import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.Success.ItemUi
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
+import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.ItemUi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     getItemsUseCase: GetItemsUseCase
-) : ViewModel() {
+) : BaseResultViewModel<ItemsPage, ItemsUiState>() {
+
+    override val flow = getItemsUseCase.invoke()
 
     val mapsFilter = setOf<String>("11")
 
-    val uiState: StateFlow<ItemsUiState> = getItemsUseCase()
-        .map { result ->
-            result.fold(
-                onSuccess = {
-                    mapper(it, mapsFilter)
-                },
-                onFailure = {
-                    it.printStackTrace()
-                    ItemsUiState.Loading
-                }
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            ItemsUiState.Loading
-        )
-
-    private fun mapper(page: ItemsPage, mapsFilter: Set<String>): ItemsUiState.Success {
+    override fun mapperResult(page: ItemsPage): ItemsUiState {
         val items = page.icons
             .asSequence()
             .let { seq ->
@@ -69,29 +50,24 @@ class ItemsViewModel @Inject constructor(
         val itemsOrder = items.map { it.id }.toList()
         val itemsMap = items.associateBy { it.id }
 
-        return ItemsUiState.Success(
-            version = page.version,
-            lang = page.lang,
+        return ItemsUiState(
             itemsOrder = itemsOrder,
-            itemsMap = itemsMap
+            itemsMap = itemsMap,
+            version = page.version
         )
     }
 
-    sealed interface ItemsUiState {
-        object Loading : ItemsUiState
-        data class Success(
-            val version: String,
-            val lang: String,
-            val itemsOrder: List<String>,
-            val itemsMap: Map<String, ItemUi>,
-        ) : ItemsUiState {
-            data class ItemUi(
-                val id: String,
-                val name: String,
-                val image: String,
-                val from: List<String>,
-                val into: List<String>,
-            )
-        }
+    data class ItemsUiState(
+        val itemsOrder: List<String>,
+        val itemsMap: Map<String, ItemUi>,
+        override val version: String,
+    ) : PageUiState {
+        data class ItemUi(
+            val id: String,
+            val name: String,
+            val image: String,
+            val from: List<String>,
+            val into: List<String>,
+        )
     }
 }

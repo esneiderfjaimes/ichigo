@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,7 +30,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,19 +51,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
+import com.nei.ichigo.common.BaseScreen
+import com.nei.ichigo.common.BaseTopAppBar
+import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
-import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
-import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.PageInfo
-import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
-import com.nei.ichigo.core.designsystem.component.appendTitle
-import com.nei.ichigo.core.designsystem.component.appendVersion
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -84,7 +78,7 @@ fun IconsScreen() {
 
 @Composable
 private fun IconsScreen(
-    state: IconsUiState,
+    state: UiState<out IconsUiState>,
     onSelectPage: (Int?) -> Unit = {},
     onPageSizeChange: (Int) -> Unit = {},
 ) {
@@ -93,47 +87,33 @@ private fun IconsScreen(
             mutableStateOf(null)
         }
 
-        Scaffold(
-            topBar = {
-                IconsTopAppBar(state, onSelectPage, onPageSizeChange)
-            },
+        BaseScreen(
+            state = state,
+            topBar = { IconsTopAppBar(state, onSelectPage, onPageSizeChange) },
             bottomBar = {
-                if (state is IconsUiState.Success) {
-                    state.pageInfo?.let {
+                if (state is UiState.Success) {
+                    state.content.pageInfo?.let {
                         BottomPager(it) {
                             onSelectPage(it)
                         }
                     }
                 }
-            },
-            contentWindowInsets = WindowInsets.safeDrawing
-        ) { innerPadding ->
-            when (state) {
-                IconsUiState.Error -> {
-                    ErrorScreen(modifier = Modifier.padding(innerPadding))
-                }
-
-                IconsUiState.Loading -> {
-                    LoadingScreen(modifier = Modifier.padding(innerPadding))
-                }
-
-                is IconsUiState.Success -> {
-                    SuccessContent(
-                        innerPadding = innerPadding,
-                        icons = state.icons,
-                        total = state.totalIcons,
-                        version = state.version,
-                        selectedProfileIcon = selectedProfileIcon,
-                        onSelect = { selectedProfileIcon = it }
-                    )
-                }
             }
+        ) { state, innerPadding ->
+            SuccessContent(
+                innerPadding = innerPadding,
+                icons = state.icons,
+                total = state.totalIcons,
+                version = state.version,
+                selectedProfileIcon = selectedProfileIcon,
+                onSelect = { selectedProfileIcon = it }
+            )
         }
 
-        if (state is IconsUiState.Success) {
+        if (state is UiState.Success) {
             IconDetails(
                 selectedProfileIcon = selectedProfileIcon,
-                version = state.version,
+                version = state.content.version,
                 requestClose = { selectedProfileIcon = null }
             )
         }
@@ -142,17 +122,13 @@ private fun IconsScreen(
 
 @Composable
 private fun IconsTopAppBar(
-    state: IconsUiState,
+    uiState: UiState<out IconsUiState>,
     onSelectPage: (Int?) -> Unit = {},
     onPageSizeChange: (Int) -> Unit = {},
 ) {
-    TransparentTopAppBar(text = buildAnnotatedString {
-        appendTitle(stringResource(R.string.icons))
-        if (state is IconsUiState.Success) {
-            appendVersion(state.version)
-        }
-    }) {
-        if (state is IconsUiState.Success) {
+    BaseTopAppBar(uiState, R.string.icons) {
+        if (uiState is UiState.Success) {
+            val state = uiState.content
             var showMenu by remember { mutableStateOf(false) }
             IconButton(onClick = { showMenu = true }) {
                 Icon(Icons.Rounded.MoreVert, contentDescription = null)
@@ -360,18 +336,19 @@ fun IconDetails(
 fun IconsScreenPreview() {
     AsyncImagePreviewProvider {
         IconsScreen(
-            state = IconsUiState.Success(
-                version = "1.0.0",
-                lang = "en",
-                totalIcons = 100,
-                icons = (1..100).map {
-                    IconUi(
-                        id = it.toString(),
-                        image = ""
-                    )
-                },
-                pageInfo = null,
-                pageSize = 20
+            state = UiState.Success(
+                content = IconsUiState(
+                    icons = (1..100).map {
+                        IconUi(
+                            id = it.toString(),
+                            image = ""
+                        )
+                    },
+                    totalIcons = 100,
+                    pageInfo = null,
+                    pageSize = 20,
+                    version = "1.0.0"
+                )
             )
         )
     }
@@ -383,21 +360,22 @@ fun IconsScreenPreview() {
 fun IconsScreenPreview2() {
     AsyncImagePreviewProvider {
         IconsScreen(
-            state = IconsUiState.Success(
-                version = "1.0.0",
-                lang = "en",
-                totalIcons = 100,
-                icons = (1..100).map {
-                    IconUi(
-                        id = it.toString(),
-                        image = ""
-                    )
-                },
-                pageInfo = PageInfo(
-                    pageIndex = 0,
-                    totalPages = 10
-                ),
-                pageSize = 20
+            state = UiState.Success(
+                content = IconsUiState(
+                    icons = (1..100).map {
+                        IconUi(
+                            id = it.toString(),
+                            image = ""
+                        )
+                    },
+                    totalIcons = 100,
+                    pageInfo = PageInfo(
+                        pageIndex = 0,
+                        totalPages = 10
+                    ),
+                    pageSize = 20,
+                    version = "1.0.0"
+                )
             )
         )
     }

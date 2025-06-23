@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,7 +22,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,8 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.BuildConfig
 import com.nei.ichigo.R
-import com.nei.ichigo.core.designsystem.component.ErrorScreen
-import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.common.BaseScreen
+import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.theme.supportsDynamicTheming
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
@@ -74,14 +71,15 @@ fun SettingsScreen(onLicenseClick: () -> Unit = {}) {
 
 @Composable
 private fun SettingsScreen(
-    state: SettingsUiState,
+    state: UiState<out SettingsUiState>,
     onUseDynamicColorSelected: (Boolean) -> Unit = {},
     onDarkThemeSelected: (DarkThemeConfig) -> Unit = {},
     onLanguageSelected: (String?) -> Unit = {},
     onVersionSelected: (String?) -> Unit = {},
     onLicenseClick: () -> Unit = {},
 ) {
-    Scaffold(
+    BaseScreen(
+        state = state,
         topBar = {
             TopAppBar(
                 title = {
@@ -93,35 +91,21 @@ private fun SettingsScreen(
                 },
             )
         },
-        contentWindowInsets = WindowInsets.safeDrawing
-    ) { innerPadding ->
+    ) { state, innerPadding ->
         Column(
             Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            when (state) {
-                SettingsUiState.Error -> {
-                    ErrorScreen()
-                }
-
-                SettingsUiState.Loading -> {
-                    LoadingScreen()
-                }
-
-                is SettingsUiState.Success -> {
-                    SuccessContent(
-                        state = state,
-                        onUseDynamicColorSelected = onUseDynamicColorSelected,
-                        onDarkThemeSelected = onDarkThemeSelected,
-                        onLanguageSelected = onLanguageSelected,
-                        onVersionSelected = onVersionSelected,
-                        onLicenseClick = onLicenseClick
-                    )
-                }
-
-            }
+            SuccessContent(
+                state = state,
+                onUseDynamicColorSelected = onUseDynamicColorSelected,
+                onDarkThemeSelected = onDarkThemeSelected,
+                onLanguageSelected = onLanguageSelected,
+                onVersionSelected = onVersionSelected,
+                onLicenseClick = onLicenseClick
+            )
         }
     }
 }
@@ -129,7 +113,7 @@ private fun SettingsScreen(
 context(ColumnScope)
 @Composable
 fun SuccessContent(
-    state: SettingsUiState.Success,
+    state: SettingsUiState,
     onUseDynamicColorSelected: (Boolean) -> Unit = {},
     onDarkThemeSelected: (DarkThemeConfig) -> Unit = {},
     onLanguageSelected: (String?) -> Unit = {},
@@ -333,26 +317,15 @@ fun Item(
 @Composable
 fun ChampionsSettingsDialogContentPreview() {
     SettingsScreen(
-        state = SettingsUiState.Success(
-            darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-            useDynamicColor = true,
-            version = null,
-            language = null,
-            versions = emptyList(),
-            languages = emptyList()
+        state = UiState.Success(
+            SettingsUiState(
+                darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
+                useDynamicColor = true,
+                version = null,
+                language = null,
+                versions = emptyList(),
+                languages = emptyList()
+            )
         )
     )
-}
-
-@Preview
-@Composable
-fun ChampionsSettingsDialogContentErrorPreview() {
-    SettingsScreen(state = SettingsUiState.Error)
-}
-
-
-@Preview
-@Composable
-fun ChampionsSettingsDialogContentLoadingPreview() {
-    SettingsScreen(state = SettingsUiState.Loading)
 }
