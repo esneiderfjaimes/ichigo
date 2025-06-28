@@ -2,8 +2,8 @@ package com.nei.ichigo.feature.encyclopedia.icons
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.viewModelScope
-import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.common.PageUiState
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.domain.GetProfileIconsUseCase
 import com.nei.ichigo.core.model.ProfileIcon
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class IconsViewModel @Inject constructor(
     getProfileIconsUseCase: GetProfileIconsUseCase
-) : Base2ViewModel<IconsUiState>() {
+) : UiStateViewModel<IconsUiState>() {
 
     private val pageIndex = MutableStateFlow<Int?>(0)
     private val pageSize = MutableStateFlow(PAGE_SIZE_DEFAULT)

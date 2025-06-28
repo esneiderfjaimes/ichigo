@@ -1,33 +1,41 @@
 package com.nei.ichigo.feature.encyclopedia.items
 
 import androidx.core.text.HtmlCompat
-import com.nei.ichigo.common.BaseResultViewModel
 import com.nei.ichigo.common.PageUiState
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.data.model.ItemsPage
 import com.nei.ichigo.core.domain.GetItemsUseCase
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.ItemUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
     getItemsUseCase: GetItemsUseCase
-) : BaseResultViewModel<ItemsPage, ItemsUiState>() {
+) : UiStateViewModel<ItemsUiState>() {
 
-    override val flow = getItemsUseCase.invoke()
+    private val mapsFilter = MutableStateFlow<String?>("11")
 
-    val mapsFilter = setOf<String>("11")
+    override val flow = combine(
+        flow = getItemsUseCase(),
+        flow2 = mapsFilter,
+        transform = ::mapperResult
+    )
 
-    override fun mapperResult(page: ItemsPage): ItemsUiState {
-        val items = page.icons
+    fun mapperResult(page: Result<ItemsPage>, mapsFilter: String?): ItemsUiState {
+        val page = page.getOrThrow()
+        val items = page.items
             .asSequence()
             .let { seq ->
-                if (mapsFilter.isNotEmpty()) {
+                if (mapsFilter != null) {
                     // AND
                     // .filter { it.maps.containsAll(mapsFilter) }
                     // OR
-                    seq.filter { it.maps.any { id -> id in mapsFilter } }
+                    seq.filter { it.maps.any { id -> id == mapsFilter } }
                 } else seq
             }
             .sortedBy { it.gold.total }
@@ -53,13 +61,21 @@ class ItemsViewModel @Inject constructor(
         return ItemsUiState(
             itemsOrder = itemsOrder,
             itemsMap = itemsMap,
-            version = page.version
+            maps = page.maps,
+            mapsFilter = mapsFilter,
+            version = page.version,
         )
+    }
+
+    fun onMapSelected(map: String?) {
+        mapsFilter.update { map }
     }
 
     data class ItemsUiState(
         val itemsOrder: List<String>,
         val itemsMap: Map<String, ItemUi>,
+        val maps: List<String>,
+        val mapsFilter: String?,
         override val version: String,
     ) : PageUiState {
         data class ItemUi(

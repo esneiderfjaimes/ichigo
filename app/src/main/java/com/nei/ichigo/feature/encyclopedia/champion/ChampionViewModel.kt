@@ -1,7 +1,7 @@
 package com.nei.ichigo.feature.encyclopedia.champion
 
-import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.common.PageUiState
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.domain.GetChampionUseCase
 import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.feature.encyclopedia.champion.ChampionViewModel.ChampionUiState
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 class ChampionViewModel @AssistedInject constructor(
     getChampionUseCase: GetChampionUseCase,
     @Assisted val championId: String,
-) : Base2ViewModel<ChampionUiState>() {
+) : UiStateViewModel<ChampionUiState>() {
 
     private val _selectedSkin = MutableStateFlow<Int?>(null)
 

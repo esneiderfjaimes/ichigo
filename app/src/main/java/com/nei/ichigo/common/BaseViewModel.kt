@@ -19,12 +19,14 @@ abstract class BaseViewModel<T, UiStateType>() : ViewModel() {
 
     abstract val flow: Flow<T>
 
-    abstract fun mapper(page: T): UiStateType
+    abstract fun mapper(data: T): UiStateType
 
     val uiState: StateFlow<UiState<out UiStateType>> by lazy {
         flow
-            .map<T, UiState<out UiStateType>> { result: T ->
-                UiState.Success(mapper(result))
+            .map<T, UiState<out UiStateType>> { data: T ->
+                val uiState = mapper(data)
+                Log.d("BaseViewModel", "uiState: $uiState")
+                UiState.Success(uiState)
             }.catch {
                 it.printStackTrace()
                 UiState.Error
@@ -38,18 +40,8 @@ abstract class BaseViewModel<T, UiStateType>() : ViewModel() {
     }
 }
 
-abstract class Base2ViewModel<UiStateType>() : BaseViewModel<UiStateType, UiStateType>() {
+abstract class UiStateViewModel<UiStateType>() : BaseViewModel<UiStateType, UiStateType>() {
 
-    override fun mapper(page: UiStateType) = page
+    override fun mapper(data: UiStateType) = data
 
-}
-
-abstract class BaseResultViewModel<T, UiStateType>() : BaseViewModel<Result<T>, UiStateType>() {
-
-    abstract fun mapperResult(page: T): UiStateType
-
-    override fun mapper(page: Result<T>) = page.fold(
-        onSuccess = { mapperResult(it) },
-        onFailure = { throw it }
-    )
 }

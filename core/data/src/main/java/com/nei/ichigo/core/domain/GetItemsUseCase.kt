@@ -24,11 +24,18 @@ class GetItemsUseCase @Inject constructor(
     override suspend fun fetchPage(version: String, lang: String) = runCatching {
         val items = networkDataSource.getItems(version, lang)
         Log.d(" GetItemsUseCase", "Fetched $items items")
+
+        val maps = items.asSequence()
+            .map { it.maps }
+            .flatten()
+            .distinct()
+
         ItemsPage(
             version = version,
             lang = lang,
-            icons = items,
+            items = items,
             // .sortedByDescending { it.code.toInt() }
+            maps = maps.toList()
         )
     }
 }

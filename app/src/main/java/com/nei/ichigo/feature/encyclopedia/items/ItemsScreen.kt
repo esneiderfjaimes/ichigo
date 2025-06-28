@@ -19,6 +19,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +47,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.common.onSuccess
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
@@ -56,17 +63,47 @@ fun ItemsScreen() {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     ItemsScreen(
         state = state,
+        onMapSelected = viewModel::onMapSelected
     )
 }
 
 @Composable
-private fun ItemsScreen(state: UiState<out ItemsUiState>) {
+private fun ItemsScreen(state: UiState<out ItemsUiState>, onMapSelected: (String?) -> Unit = {}) {
     BaseScreen(
         state = state,
-        topBar = { BaseTopAppBar(state, R.string.items) }
+        topBar = { ItemsTopAppBar(state, onMapSelected) }
     ) { state, innerPadding ->
         SuccessScreen(state, innerPadding)
     }
+}
+
+@Composable
+fun ItemsTopAppBar(state: UiState<out ItemsUiState>, onTagSelected: (String?) -> Unit) {
+    BaseTopAppBar(state, R.string.items, actions = {
+        state.onSuccess { state ->
+            var openFilterDialog by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { openFilterDialog = true }) {
+                BadgedBox(
+                    badge = {
+                        if (state.mapsFilter != null) {
+                            Badge()
+                        }
+                    }
+                ) {
+                    Icon(Icons.Rounded.FilterList, contentDescription = null)
+                }
+            }
+
+            if (openFilterDialog) {
+                ItemsFilterDialog(
+                    modesSelected = state.mapsFilter,
+                    modes = state.maps,
+                    onDismiss = { openFilterDialog = false },
+                    onTagSelected = onTagSelected
+                )
+            }
+        }
+    })
 }
 
 val EXTRA_WIDTH = 16.dp
@@ -215,7 +252,9 @@ fun ItemsScreenPreview() {
                             listOf("1", "2", "3"),
                         )
                     }.associateBy { it.id },
+                    maps = emptyList(),
                     version = "1.0.0",
+                    mapsFilter = null,
                 )
             )
         )

@@ -1,10 +1,11 @@
 package com.nei.ichigo.feature.encyclopedia.spells
 
-import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.common.PageUiState
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.common.utils.and
 import com.nei.ichigo.core.domain.GetSpellsUseCase
 import com.nei.ichigo.core.model.Spell
+import com.nei.ichigo.feature.encyclopedia.spells.SpellsViewModel.SpellsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SpellsViewModel @Inject constructor(
     getSpellsUseCase: GetSpellsUseCase,
-) : Base2ViewModel<SpellsViewModel.SpellsUiState>() {
+) : UiStateViewModel<SpellsUiState>() {
 
     private val modes = MutableStateFlow(setOf("ARAM", "CLASSIC"))
 

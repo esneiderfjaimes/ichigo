@@ -5,5 +5,6 @@ import com.nei.ichigo.core.model.Item
 data class ItemsPage(
     val version: String,
     val lang: String,
-    val icons: List<Item>,
+    val items: List<Item>,
+    val maps: List<String>,
 )

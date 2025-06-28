@@ -1,7 +1,7 @@
 package com.nei.ichigo.feature.settings
 
 import androidx.lifecycle.viewModelScope
-import com.nei.ichigo.common.Base2ViewModel
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.data.repository.ChampionsRepository
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class SettingsViewmodel @Inject constructor(
     repository: ChampionsRepository,
     private val userSettingsRepository: UserSettingsRepository
-) : Base2ViewModel<SettingsUiState>() {
+) : UiStateViewModel<SettingsUiState>() {
 
     override val flow: Flow<SettingsUiState> = combine(
         flow<Pair<List<String>, List<String>>> {

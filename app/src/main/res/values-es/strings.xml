@@ -62,4 +62,12 @@
     <string name="summoner_level">NIVEL DE INVOCADOR %1$s</string>
     <string name="filter_by_mode">Filtrar por modo</string>
     <string name="more">Mas</string>
+
+    <string name="summoner_s_rift">Grieta del Invocador</string>
+    <string name="howling_abyss">Abismo de los Lamentos</string>
+    <string name="nexus_blitz">Estallido del Nexo</string>
+    <string name="teamfight_tactics">Teamfight Tactics</string>
+    <string name="arena">Arena</string>
+    <string name="swarm">Horda</string>
+    <string name="brawl">Pelea</string>
 </resources>

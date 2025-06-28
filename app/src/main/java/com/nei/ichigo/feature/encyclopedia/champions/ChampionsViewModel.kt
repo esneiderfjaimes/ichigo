@@ -1,7 +1,7 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
-import com.nei.ichigo.common.Base2ViewModel
 import com.nei.ichigo.common.PageUiState
+import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.domain.GetChampionsUseCase
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
     getChampionsUseCase: GetChampionsUseCase
-) : Base2ViewModel<ChampionsUiState>() {
+) : UiStateViewModel<ChampionsUiState>() {
 
     private val _tagSelected = MutableStateFlow<String?>(null)
 

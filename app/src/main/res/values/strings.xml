@@ -61,4 +61,11 @@
     <string name="summoner_level">SUMMONER LEVEL %1$s</string>
     <string name="filter_by_mode">Filter by mode</string>
     <string name="more">More</string>
+    <string name="summoner_s_rift">Summoner\'s Rift</string>
+    <string name="howling_abyss">Howling Abyss</string>
+    <string name="nexus_blitz">Nexus Blitz</string>
+    <string name="teamfight_tactics">Teamfight Tactics</string>
+    <string name="arena">Arena</string>
+    <string name="swarm">Swarm</string>
+    <string name="brawl">Brawl</string>
 </resources>
