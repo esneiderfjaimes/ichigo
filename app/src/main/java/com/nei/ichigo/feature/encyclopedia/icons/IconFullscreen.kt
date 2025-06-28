@@ -29,9 +29,9 @@ import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 
-context(SharedTransitionScope, AnimatedVisibilityScope)
+context(_: AnimatedVisibilityScope)
 @Composable
-fun IconFullscreen(
+fun SharedTransitionScope.IconFullscreen(
     icon: IconUi,
     version: String,
     requestClose: () -> Unit

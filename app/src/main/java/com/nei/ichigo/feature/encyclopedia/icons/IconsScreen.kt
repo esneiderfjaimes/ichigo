@@ -199,9 +199,8 @@ private fun IconsTopAppBar(
 
 private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
-context(SharedTransitionScope)
 @Composable
-private fun SuccessContent(
+private fun SharedTransitionScope.SuccessContent(
     innerPadding: PaddingValues,
     icons: List<IconUi>,
     total: Int,
@@ -259,9 +258,9 @@ private fun SuccessContent(
     )
 }
 
-context(SharedTransitionScope, AnimatedVisibilityScope)
+context(visibilityScope: AnimatedVisibilityScope)
 @Composable
-fun ProfileIconItem(
+fun SharedTransitionScope.ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
@@ -272,7 +271,7 @@ fun ProfileIconItem(
             .padding(DEFAULT_ITEM_PADDING)
             .sharedBounds(
                 sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = this@AnimatedVisibilityScope,
+                animatedVisibilityScope = visibilityScope,
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -288,7 +287,7 @@ fun ProfileIconItem(
                 )
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
+                    animatedVisibilityScope = visibilityScope,
                     clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                 ),
             size = size,
@@ -298,15 +297,14 @@ fun ProfileIconItem(
             modifier = Modifier
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
+                    animatedVisibilityScope = visibilityScope,
                 )
         )
     }
 }
 
-context(SharedTransitionScope)
 @Composable
-fun IconDetails(
+fun SharedTransitionScope.IconDetails(
     selectedProfileIcon: IconUi?,
     version: String,
     requestClose: () -> Unit

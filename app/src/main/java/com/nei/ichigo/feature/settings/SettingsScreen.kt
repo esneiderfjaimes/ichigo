@@ -110,9 +110,8 @@ private fun SettingsScreen(
     }
 }
 
-context(ColumnScope)
 @Composable
-fun SuccessContent(
+fun ColumnScope.SuccessContent(
     state: SettingsUiState,
     onUseDynamicColorSelected: (Boolean) -> Unit = {},
     onDarkThemeSelected: (DarkThemeConfig) -> Unit = {},
@@ -247,7 +246,6 @@ fun SuccessContent(
     ) {
         Text(text = stringResource(R.string.licenses))
     }
-
 }
 
 @Composable

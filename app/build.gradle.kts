@@ -26,14 +26,18 @@ android {
             )
         }
     }
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-            "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
-            "-Xcontext-receivers",
-            // TODO: migrate in Kotlin 2.2 "-Xcontext-parameters"
-        )
+    kotlin {
+        compilerOptions {
+            optIn.addAll(
+                "androidx.compose.material3.ExperimentalMaterial3Api",
+                "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+                "androidx.compose.animation.ExperimentalSharedTransitionApi",
+            )
+            freeCompilerArgs.addAll(
+                "-Xcontext-parameters",
+                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
+            )
+        }
     }
     buildFeatures {
         compose = true

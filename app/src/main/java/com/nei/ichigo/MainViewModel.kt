@@ -2,8 +2,8 @@ package com.nei.ichigo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nei.ichigo.MainActivityUiState.Loading
-import com.nei.ichigo.MainActivityUiState.Success
+import com.nei.ichigo.MainUiState.Loading
+import com.nei.ichigo.MainUiState.Success
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.core.model.UserSettings
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     userSettingsRepository: UserSettingsRepository
 ) : ViewModel() {
-    val uiState: StateFlow<MainActivityUiState> = userSettingsRepository.userSettings.map {
+    val uiState: StateFlow<MainUiState> = userSettingsRepository.userSettings.map {
         Success(it)
     }.stateIn(
         scope = viewModelScope,
@@ -27,10 +27,10 @@ class MainViewModel @Inject constructor(
     )
 }
 
-sealed interface MainActivityUiState {
-    data object Loading : MainActivityUiState
+sealed interface MainUiState {
+    data object Loading : MainUiState
 
-    data class Success(val userData: UserSettings) : MainActivityUiState {
+    data class Success(val userData: UserSettings) : MainUiState {
         override val shouldDisableDynamicTheming = !userData.useDynamicColor
 
         override fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) =

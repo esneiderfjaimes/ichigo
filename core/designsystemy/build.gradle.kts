@@ -7,15 +7,18 @@ plugins {
 android {
     namespace = "com.nei.ichigo.core.designsystem"
 
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-            "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
-            "-opt-in=coil3.annotation.ExperimentalCoilApi",
-            "-Xcontext-receivers",
-            // TODO: migrate in Kotlin 2.2 "-Xcontext-parameters"
-        )
+    kotlin {
+        compilerOptions {
+            optIn.addAll(
+                "androidx.compose.material3.ExperimentalMaterial3Api",
+                "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+                "androidx.compose.animation.ExperimentalSharedTransitionApi",
+                "coil3.annotation.ExperimentalCoilApi"
+            )
+            freeCompilerArgs.addAll(
+                "-Xcontext-parameters"
+            )
+        }
     }
     buildFeatures {
         compose = true
