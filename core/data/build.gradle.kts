@@ -6,6 +6,13 @@ plugins {
 
 android {
     namespace = "com.nei.ichigo.core.data"
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.addAll(
+                "-Xannotation-default-target=param-property"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -16,8 +23,4 @@ dependencies {
     implementation(projects.core.database)
 
     implementation(libs.androidx.core.ktx)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

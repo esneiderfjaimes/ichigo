@@ -57,5 +57,13 @@ gradlePlugin {
             id = libs.plugins.ichigo.jvm.library.get().pluginId
             implementationClass = "com.nei.ichigo.JvmLibraryConventionPlugin"
         }
+        register("compose") {
+            id = libs.plugins.ichigo.compose.get().pluginId
+            implementationClass = "com.nei.ichigo.ComposeConventionPlugin"
+        }
+        register("test") {
+            id = libs.plugins.ichigo.test.get().pluginId
+            implementationClass = "com.nei.ichigo.TestConventionPlugin"
+        }
     }
 }

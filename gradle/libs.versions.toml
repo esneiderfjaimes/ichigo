@@ -130,6 +130,8 @@ ichigo-android-library = { id = "ichigo.android.library" }
 ichigo-android-lint = { id = "ichigo.android.lint" }
 ichigo-hilt = { id = "ichigo.hilt" }
 ichigo-jvm-library = { id = "ichigo.library" }
+ichigo-test = { id = "ichigo.test" }
+ichigo-compose = { id = "ichigo.compose" }
 
 [bundles]
 suppress = [

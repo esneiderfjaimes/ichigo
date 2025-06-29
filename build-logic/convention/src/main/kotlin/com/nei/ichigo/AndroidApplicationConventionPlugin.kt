@@ -13,6 +13,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             apply(plugin = "com.android.application")
             apply(plugin = "org.jetbrains.kotlin.android")
             apply(plugin = "ichigo.android.lint")
+            apply(plugin = "ichigo.test")
 
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
