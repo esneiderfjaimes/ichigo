@@ -24,16 +24,21 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRailDefaults
+import androidx.compose.material3.ShortNavigationBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuite
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldValue
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,9 +72,10 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
         layoutType = navSuiteType,
         navigationSuiteColors = NavigationSuiteDefaults.colors(navigationBarContainerColor = Color.Transparent),
         containerColor = Color.Transparent,
-        navigationSuiteItems = {
+        navigationItems = {
             navScreen.forEach { screen ->
-                item(
+                NavigationSuiteItem(
+                    navigationSuiteType = navSuiteType,
                     icon = {
                         Icon(
                             imageVector = screen.icon,
@@ -82,7 +88,8 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
                 )
             }
 
-            item(
+            NavigationSuiteItem(
+                navigationSuiteType = navSuiteType,
                 icon = {
                     Icon(
                         imageVector = Icons.Rounded.MoreHoriz,
@@ -116,29 +123,73 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
  * check [androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo]
  */
 @Composable
+@Suppress("DEPRECATION")
 fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
     return with(adaptiveInfo) {
-        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-            NavigationSuiteType.NavigationBar
-        } else {
-            NavigationSuiteType.NavigationRail
+        when (windowSizeClass.windowWidthSizeClass) {
+            WindowWidthSizeClass.COMPACT -> NavigationSuiteType.NavigationBar
+            WindowWidthSizeClass.MEDIUM -> NavigationSuiteType.WideNavigationRailCollapsed
+            WindowWidthSizeClass.EXPANDED -> NavigationSuiteType.WideNavigationRailExpanded
+            else -> NavigationSuiteType.NavigationRail
         }
     }
 }
+
+/**
+ * check [androidx.compose.material3.adaptive.navigationsuite.navigationSuiteScaffoldConsumeWindowInsets]
+ */
+@Composable
+private fun Modifier.navigationSuiteScaffoldConsumeWindowInsets(
+    navigationSuiteType: NavigationSuiteType,
+    state: NavigationSuiteScaffoldState
+): Modifier =
+    consumeWindowInsets(
+        if (state.currentValue == NavigationSuiteScaffoldValue.Hidden && !state.isAnimating) {
+            WindowInsets(0, 0, 0, 0)
+        } else {
+            when (navigationSuiteType) {
+                NavigationSuiteType.ShortNavigationBarCompact,
+                NavigationSuiteType.ShortNavigationBarMedium ->
+                    ShortNavigationBarDefaults.windowInsets.only(WindowInsetsSides.Bottom)
+
+                NavigationSuiteType.WideNavigationRailCollapsed,
+                NavigationSuiteType.WideNavigationRailExpanded,
+                    ->
+                    WideNavigationRailDefaults.windowInsets.only(WindowInsetsSides.Start)
+
+                NavigationSuiteType.NavigationBar ->
+                    NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Bottom)
+
+                NavigationSuiteType.NavigationRail ->
+                    NavigationRailDefaults.windowInsets.only(WindowInsetsSides.Start)
+
+                NavigationSuiteType.NavigationDrawer ->
+                    DrawerDefaults.windowInsets.only(WindowInsetsSides.Start)
+
+                else -> WindowInsets(0, 0, 0, 0)
+            }
+        }
+    )
 
 /**
  * check [androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold]
  */
 @Composable
 fun NavigationSuiteScaffold2(
-    navigationSuiteItems: NavigationSuiteScope.() -> Unit,
+    navigationItems: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     layoutType: NavigationSuiteType,
     navigationSuiteColors: NavigationSuiteColors = NavigationSuiteDefaults.colors(),
     containerColor: Color = NavigationSuiteScaffoldDefaults.containerColor,
     contentColor: Color = NavigationSuiteScaffoldDefaults.contentColor,
-    content: @Composable () -> Unit = {},
+    state: NavigationSuiteScaffoldState = rememberNavigationSuiteScaffoldState(),
+    navigationItemVerticalArrangement: Arrangement.Vertical =
+        NavigationSuiteDefaults.verticalArrangement,
+    primaryActionContent: @Composable (() -> Unit) = {},
+    primaryActionContentHorizontalAlignment: Alignment.Horizontal =
+        NavigationSuiteScaffoldDefaults.primaryActionContentAlignment,
+    content: @Composable () -> Unit,
 ) {
     Surface(modifier = modifier, color = containerColor, contentColor = contentColor) {
         NavigationSuiteScaffoldLayout(
@@ -153,28 +204,20 @@ fun NavigationSuiteScaffold2(
                             else -> WindowInsets(0, 0, 0, 0)
                         }
                     ),
-                    layoutType = layoutType,
+                    navigationSuiteType = layoutType,
                     colors = navigationSuiteColors,
-                    content = navigationSuiteItems
+                    primaryActionContent = primaryActionContent,
+                    verticalArrangement = navigationItemVerticalArrangement,
+                    content = navigationItems
                 )
             },
-            layoutType = layoutType,
+            navigationSuiteType = layoutType,
+            state = state,
+            primaryActionContent = primaryActionContent,
+            primaryActionContentHorizontalAlignment = primaryActionContentHorizontalAlignment,
             content = {
                 Box(
-                    Modifier.consumeWindowInsets(
-                        when (layoutType) {
-                            NavigationSuiteType.NavigationBar ->
-                                NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Bottom)
-
-                            NavigationSuiteType.NavigationRail ->
-                                NavigationRailDefaults.windowInsets.only(WindowInsetsSides.Start)
-
-                            NavigationSuiteType.NavigationDrawer ->
-                                DrawerDefaults.windowInsets.only(WindowInsetsSides.Start)
-
-                            else -> WindowInsets(0, 0, 0, 0)
-                        }
-                    )
+                    Modifier.navigationSuiteScaffoldConsumeWindowInsets(layoutType, state)
                 ) {
                     content()
                 }

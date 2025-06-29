@@ -7,7 +7,6 @@ plugins {
 android {
     namespace = "com.nei.ichigo.core.designsystem"
 
-    // TODO             "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
     kotlin {
         compilerOptions {
             optIn.addAll(

@@ -262,6 +262,8 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+const val NO_MOTION_SCHEME = false
+
 @Composable
 fun IchigoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -282,7 +284,7 @@ fun IchigoTheme(
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        motionScheme = noMotionScheme(),
+        motionScheme = if (NO_MOTION_SCHEME) noMotionScheme() else null,
         content = content
     )
 }
