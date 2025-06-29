@@ -14,7 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.core.designsystem.component.loadImageLoaderFactory
 import com.nei.ichigo.navigation.IchigoNavHost
+import com.nei.ichigo.navigation.IchigoNavSuite
 import com.nei.ichigo.navigation.Screen
+
 
 /**
  * check [androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo]
@@ -33,11 +35,15 @@ fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     }
 }
 
+
 @Composable
 fun IchigoApp() {
     loadImageLoaderFactory()
 
     val navController = rememberNavController()
+    IchigoNavSuite(navController) {
+        IchigoNavHost(navController)
+    }
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
     NavigationSuiteScaffold(

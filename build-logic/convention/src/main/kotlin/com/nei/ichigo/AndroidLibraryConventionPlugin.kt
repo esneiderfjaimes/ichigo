@@ -22,12 +22,14 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
+@Suppress("unused")
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply(plugin = "com.android.library")
             apply(plugin = "org.jetbrains.kotlin.android")
             apply(plugin = "ichigo.android.lint")
+            apply(plugin = "ichigo.test")
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)

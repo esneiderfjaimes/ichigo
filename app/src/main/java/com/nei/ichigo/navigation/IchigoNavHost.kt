@@ -2,8 +2,7 @@ package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -13,15 +12,27 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.nei.ichigo.R
+import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
+import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
+import com.nei.ichigo.feature.encyclopedia.champions.navigation.champions
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.navigateToChampions
+import com.nei.ichigo.feature.encyclopedia.champions2pane.SUPPORT_PANE_CHAMPION
 import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.EncyclopediaSettingsRoute
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.encyclopediaSettings
-import com.nei.ichigo.feature.encyclopedia.settings.navigation.navigateToEncyclopediaSettings
+import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
+import com.nei.ichigo.feature.encyclopedia.items.navigation.items
+import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
+import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
+import com.nei.ichigo.feature.licenses.navigation.licencesScreen
+import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
+import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
+import com.nei.ichigo.feature.settings.navigation.encyclopediaSettings
+import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
 sealed class Screen(
     val route: String,
@@ -33,7 +44,7 @@ sealed class Screen(
     data object Champions : Screen(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
-        icon = Icons.Default.Face,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
@@ -43,10 +54,31 @@ sealed class Screen(
     data object ProfileIcons : Screen(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
-        icon = Icons.Default.Image,
+        icon = Icons.Default.Circle,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
+        }
+    )
+
+
+    data object Items : Screen(
+        route = ItemsRoute.javaClass.name,
+        title = R.string.items,
+        icon = Icons.Default.Circle,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToItems(navOptions)
+        }
+    )
+
+    data object Spells : Screen(
+        route = SpellsRoute.javaClass.name,
+        title = R.string.spells,
+        icon = Icons.Default.Circle,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToSpells(navOptions)
         }
     )
 
@@ -55,12 +87,13 @@ sealed class Screen(
         title = R.string.settings,
         icon = Icons.Default.Settings,
         action = {
-            navigateToEncyclopediaSettings(navOptions { launchSingleTop = true })
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToEncyclopediaSettings(navOptions)
         }
     )
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Settings)
+        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Settings)
     }
 }
 
@@ -77,10 +110,18 @@ private fun NavController.topLevelDestinationNavOptions() = navOptions {
 fun IchigoNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = IconsRoute,
+        startDestination = ChampionsRoute,
     ) {
-        championsListDetail()
+        if (SUPPORT_PANE_CHAMPION) {
+            championsListDetail()
+        } else {
+            champions(onChampionClick = { navController.navigateToChampion(it) })
+            champion(onBackPress = { navController.popBackStack() })
+        }
         icons()
-        encyclopediaSettings(onDismiss = { navController.popBackStack() })
+        items()
+        spells()
+        encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
+        licencesScreen(onBackPress = { navController.popBackStack() })
     }
 }

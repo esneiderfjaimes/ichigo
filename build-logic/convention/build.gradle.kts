@@ -25,7 +25,16 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
 
-    println(libs.bundles.suppress)
+    // fake usage to suppress warning
+    val list = listOf(
+        libs.bundles.suppress,
+        libs.bundles.compose,
+        libs.plugins.android.test,
+        libs.plugins.room,
+        libs.plugins.ichigo.android.lint,
+        libs.plugins.ichigo.test,
+    )
+    println("Suppressed warnings ${list.size}")
 }
 
 tasks {
@@ -56,6 +65,14 @@ gradlePlugin {
         register("jvmLibrary") {
             id = libs.plugins.ichigo.jvm.library.get().pluginId
             implementationClass = "com.nei.ichigo.JvmLibraryConventionPlugin"
+        }
+        register("compose") {
+            id = libs.plugins.ichigo.compose.get().pluginId
+            implementationClass = "com.nei.ichigo.ComposeConventionPlugin"
+        }
+        register("test") {
+            id = libs.plugins.ichigo.test.get().pluginId
+            implementationClass = "com.nei.ichigo.TestConventionPlugin"
         }
     }
 }

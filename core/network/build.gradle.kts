@@ -1,9 +1,8 @@
 plugins {
     alias(libs.plugins.ichigo.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ichigo.hilt)
-    id("kotlinx-serialization")
     alias(libs.plugins.kotlin.serialization)
+    id("kotlinx-serialization")
 }
 
 android {
@@ -18,12 +17,10 @@ dependencies {
 
     implementation(projects.core.model)
 
+    // squareup
     implementation(libs.squareup.logging.interceptor)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter.gson)
-    implementation(libs.kotlin.serialization.json)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.kotlin.serialization.json)
 }

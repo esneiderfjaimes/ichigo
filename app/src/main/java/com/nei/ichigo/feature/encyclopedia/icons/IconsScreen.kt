@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -9,26 +8,19 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.MoreVert
@@ -38,7 +30,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,30 +40,28 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
-import com.nei.ichigo.core.designsystem.component.AsyncImage
+import com.nei.ichigo.common.BaseScreen
+import com.nei.ichigo.common.BaseTopAppBar
+import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
-import com.nei.ichigo.core.designsystem.component.ErrorScreen
-import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
+import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
+import com.nei.ichigo.core.designsystem.component.IchigoItemImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.PageInfo
-import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
-import com.nei.ichigo.core.designsystem.theme.Gold
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -89,7 +78,7 @@ fun IconsScreen() {
 
 @Composable
 private fun IconsScreen(
-    state: IconsUiState,
+    state: UiState<out IconsUiState>,
     onSelectPage: (Int?) -> Unit = {},
     onPageSizeChange: (Int) -> Unit = {},
 ) {
@@ -98,47 +87,33 @@ private fun IconsScreen(
             mutableStateOf(null)
         }
 
-        Scaffold(
-            topBar = {
-                IconsTopAppBar(state, onSelectPage, onPageSizeChange)
-            },
+        BaseScreen(
+            state = state,
+            topBar = { IconsTopAppBar(state, onSelectPage, onPageSizeChange) },
             bottomBar = {
-                if (state is IconsUiState.Success) {
-                    state.pageInfo?.let {
+                if (state is UiState.Success) {
+                    state.content.pageInfo?.let {
                         BottomPager(it) {
                             onSelectPage(it)
                         }
                     }
                 }
-            },
-            contentWindowInsets = WindowInsets.safeDrawing
-        ) { innerPadding ->
-            when (state) {
-                IconsUiState.Error -> {
-                    ErrorScreen(modifier = Modifier.padding(innerPadding))
-                }
-
-                IconsUiState.Loading -> {
-                    LoadingScreen(modifier = Modifier.padding(innerPadding))
-                }
-
-                is IconsUiState.Success -> {
-                    SuccessContent(
-                        innerPadding = innerPadding,
-                        icons = state.icons,
-                        total = state.totalIcons,
-                        version = state.version,
-                        selectedProfileIcon = selectedProfileIcon,
-                        onSelect = { selectedProfileIcon = it }
-                    )
-                }
             }
+        ) { state, innerPadding ->
+            SuccessContent(
+                innerPadding = innerPadding,
+                icons = state.icons,
+                total = state.totalIcons,
+                version = state.version,
+                selectedProfileIcon = selectedProfileIcon,
+                onSelect = { selectedProfileIcon = it }
+            )
         }
 
-        if (state is IconsUiState.Success) {
+        if (state is UiState.Success) {
             IconDetails(
                 selectedProfileIcon = selectedProfileIcon,
-                version = state.version,
+                version = state.content.version,
                 requestClose = { selectedProfileIcon = null }
             )
         }
@@ -147,31 +122,13 @@ private fun IconsScreen(
 
 @Composable
 private fun IconsTopAppBar(
-    state: IconsUiState,
+    uiState: UiState<out IconsUiState>,
     onSelectPage: (Int?) -> Unit = {},
     onPageSizeChange: (Int) -> Unit = {},
 ) {
-    TransparentTopAppBar(text = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-        ) {
-            append(stringResource(R.string.icons))
-        }
-        if (state is IconsUiState.Success) {
-            if (state.version.isNotBlank()) withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    fontSize = MaterialTheme.typography.titleSmall.fontSize
-                )
-            ) {
-                append(" v${state.version}")
-            }
-        }
-    }) {
-        if (state is IconsUiState.Success) {
+    BaseTopAppBar(uiState, R.string.icons) {
+        if (uiState is UiState.Success) {
+            val state = uiState.content
             var showMenu by remember { mutableStateOf(false) }
             IconButton(onClick = { showMenu = true }) {
                 Icon(Icons.Rounded.MoreVert, contentDescription = null)
@@ -240,17 +197,10 @@ private fun IconsTopAppBar(
     }
 }
 
-private val BORDER_SIZE = 0.75.dp
+private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
-private val ITEM_SIZE = 70.dp
-
-private val ITEM_SPADING = 4.dp
-private val ITEM_SHAPE = RoundedCornerShape(25)
-private val GRID_MIN_SIZE = ITEM_SIZE + (ITEM_SPADING * 2) + (BORDER_SIZE * 2)
-
-context(SharedTransitionScope)
 @Composable
-private fun SuccessContent(
+private fun SharedTransitionScope.SuccessContent(
     innerPadding: PaddingValues,
     icons: List<IconUi>,
     total: Int,
@@ -297,7 +247,7 @@ private fun SuccessContent(
                 ) {
                     ProfileIconItem(
                         icon = icon,
-                        size = ITEM_SIZE,
+                        size = DEFAULT_ITEM_SIZE,
                         version = version
                     ) {
                         onSelect(icon)
@@ -308,60 +258,53 @@ private fun SuccessContent(
     )
 }
 
-context(SharedTransitionScope, AnimatedVisibilityScope)
+context(visibilityScope: AnimatedVisibilityScope)
 @Composable
-fun ProfileIconItem(
+fun SharedTransitionScope.ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
-    onClick: () -> Unit = {}
+    onClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = Modifier
-            .padding(ITEM_SPADING)
+            .padding(DEFAULT_ITEM_PADDING)
             .sharedBounds(
                 sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = this@AnimatedVisibilityScope,
+                animatedVisibilityScope = visibilityScope,
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
+        IchigoItemImage(
             model = getProfileIconImage(icon.image, version),
             modifier = Modifier
-                .clip(ITEM_SHAPE)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(
-                    width = BORDER_SIZE,
-                    color = Gold,
-                    shape = ITEM_SHAPE
+                .then(
+                    other = if (onClick != null) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    }
                 )
-                .padding(BORDER_SIZE)
-                .size(size)
-                .clickable(onClick = onClick)
                 .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = icon.id),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
-                    clipInOverlayDuringTransition = OverlayClip(ITEM_SHAPE)
+                    sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
+                    animatedVisibilityScope = visibilityScope,
+                    clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                 ),
+            size = size,
         )
-        Text(
+        IchigoItemLabel(
             text = "#" + icon.id,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.background, CircleShape)
-                .padding(4.dp)
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = this@AnimatedVisibilityScope,
+                    animatedVisibilityScope = visibilityScope,
                 )
         )
     }
 }
 
-context(SharedTransitionScope)
 @Composable
-fun IconDetails(
+fun SharedTransitionScope.IconDetails(
     selectedProfileIcon: IconUi?,
     version: String,
     requestClose: () -> Unit
@@ -374,33 +317,15 @@ fun IconDetails(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center
         ) {
             if (icon != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = requestClose
-                        )
-                        .background(Color.Black.copy(alpha = 0.5f))
-                )
-
-                ProfileIconItem(
+                IconFullscreen(
                     icon = icon,
                     version = version,
-                    size = ITEM_SIZE * 2,
-                    onClick = requestClose
+                    requestClose = requestClose
                 )
-
-                BackHandler {
-                    requestClose()
-                }
             }
         }
-
     }
 }
 
@@ -409,18 +334,19 @@ fun IconDetails(
 fun IconsScreenPreview() {
     AsyncImagePreviewProvider {
         IconsScreen(
-            state = IconsUiState.Success(
-                version = "1.0.0",
-                lang = "en",
-                totalIcons = 100,
-                icons = (1..100).map {
-                    IconUi(
-                        id = it.toString(),
-                        image = ""
-                    )
-                },
-                pageInfo = null,
-                pageSize = 20
+            state = UiState.Success(
+                content = IconsUiState(
+                    icons = (1..100).map {
+                        IconUi(
+                            id = it.toString(),
+                            image = ""
+                        )
+                    },
+                    totalIcons = 100,
+                    pageInfo = null,
+                    pageSize = 20,
+                    version = "1.0.0"
+                )
             )
         )
     }
@@ -432,21 +358,22 @@ fun IconsScreenPreview() {
 fun IconsScreenPreview2() {
     AsyncImagePreviewProvider {
         IconsScreen(
-            state = IconsUiState.Success(
-                version = "1.0.0",
-                lang = "en",
-                totalIcons = 100,
-                icons = (1..100).map {
-                    IconUi(
-                        id = it.toString(),
-                        image = ""
-                    )
-                },
-                pageInfo = PageInfo(
-                    pageIndex = 0,
-                    totalPages = 10
-                ),
-                pageSize = 20
+            state = UiState.Success(
+                content = IconsUiState(
+                    icons = (1..100).map {
+                        IconUi(
+                            id = it.toString(),
+                            image = ""
+                        )
+                    },
+                    totalIcons = 100,
+                    pageInfo = PageInfo(
+                        pageIndex = 0,
+                        totalPages = 10
+                    ),
+                    pageSize = 20,
+                    version = "1.0.0"
+                )
             )
         )
     }

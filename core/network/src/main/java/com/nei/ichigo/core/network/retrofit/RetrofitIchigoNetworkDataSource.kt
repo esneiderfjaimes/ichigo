@@ -6,8 +6,10 @@ import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.core.model.ProfileIcon
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import com.nei.ichigo.core.network.model.ChampionResponseServer
+import com.nei.ichigo.core.network.model.ItemResponseServer
 import com.nei.ichigo.core.network.model.PageResponseServer
 import com.nei.ichigo.core.network.model.ProfileIconResponseServer
+import com.nei.ichigo.core.network.model.SummonerResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import com.nei.ichigo.core.network.model.asExternalModelDetail
 import dagger.Lazy
@@ -52,6 +54,18 @@ private interface DataDragonApi {
         @Path("version") version: String,
         @Path("lang") lang: String,
     ): PageResponseServer<ProfileIconResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/item.json")
+    suspend fun items(
+        @Path("version") version: String,
+        @Path("lang") lang: String,
+    ): PageResponseServer<ItemResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/summoner.json")
+    suspend fun summonerSpells(
+        @Path("version") version: String,
+        @Path("lang") lang: String
+    ): PageResponseServer<SummonerResponseServer>
 }
 
 @Singleton
@@ -117,5 +131,21 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
         networkApi.profileIcons(version, lang)
             .data!!.values
             .map(ProfileIconResponseServer::asExternalModel)
+    }
+
+    override suspend fun getItems(version: String, lang: String) = withContext(Dispatchers.IO) {
+        networkApi.items(version, lang)
+            .data!!
+            .map { (id, item) ->
+                item.asExternalModel(id)
+            }
+    }
+
+    override suspend fun getSummonerSpells(
+        version: String, lang: String
+    ) = withContext(Dispatchers.IO) {
+        networkApi.summonerSpells(version, lang)
+            .data!!.values
+            .map(SummonerResponseServer::asExternalModel)
     }
 }

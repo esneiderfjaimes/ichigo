@@ -16,7 +16,7 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.nei.ichigo.MainActivityUiState.Loading
+import com.nei.ichigo.MainUiState.Loading
 import com.nei.ichigo.core.designsystem.theme.IchigoTheme
 import com.nei.ichigo.ui.IchigoApp
 import dagger.hilt.android.AndroidEntryPoint

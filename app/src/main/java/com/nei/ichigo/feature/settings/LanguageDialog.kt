@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.settings
+package com.nei.ichigo.feature.settings
 
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.runtime.Composable

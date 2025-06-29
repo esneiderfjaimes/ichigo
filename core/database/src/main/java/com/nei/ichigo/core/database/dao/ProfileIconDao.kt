@@ -9,7 +9,7 @@ import com.nei.ichigo.core.database.model.ProfileIconEntity
 @Dao
 interface ProfileIconDao {
 
-    @Query("SELECT * FROM profile_icons WHERE version = :version AND lang = :lang ORDER BY id ASC")
+    @Query("SELECT * FROM profile_icons WHERE version = :version AND lang = :lang")
     fun getProfileIcons(version: String, lang: String): List<ProfileIconEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
