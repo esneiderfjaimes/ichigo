@@ -25,7 +25,16 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
 
-    println(libs.bundles.suppress)
+    // fake usage to suppress warning
+    val list = listOf(
+        libs.bundles.suppress,
+        libs.bundles.compose,
+        libs.plugins.android.test,
+        libs.plugins.room,
+        libs.plugins.ichigo.android.lint,
+        libs.plugins.ichigo.test,
+    )
+    println("Suppressed warnings ${list.size}")
 }
 
 tasks {

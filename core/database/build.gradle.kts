@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.ichigo.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ichigo.hilt)
 }
 

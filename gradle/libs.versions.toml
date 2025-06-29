@@ -22,8 +22,6 @@ retrofit = "3.0.0"
 kotlinxSerializationJson = "1.9.0"
 androidDesugarJdkLibs = "2.1.5"
 androidxTracing = "1.3.0"
-appcompat = "1.7.1"
-material = "1.12.0"
 versions = "0.52.0"
 versionCatalogUpdate = "1.0.0"
 githooks = "0.0.3"
@@ -105,9 +103,6 @@ android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs
 compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -143,6 +138,16 @@ suppress = [
     "hilt-core",
     "hilt-ext-compiler",
     "kotlin-test",
+    "compose-bom",
+    "compose-ui-tooling",
+    "compose-ui-tooling-preview",
+    "compose-ui-test-manifest",
+    "compose-ui-test-junit4",
+    "compose-material3",
+    "compose-material-icons-extended",
+    "junit",
+    "androidx-junit",
+    "androidx-espresso-core",
 ]
 compose = [
     "compose-ui",
