@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.ichigo.android.application)
     alias(libs.plugins.ichigo.compose)
     alias(libs.plugins.ichigo.hilt)
+    alias(libs.plugins.aboutlibraries)
     id("kotlinx-serialization")
-    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 android {
