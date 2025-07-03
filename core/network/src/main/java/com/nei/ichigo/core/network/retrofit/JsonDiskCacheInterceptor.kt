@@ -6,13 +6,26 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.Invocation
 import java.io.File
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class NonCacheable
 
 class JsonDiskCacheInterceptor(
     private val context: Context
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
+
+        // Don't cache non-cacheable requests
+        val invocation = request.tag(Invocation::class.java)
+        val isNonCacheable = invocation?.method()
+            ?.getAnnotation(NonCacheable::class.java) != null
+        if (isNonCacheable) {
+            return chain.proceed(request)
+        }
 
         // Only cache GET
         if (request.method != "GET") return chain.proceed(request)

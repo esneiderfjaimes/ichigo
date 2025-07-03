@@ -30,9 +30,11 @@ private const val BASE_URL = "https://ddragon.leagueoflegends.com/"
  */
 private interface DataDragonApi {
 
+    @NonCacheable
     @GET("/cdn/languages.json")
     suspend fun languages(): List<String>
 
+    @NonCacheable
     @GET("/api/versions.json")
     suspend fun versions(): List<String>
 
