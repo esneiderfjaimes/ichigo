@@ -4,7 +4,8 @@ updates:
     directory: "/"
     target-branch: "dependabot/central"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+      day: "first"
     open-pull-requests-limit: 99
     allow:
       - dependency-type: "direct"
