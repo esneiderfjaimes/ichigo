@@ -1,9 +1,6 @@
 package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -12,6 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.icon.Champion
+import com.nei.ichigo.core.designsystem.icon.IchigoIcons
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -44,7 +43,7 @@ sealed class Screen(
     data object Champions : Screen(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Champion,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
@@ -54,7 +53,7 @@ sealed class Screen(
     data object ProfileIcons : Screen(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.ProfileIcons,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
@@ -65,7 +64,7 @@ sealed class Screen(
     data object Items : Screen(
         route = ItemsRoute.javaClass.name,
         title = R.string.items,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Items,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToItems(navOptions)
@@ -75,7 +74,7 @@ sealed class Screen(
     data object Spells : Screen(
         route = SpellsRoute.javaClass.name,
         title = R.string.spells,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Spells,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToSpells(navOptions)
@@ -85,7 +84,7 @@ sealed class Screen(
     data object Settings : Screen(
         route = EncyclopediaSettingsRoute.javaClass.name,
         title = R.string.settings,
-        icon = Icons.Default.Settings,
+        icon = IchigoIcons.Settings,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToEncyclopediaSettings(navOptions)

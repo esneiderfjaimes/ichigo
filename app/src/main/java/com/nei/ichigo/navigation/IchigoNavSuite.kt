@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -76,7 +77,13 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
                             contentDescription = null
                         )
                     },
-                    label = { Text(stringResource(screen.title)) },
+                    label = {
+                        Text(
+                            text = stringResource(screen.title),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
                     selected = currentDestination?.destination?.route == screen.route,
                     onClick = { screen.action(navController) }
                 )
@@ -203,7 +210,13 @@ fun MoreOptionsBottomSheet(
                 selected = currentDestination?.destination?.route == screen.route,
                 onClick = { onClick(screen) },
                 icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                label = { Text(stringResource(screen.title)) },
+                label = {
+                    Text(
+                        text = stringResource(screen.title),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
             )
         }
     }

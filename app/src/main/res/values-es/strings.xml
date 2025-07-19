@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ichigo</string>
-
     <string name="all">Todos</string>
     <string name="filter_by_tag">Filtrar por etiqueta</string>
     <string name="select_language">Seleccionar idioma</string>
