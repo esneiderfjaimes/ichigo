@@ -4,11 +4,13 @@ import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.core.model.ProfileIcon
+import com.nei.ichigo.core.model.RuneBranch
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
 import com.nei.ichigo.core.network.model.ChampionResponseServer
 import com.nei.ichigo.core.network.model.ItemResponseServer
 import com.nei.ichigo.core.network.model.PageResponseServer
 import com.nei.ichigo.core.network.model.ProfileIconResponseServer
+import com.nei.ichigo.core.network.model.RunesDto
 import com.nei.ichigo.core.network.model.SummonerResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import com.nei.ichigo.core.network.model.asExternalModelDetail
@@ -68,6 +70,12 @@ private interface DataDragonApi {
         @Path("version") version: String,
         @Path("lang") lang: String
     ): PageResponseServer<SummonerResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/runesReforged.json")
+    suspend fun runes(
+        @Path("version") version: String,
+        @Path("lang") lang: String
+    ): RunesDto
 }
 
 @Singleton
@@ -150,4 +158,10 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
             .data!!.values
             .map(SummonerResponseServer::asExternalModel)
     }
+
+    override suspend fun getRunes(version: String, lang: String): List<RuneBranch> =
+        withContext(Dispatchers.IO) {
+            val runes = networkApi.runes(version, lang)
+            runes.asExternalModel()
+        }
 }

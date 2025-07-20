@@ -24,6 +24,9 @@ import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
 import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
 import com.nei.ichigo.feature.encyclopedia.items.navigation.items
 import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.RunesRoute
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.navigateToRunes
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.runes
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
@@ -91,8 +94,18 @@ sealed class Screen(
         }
     )
 
+    data object Runes : Screen(
+        route = RunesRoute.javaClass.name,
+        title = R.string.runes,
+        icon = IchigoIcons.Rune,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToRunes(navOptions)
+        }
+    )
+
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Settings)
+        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Runes, Settings)
     }
 }
 
@@ -120,6 +133,7 @@ fun IchigoNavHost(navController: NavHostController) {
         icons()
         items()
         spells()
+        runes()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }

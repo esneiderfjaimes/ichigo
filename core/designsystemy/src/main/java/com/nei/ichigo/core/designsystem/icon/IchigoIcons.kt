@@ -13,6 +13,7 @@ object IchigoIcons {
     val ProfileIcons = Icons.Default.Image
     val Items = Icons.Default.Circle
     val Spells = Icons.Default.Circle
+    val Rune = Icons.Default.Circle
     val Settings = Icons.Rounded.Settings
 
     inline fun path(pathBuilder: PathBuilder.() -> Unit) = materialIcon(name = "Champion") {

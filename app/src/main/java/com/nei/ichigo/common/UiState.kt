@@ -14,6 +14,8 @@ inline fun <T> UiState<T>.onSuccess(action: (T) -> Unit): UiState<T> =
         this
     }
 
+fun <T> T.toSuccessUiState() = UiState.Success(this)
+
 interface PageUiState {
     val version: String
 }
