@@ -104,7 +104,8 @@ fun IchigoNavSuite(
                     )
                 },
                 label = { Text(stringResource(R.string.more)) },
-                selected = showMoreOptionsButton,
+                selected = showMoreOptionsButton
+                        || moreOptions.any { currentDestination?.destination?.route == it.route },
                 onClick = {
                     showMoreOptionsButton = true
                 }
