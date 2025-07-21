@@ -2,7 +2,7 @@ package com.nei.ichigo.feature.encyclopedia.runes
 
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
-import com.nei.ichigo.core.data.model.Page
+import com.nei.ichigo.core.data.model.ListPage
 import com.nei.ichigo.core.domain.GetRunesUseCase
 import com.nei.ichigo.core.model.RuneBranch
 import com.nei.ichigo.feature.encyclopedia.runes.RunesViewModel.RunesUiState
@@ -15,7 +15,7 @@ class RunesViewModel @Inject constructor(
     getRunesUseCase: GetRunesUseCase,
 ) : UiStateViewModel<RunesUiState>() {
     override val flow = getRunesUseCase().map { pageResult ->
-        val page: Page<RuneBranch> = pageResult.getOrThrow()
+        val page: ListPage<RuneBranch> = pageResult.getOrThrow()
         val branches: List<RuneBranch> = page.data.sortedByIdOrder(RuneBranch::id, ORDER)
         val version: String = page.version
         RunesUiState(
@@ -48,7 +48,8 @@ fun <T> List<T>.sortedByIdOrder(
 
     return this.sortedWith(
         compareBy(
-        { orderMap[it.let(getId)] ?: Int.MAX_VALUE }, // Orden según idOrder
-        { this.indexOf(it) }                          // Si no está, se mantiene el orden original
-    ))
+            { orderMap[it.let(getId)] ?: Int.MAX_VALUE },
+            { this.indexOf(it) }
+        )
+    )
 }

@@ -32,18 +32,18 @@ class IconsViewModel @Inject constructor(
     ) { pageResult, pageIndex, pageSize ->
         val page = pageResult.getOrThrow()
         val (icons, pageInfo) = if (pageIndex != null) {
-            val pageIcons = page.icons.getPage(pageSize = pageSize, pageIndex = pageIndex)
-            val totalPages = (page.icons.size + pageSize - 1) / pageSize
+            val pageIcons = page.data.getPage(pageSize = pageSize, pageIndex = pageIndex)
+            val totalPages = (page.data.size + pageSize - 1) / pageSize
             pageIcons to PageInfo(
                 pageIndex = pageIndex,
                 totalPages = totalPages
             )
         } else {
-            page.icons to null
+            page.data to null
         }
         IconsUiState(
             icons = icons.map(ProfileIcon::toUi),
-            totalIcons = page.icons.size,
+            totalIcons = page.data.size,
             pageInfo = pageInfo,
             pageSize = pageSize,
             version = page.version

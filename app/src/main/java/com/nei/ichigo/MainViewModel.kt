@@ -7,16 +7,20 @@ import com.nei.ichigo.MainUiState.Success
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.core.model.UserSettings
+import com.nei.ichigo.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    userSettingsRepository: UserSettingsRepository
+    val userSettingsRepository: UserSettingsRepository
 ) : ViewModel() {
     val uiState: StateFlow<MainUiState> = userSettingsRepository.userSettings.map {
         Success(it)
@@ -25,6 +29,17 @@ class MainViewModel @Inject constructor(
         initialValue = Loading,
         started = SharingStarted.WhileSubscribed(5_000),
     )
+
+    suspend fun getLastNavigationRoute() =
+        userSettingsRepository.userSettings.first().lastNavigationRoute
+
+    fun updateLastNavigationRoute(route: Screen) {
+        viewModelScope.launch(Dispatchers.IO) {
+            // We don't want to update the last navigation route when the user is on the settings screen
+            if (route == Screen.Settings) return@launch
+            userSettingsRepository.updateLastNavigationRoute(route.name)
+        }
+    }
 }
 
 sealed interface MainUiState {

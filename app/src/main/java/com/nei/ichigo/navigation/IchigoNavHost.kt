@@ -36,14 +36,14 @@ import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
 import com.nei.ichigo.feature.settings.navigation.encyclopediaSettings
 import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
-sealed class Screen(
+enum class Screen(
     val route: String,
     @StringRes
     val title: Int,
     val icon: ImageVector,
     val action: NavController.() -> Unit
 ) {
-    data object Champions : Screen(
+    Champions(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
         icon = IchigoIcons.Champion,
@@ -51,9 +51,9 @@ sealed class Screen(
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
         }
-    )
+    ),
 
-    data object ProfileIcons : Screen(
+    ProfileIcons(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
         icon = IchigoIcons.ProfileIcons,
@@ -61,10 +61,9 @@ sealed class Screen(
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
         }
-    )
+    ),
 
-
-    data object Items : Screen(
+    Items(
         route = ItemsRoute.javaClass.name,
         title = R.string.items,
         icon = IchigoIcons.Items,
@@ -72,9 +71,9 @@ sealed class Screen(
             val navOptions = topLevelDestinationNavOptions()
             navigateToItems(navOptions)
         }
-    )
+    ),
 
-    data object Spells : Screen(
+    Spells(
         route = SpellsRoute.javaClass.name,
         title = R.string.spells,
         icon = IchigoIcons.Spells,
@@ -82,19 +81,9 @@ sealed class Screen(
             val navOptions = topLevelDestinationNavOptions()
             navigateToSpells(navOptions)
         }
-    )
+    ),
 
-    data object Settings : Screen(
-        route = EncyclopediaSettingsRoute.javaClass.name,
-        title = R.string.settings,
-        icon = IchigoIcons.Settings,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToEncyclopediaSettings(navOptions)
-        }
-    )
-
-    data object Runes : Screen(
+    Runes(
         route = RunesRoute.javaClass.name,
         title = R.string.runes,
         icon = IchigoIcons.Rune,
@@ -102,10 +91,20 @@ sealed class Screen(
             val navOptions = topLevelDestinationNavOptions()
             navigateToRunes(navOptions)
         }
-    )
+    ),
+
+    Settings(
+        route = EncyclopediaSettingsRoute.javaClass.name,
+        title = R.string.settings,
+        icon = IchigoIcons.Settings,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToEncyclopediaSettings(navOptions)
+        }
+    );
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Runes, Settings)
+        val allScreens = entries.toList()
     }
 }
 
@@ -119,10 +118,13 @@ private fun NavController.topLevelDestinationNavOptions() = navOptions {
 }
 
 @Composable
-fun IchigoNavHost(navController: NavHostController) {
+fun IchigoNavHost(
+    navController: NavHostController,
+    lastNavigationRoute: String?,
+) {
     NavHost(
         navController = navController,
-        startDestination = Screen.allScreens.first().route,
+        startDestination = resolveStartDestination(lastNavigationRoute),
     ) {
         if (SUPPORT_PANE_CHAMPION) {
             championsListDetail()
@@ -137,4 +139,11 @@ fun IchigoNavHost(navController: NavHostController) {
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }
+}
+
+fun resolveStartDestination(lastNavigationRoute: String?): String {
+    val screen = lastNavigationRoute?.let {
+        Screen.allScreens.find { it.name == lastNavigationRoute }
+    }
+    return screen?.route ?: Screen.allScreens.first().route
 }

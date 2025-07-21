@@ -27,8 +27,6 @@ data class RuneDto(
     val longDesc: String
 )
 
-fun RunesDto.asExternalModel(): List<RuneBranch> = map(BranchDto::asExternalModel)
-
 fun BranchDto.asExternalModel(): RuneBranch = RuneBranch(
     id = id,
     key = key,

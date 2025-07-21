@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -89,12 +90,14 @@ class MainActivity : ComponentActivity() {
         // the UI.
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
+        val lastNavigationRoute = runBlocking { viewModel.getLastNavigationRoute() }
+
         setContent {
             IchigoTheme(
                 darkTheme = themeSettings.darkTheme,
                 dynamicColor = !themeSettings.disableDynamicTheming
             ) {
-                IchigoApp()
+                IchigoApp(lastNavigationRoute, viewModel::updateLastNavigationRoute)
             }
         }
     }

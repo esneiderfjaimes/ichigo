@@ -48,6 +48,7 @@ import com.nei.ichigo.BuildConfig
 import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.core.data.model.ConfigValue
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.theme.supportsDynamicTheming
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
@@ -189,10 +190,10 @@ fun ColumnScope.SuccessContent(
 
     ItemListSelector(
         text = stringResource(R.string.version),
-        value = state.version ?: stringResource(R.string.latest),
+        value = versionToString(state.version),
         bottomSheetContent = { dismiss ->
             VersionDialog(
-                selectedVersion = state.version,
+                selectedVersion = state.version.byUser,
                 versions = state.versions,
                 onVersionSelected = {
                     dismiss()
@@ -205,11 +206,10 @@ fun ColumnScope.SuccessContent(
 
     ItemListSelector(
         text = stringResource(R.string.language),
-        value = state.language?.let { languageCodeToString(it) }
-            ?: stringResource(R.string.automatic),
+        value = languageToString(state.language),
         bottomSheetContent = { dismiss ->
             LanguageDialog(
-                selectedLanguage = state.language,
+                selectedLanguage = state.language.byUser,
                 languages = state.languages,
                 onLanguageSelected = {
                     dismiss()
@@ -246,6 +246,28 @@ fun ColumnScope.SuccessContent(
     ) {
         Text(text = stringResource(R.string.licenses))
     }
+}
+
+@Composable
+fun versionToString(value: ConfigValue) = when (value) {
+    is ConfigValue.AutomaticSelection -> buildString {
+        append(stringResource(R.string.latest))
+        append(" • ")
+        append(value.value)
+    }
+
+    is ConfigValue.SelectedByUser -> value.value
+}
+
+@Composable
+fun languageToString(value: ConfigValue) = when (value) {
+    is ConfigValue.AutomaticSelection -> buildString {
+        append(stringResource(R.string.automatic))
+        append(" • ")
+        append(languageCodeToString(value.value))
+    }
+
+    is ConfigValue.SelectedByUser -> languageCodeToString(value.value)
 }
 
 @Composable
@@ -319,8 +341,8 @@ fun ChampionsSettingsDialogContentPreview() {
             SettingsUiState(
                 darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                 useDynamicColor = true,
-                version = null,
-                language = null,
+                version = ConfigValue.AutomaticSelection("1.0.0"),
+                language = ConfigValue.AutomaticSelection("en_US"),
                 versions = emptyList(),
                 languages = emptyList()
             )

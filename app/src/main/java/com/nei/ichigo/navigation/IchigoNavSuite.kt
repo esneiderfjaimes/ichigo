@@ -55,7 +55,11 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
 
 @Composable
-fun IchigoNavSuite(navController: NavHostController, content: @Composable (() -> Unit)) {
+fun IchigoNavSuite(
+    navController: NavHostController,
+    updateLastNavigationRoute: (Screen) -> Unit,
+    content: @Composable (() -> Unit)
+) {
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
     var showMoreOptionsButton by rememberSaveable { mutableStateOf(false) }
@@ -85,7 +89,10 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
                         )
                     },
                     selected = currentDestination?.destination?.route == screen.route,
-                    onClick = { screen.action(navController) }
+                    onClick = {
+                        screen.action(navController)
+                        updateLastNavigationRoute(screen)
+                    }
                 )
             }
 
@@ -114,6 +121,7 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
             MoreOptionsBottomSheet(moreOptions, currentDestination) { screen ->
                 showMoreOptionsButton = false
                 screen.action(navController)
+                updateLastNavigationRoute(screen)
             }
         }
     }
@@ -238,7 +246,7 @@ fun IchigoAppPreview() {
 @Composable
 private fun NavigationSuitePreview() {
     val navController = rememberNavController()
-    IchigoNavSuite(navController = navController) {
+    IchigoNavSuite(navController = navController, {}) {
         Box(Modifier.fillMaxSize()) {
             Box(
                 Modifier

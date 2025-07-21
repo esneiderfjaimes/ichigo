@@ -34,6 +34,11 @@ internal class OfflineUserSettingsRepository @Inject constructor(
         ichigoPreferencesDataSource.saveUserLangSelected(language)
     }
 
+    override suspend fun updateLastNavigationRoute(route: String) {
+        Log.d(TAG, "updateLastNavigationRoute: $route")
+        ichigoPreferencesDataSource.saveLastNavigationRoute(route)
+    }
+
     companion object {
         private const val TAG = "OfflineUserSettingsRepo"
     }

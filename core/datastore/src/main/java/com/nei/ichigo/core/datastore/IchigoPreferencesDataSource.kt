@@ -18,14 +18,15 @@ class IchigoPreferencesDataSource @Inject constructor(
     @DataStoreUserSettings
     private val preferences: DataStore<Preferences>,
 ) {
-    val userSettings = preferences.data.map {
+    val userSettings = preferences.data.map { preferences ->
         UserSettings(
-            darkThemeConfig = it[DARK_THEME_CONFIG_KEY]
+            darkThemeConfig = preferences[DARK_THEME_CONFIG_KEY]
                 ?.let { ordinal -> DarkThemeConfig.entries.find { it.ordinal == ordinal } }
                 ?: DarkThemeConfig.FOLLOW_SYSTEM,
-            useDynamicColor = it[USE_DYNAMIC_COLOR_KEY] == true,
-            versionSelected = it[USER_VERSION_KEY],
-            langSelected = it[USER_LANG_KEY]
+            useDynamicColor = preferences[USE_DYNAMIC_COLOR_KEY] == true,
+            versionSelected = preferences[USER_VERSION_KEY],
+            langSelected = preferences[USER_LANG_KEY],
+            lastNavigationRoute = preferences[LAST_NAVIGATION_ROUTE_KEY],
         )
     }
 
@@ -61,15 +62,26 @@ class IchigoPreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun saveLastNavigationRoute(route: String?) {
+        preferences.edit { preferences ->
+            if (route == null) {
+                preferences.remove(LAST_NAVIGATION_ROUTE_KEY)
+            } else {
+                preferences[LAST_NAVIGATION_ROUTE_KEY] = route
+            }
+        }
+    }
+
     companion object {
         private val Context.dataStore by preferencesDataStore("user_settings")
 
         fun dataStoreBy(context: Context) = context.dataStore
 
-        val DARK_THEME_CONFIG_KEY = intPreferencesKey("dark_theme_config")
-        val USE_DYNAMIC_COLOR_KEY = booleanPreferencesKey("use_dynamic_color")
-        val USER_LANG_KEY = stringPreferencesKey("lang_selected")
-        val USER_VERSION_KEY = stringPreferencesKey("version_selected")
+        private val DARK_THEME_CONFIG_KEY = intPreferencesKey("dark_theme_config")
+        private val USE_DYNAMIC_COLOR_KEY = booleanPreferencesKey("use_dynamic_color")
+        private val USER_LANG_KEY = stringPreferencesKey("lang_selected")
+        private val USER_VERSION_KEY = stringPreferencesKey("version_selected")
+        private val LAST_NAVIGATION_ROUTE_KEY = stringPreferencesKey("last_navigation_route")
     }
 
     @Retention(AnnotationRetention.BINARY)

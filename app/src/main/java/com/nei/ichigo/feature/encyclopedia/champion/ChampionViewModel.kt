@@ -22,12 +22,12 @@ class ChampionViewModel @AssistedInject constructor(
     private val _selectedSkin = MutableStateFlow<Int?>(null)
 
     override val flow = combine(
-        flow = getChampionUseCase.invoke(championId),
+        flow = getChampionUseCase(championId),
         flow2 = _selectedSkin
     ) { result, selectedSkin ->
         val page = result.getOrThrow()
         ChampionUiState(
-            champion = page.champion,
+            champion = page.data,
             selectedSkin = selectedSkin,
             version = page.version,
         )

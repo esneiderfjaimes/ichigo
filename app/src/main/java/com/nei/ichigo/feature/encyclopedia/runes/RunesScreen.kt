@@ -4,16 +4,20 @@ package com.nei.ichigo.feature.encyclopedia.runes
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -45,6 +49,7 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.utils.getRuneImage
 import com.nei.ichigo.core.model.Rune
 import com.nei.ichigo.core.model.RuneBranch
+import com.nei.ichigo.core.model.RuneSlot
 import com.nei.ichigo.feature.encyclopedia.runes.RunesViewModel.RunesUiState
 
 @Composable
@@ -84,32 +89,38 @@ private fun RunesContent(
     val currentBranch = state.branches.find { it.id == currentItemId }
     var currentRuneId by rememberSaveable { mutableStateOf<String?>(null) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(contentPadding)
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            state.branches.forEach { branch ->
-                RuneBranchItem(
-                    branch = branch,
-                    currentItemId = currentItemId,
-                    onClick = { currentItemId = branch.id },
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                state.branches.forEach { branch ->
+                    RuneBranchItem(
+                        branch = branch,
+                        currentItemId = currentItemId,
+                        onClick = { currentItemId = branch.id },
+                    )
+                }
+            }
+
+            currentBranch?.let { runeBranch ->
+                Spacer(modifier = Modifier.size(16.dp))
+                RuneTree(
+                    branch = runeBranch,
+                    currentRuneSelected = currentRuneId,
+                    onRuneSelectedChange = { rune -> currentRuneId = rune?.id },
                 )
             }
-        }
-
-        currentBranch?.let { runeBranch ->
-            RuneTree(
-                branch = runeBranch,
-                currentRuneSelected = currentRuneId,
-                onRuneSelectedChange = { rune -> currentRuneId = rune?.id },
-            )
         }
     }
 }
@@ -123,7 +134,7 @@ private fun RuneBranchItem(
 ) {
     Surface(
         modifier = modifier
-            .padding(4.dp)
+            .padding(horizontal = 4.dp)
             .sizeIn(minWidth = 90.dp),
         onClick = { onClick(branch.id) },
         tonalElevation = 4.dp,
@@ -142,11 +153,11 @@ private fun RuneBranchItem(
         ) {
             AsyncImage(
                 model = getRuneImage(branch.icon),
+                modifier = Modifier.size(16.dp),
             )
             IchigoItemLabel(
                 text = branch.name,
             )
-
         }
     }
 }
@@ -215,7 +226,20 @@ private fun SpellsScreenPreview() {
                         id = it.toString(),
                         name = "test $it",
                         icon = "test $it",
-                        slots = listOf(),
+                        slots = List(4) {
+                            RuneSlot(
+                                runes = List(3) {
+                                    Rune(
+                                        id = it.toString(),
+                                        name = "test $it",
+                                        icon = "test $it",
+                                        key = it.toString(),
+                                        shortDesc = "test $it",
+                                        longDesc = "test $it",
+                                    )
+                                }
+                            )
+                        },
                         key = it.toString()
                     )
                 },
