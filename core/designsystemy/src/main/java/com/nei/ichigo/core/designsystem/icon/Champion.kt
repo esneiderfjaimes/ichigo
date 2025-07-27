@@ -9,7 +9,7 @@ val IchigoIcons.Champion: ImageVector
         if (_champion != null) {
             return _champion!!
         }
-        _champion = path {
+        _champion = path(name = "champion") {
             moveToRelative(11.999f, 2.0f)
             curveToRelative(0.0f, 0.0f, -7.789f, 2.174f, -7.156f, 4.843f)
             curveToRelative(0.632f, 2.669f, 0.022f, 4.626f, 0.101f, 5.081f)

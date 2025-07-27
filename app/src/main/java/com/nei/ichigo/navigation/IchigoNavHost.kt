@@ -11,6 +11,9 @@ import androidx.navigation.navOptions
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.icon.Champion
 import com.nei.ichigo.core.designsystem.icon.IchigoIcons
+import com.nei.ichigo.core.designsystem.icon.Item
+import com.nei.ichigo.core.designsystem.icon.Rune
+import com.nei.ichigo.core.designsystem.icon.Spell
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -52,7 +55,6 @@ enum class Screen(
             navigateToChampions(navOptions)
         }
     ),
-
     ProfileIcons(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
@@ -62,27 +64,24 @@ enum class Screen(
             navigateToIcons(navOptions)
         }
     ),
-
     Items(
         route = ItemsRoute.javaClass.name,
         title = R.string.items,
-        icon = IchigoIcons.Items,
+        icon = IchigoIcons.Item,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToItems(navOptions)
         }
     ),
-
     Spells(
         route = SpellsRoute.javaClass.name,
         title = R.string.spells,
-        icon = IchigoIcons.Spells,
+        icon = IchigoIcons.Spell,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToSpells(navOptions)
         }
     ),
-
     Runes(
         route = RunesRoute.javaClass.name,
         title = R.string.runes,
@@ -92,7 +91,6 @@ enum class Screen(
             navigateToRunes(navOptions)
         }
     ),
-
     Settings(
         route = EncyclopediaSettingsRoute.javaClass.name,
         title = R.string.settings,

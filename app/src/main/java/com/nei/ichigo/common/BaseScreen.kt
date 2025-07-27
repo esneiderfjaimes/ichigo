@@ -27,14 +27,15 @@ fun <T> BaseScreen(
     state: UiState<T>,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing.only(
+        WindowInsetsSides.Vertical + WindowInsetsSides.End
+    ),
     content: @Composable (state: T, innerPadding: PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = topBar,
         bottomBar = bottomBar,
-        contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Vertical + WindowInsetsSides.End
-        )
+        contentWindowInsets = contentWindowInsets
     ) { innerPadding ->
         when (state) {
             UiState.Error -> {

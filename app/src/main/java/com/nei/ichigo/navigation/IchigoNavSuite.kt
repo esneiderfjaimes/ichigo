@@ -1,14 +1,17 @@
 package com.nei.ichigo.navigation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -68,8 +71,11 @@ fun IchigoNavSuite(
     val navScreen = allScreens.take(3)
     val moreOptions = allScreens.drop(3)
     NavigationSuiteScaffold2(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+        /* .navigationBarsPadding()*/,
         layoutType = navSuiteType,
+        showNavigation = allScreens.any { currentDestination?.destination?.route == it.route },
         navigationSuiteColors = NavigationSuiteDefaults.colors(navigationBarContainerColor = Color.Transparent),
         containerColor = Color.Transparent,
         navigationSuiteItems = {
@@ -151,6 +157,7 @@ fun NavigationSuiteScaffold2(
     navigationSuiteItems: NavigationSuiteScope.() -> Unit,
     modifier: Modifier = Modifier,
     layoutType: NavigationSuiteType,
+    showNavigation: Boolean = true,
     navigationSuiteColors: NavigationSuiteColors = NavigationSuiteDefaults.colors(),
     containerColor: Color = NavigationSuiteScaffoldDefaults.containerColor,
     contentColor: Color = NavigationSuiteScaffoldDefaults.contentColor,
@@ -159,20 +166,37 @@ fun NavigationSuiteScaffold2(
     Surface(modifier = modifier, color = containerColor, contentColor = contentColor) {
         NavigationSuiteScaffoldLayout(
             navigationSuite = {
-                NavigationSuite(
-                    // fix window insets navigation suite
-                    modifier = Modifier.windowInsetsPadding(
-                        when (layoutType) {
-                            NavigationSuiteType.NavigationRail ->
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+                AnimatedContent(showNavigation) { show ->
+                    if (show) {
+                        NavigationSuite(
+                            // fix window insets navigation suite
+                            modifier = Modifier.windowInsetsPadding(
+                                when (layoutType) {
+                                    NavigationSuiteType.NavigationRail ->
+                                        WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
 
-                            else -> WindowInsets(0, 0, 0, 0)
-                        }
-                    ),
-                    layoutType = layoutType,
-                    colors = navigationSuiteColors,
-                    content = navigationSuiteItems
-                )
+                                    else -> WindowInsets(0, 0, 0, 0)
+                                }
+                            ),
+                            layoutType = layoutType,
+                            colors = navigationSuiteColors,
+                            content = navigationSuiteItems
+                        )
+                    } else {
+                        Spacer(
+                            modifier = Modifier
+                                .windowInsetsPadding(
+                                    when (layoutType) {
+                                        NavigationSuiteType.NavigationRail ->
+                                            WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+
+                                        else -> WindowInsets(0, 0, 0, 0)
+                                    }
+                                )
+                                .navigationBarsPadding()
+                        )
+                    }
+                }
             },
             layoutType = layoutType,
             content = {
