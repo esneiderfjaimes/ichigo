@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +49,7 @@ import com.nei.ichigo.BuildConfig
 import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.core.data.model.ConfigValue
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.theme.supportsDynamicTheming
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
@@ -189,10 +191,10 @@ fun ColumnScope.SuccessContent(
 
     ItemListSelector(
         text = stringResource(R.string.version),
-        value = state.version ?: stringResource(R.string.latest),
+        value = versionToString(state.version),
         bottomSheetContent = { dismiss ->
             VersionDialog(
-                selectedVersion = state.version,
+                selectedVersion = state.version.byUser,
                 versions = state.versions,
                 onVersionSelected = {
                     dismiss()
@@ -205,11 +207,10 @@ fun ColumnScope.SuccessContent(
 
     ItemListSelector(
         text = stringResource(R.string.language),
-        value = state.language?.let { languageCodeToString(it) }
-            ?: stringResource(R.string.automatic),
+        value = languageToString(state.language),
         bottomSheetContent = { dismiss ->
             LanguageDialog(
-                selectedLanguage = state.language,
+                selectedLanguage = state.language.byUser,
                 languages = state.languages,
                 onLanguageSelected = {
                     dismiss()
@@ -249,6 +250,28 @@ fun ColumnScope.SuccessContent(
 }
 
 @Composable
+fun versionToString(value: ConfigValue) = when (value) {
+    is ConfigValue.AutomaticSelection -> buildString {
+        append(stringResource(R.string.latest))
+        append(" • ")
+        append(value.value)
+    }
+
+    is ConfigValue.SelectedByUser -> value.value
+}
+
+@Composable
+fun languageToString(value: ConfigValue) = when (value) {
+    is ConfigValue.AutomaticSelection -> buildString {
+        append(stringResource(R.string.automatic))
+        append(" • ")
+        append(languageCodeToString(value.value))
+    }
+
+    is ConfigValue.SelectedByUser -> languageCodeToString(value.value)
+}
+
+@Composable
 fun SectionTitle(text: String) {
     Text(
         text = text,
@@ -275,7 +298,7 @@ fun ItemListSelector(
             TextButton(
                 onClick = { showBottomSheet = true },
             ) {
-                Text(value)
+                Text(value, textAlign = TextAlign.End)
             }
         }
     )
@@ -303,9 +326,9 @@ fun Item(
             style = style,
             modifier = Modifier
                 .padding(start = 24.dp)
-                .weight(1f)
                 .minimumInteractiveComponentSize()
         )
+        Spacer(Modifier.weight(1f))
         action()
         Spacer(Modifier.width(24.dp))
     }
@@ -319,8 +342,8 @@ fun ChampionsSettingsDialogContentPreview() {
             SettingsUiState(
                 darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                 useDynamicColor = true,
-                version = null,
-                language = null,
+                version = ConfigValue.AutomaticSelection("1.0.0"),
+                language = ConfigValue.AutomaticSelection("en_US"),
                 versions = emptyList(),
                 languages = emptyList()
             )

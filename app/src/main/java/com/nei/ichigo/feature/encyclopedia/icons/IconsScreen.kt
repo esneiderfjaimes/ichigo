@@ -92,8 +92,8 @@ private fun IconsScreen(
             topBar = { IconsTopAppBar(state, onSelectPage, onPageSizeChange) },
             bottomBar = {
                 if (state is UiState.Success) {
-                    state.content.pageInfo?.let {
-                        BottomPager(it) {
+                    state.content.pageInfo?.let { pageInfo ->
+                        BottomPager(pageInfo) {
                             onSelectPage(it)
                         }
                     }

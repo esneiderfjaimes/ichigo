@@ -1,27 +1,16 @@
 package com.nei.ichigo.core.domain
 
-import android.content.Context
 import android.util.Log
 import com.nei.ichigo.core.data.model.ItemsPage
-import com.nei.ichigo.core.data.repository.ChampionsRepository
-import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
+import com.nei.ichigo.core.data.repository.PagerHelper
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class GetItemsUseCase @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val networkDataSource: IchigoNetworkDataSource,
-    championsRepository: ChampionsRepository,
-    ichigoPreferencesDataSource: IchigoPreferencesDataSource,
-) : PagerHelper<ItemsPage>(
-    context,
-    championsRepository,
-    ichigoPreferencesDataSource
+    private val pagerHelper: PagerHelper
 ) {
-    operator fun invoke() = flow
-
-    override suspend fun fetchPage(version: String, lang: String) = runCatching {
+    operator fun invoke() = pagerHelper.createFlow { version, lang ->
         val items = networkDataSource.getItems(version, lang)
         Log.d(" GetItemsUseCase", "Fetched $items items")
 

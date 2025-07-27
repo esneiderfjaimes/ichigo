@@ -16,8 +16,12 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
@@ -72,29 +77,15 @@ fun SkinFullscreen(
 
                 Scaffold(
                     topBar = {
-                        TransparentTopAppBar(
-                            title = {
-                                Column {
-                                    Text(skin.name, style = MaterialTheme.typography.titleLarge)
-                                    Text(
-                                        stringResource(R.string.skin),
-                                        style = MaterialTheme.typography.labelMedium
-                                    )
-                                }
-                            },
-                            navigationIcon = {
-                                IconButton(onClick = { onSelectSkin(null) }) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                                        contentDescription = "Close"
-                                    )
-                                }
-                            }
+                        SkinFullscreenTopAppBar(
+                            skin = skin,
+                            onCloseClick = { onSelectSkin(null) }
                         )
                     },
                     bottomBar = {
                         BottomPager(
                             pageInfo = pager,
+                            columns = 1,
                             title = { stringResource(R.string.select_skin) },
                             itemLabel = { index ->
                                 val skin = skins[index]
@@ -144,6 +135,43 @@ fun SkinFullscreen(
             }
         }
     }
+}
+
+@Composable
+fun SkinFullscreenTopAppBar(
+    skin: Skin,
+    onCloseClick: () -> Unit,
+) {
+    TransparentTopAppBar(
+        title = {
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text(skin.name) } },
+                state = rememberTooltipState()
+            ) {
+                Column {
+                    Text(
+                        skin.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        stringResource(R.string.skin),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onCloseClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                    contentDescription = "Close"
+                )
+            }
+        }
+    )
 }
 
 @Preview

@@ -16,4 +16,6 @@ interface UserSettingsRepository {
 
     suspend fun saveLanguageSelected(language: String?)
 
+    suspend fun updateLastNavigationRoute(route: String)
+
 }

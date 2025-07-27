@@ -36,6 +36,7 @@ data class PageInfo(
 @Composable
 fun BottomPager(
     pageInfo: PageInfo,
+    columns: Int = 2,
     title: @Composable () -> String = { stringResource(R.string.core_designsystemy_select_page) },
     itemLabel: @Composable (Int) -> String = { (it + 1).toString() },
     onSelectPage: (Int) -> Unit
@@ -78,6 +79,7 @@ fun BottomPager(
                 PagesDialog(
                     pageInfo = pageInfo,
                     title = title,
+                    columns = columns,
                     onSelectPage = onSelectPage,
                     itemLabel = itemLabel,
                     onDismiss = { showPageDialog = false }
@@ -103,6 +105,7 @@ fun BottomPager(
 fun PagesDialog(
     pageInfo: PageInfo,
     onSelectPage: (Int) -> Unit,
+    columns: Int = 2,
     title: @Composable () -> String,
     itemLabel: @Composable (Int) -> String,
     onDismiss: () -> Unit
@@ -111,6 +114,7 @@ fun PagesDialog(
         PagesDialogContent(
             pageInfo = pageInfo,
             title = title,
+            columns = columns,
             onSelectPage = {
                 onSelectPage(it)
                 onDismiss()
@@ -125,6 +129,7 @@ fun PagesDialog(
 fun PagesDialogContent(
     pageInfo: PageInfo,
     onSelectPage: (Int) -> Unit,
+    columns: Int = 2,
     title: @Composable () -> String = { stringResource(R.string.core_designsystemy_select_page) },
     itemLabel: @Composable (Int) -> String = { (it + 1).toString() },
     onDismiss: () -> Unit = {}
@@ -137,6 +142,7 @@ fun PagesDialogContent(
         SelectGridContent(
             selectedItem = pageInfo.pageIndex,
             items = indexes,
+            columns = columns,
             itemLabel = itemLabel,
             onSelectItem = { onSelectPage(it!!) }
         )

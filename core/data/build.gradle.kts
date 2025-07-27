@@ -7,9 +7,8 @@ android {
     namespace = "com.nei.ichigo.core.data"
     kotlin {
         compilerOptions {
-            freeCompilerArgs.addAll(
-                "-Xannotation-default-target=param-property"
-            )
+            // https://youtrack.jetbrains.com/issue/KT-73255
+            freeCompilerArgs.add("-Xannotation-default-target=first-only")
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -12,6 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.nei.ichigo.R
+import com.nei.ichigo.core.designsystem.icon.Champion
+import com.nei.ichigo.core.designsystem.icon.IchigoIcons
+import com.nei.ichigo.core.designsystem.icon.Item
+import com.nei.ichigo.core.designsystem.icon.Rune
+import com.nei.ichigo.core.designsystem.icon.Spell
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -25,6 +27,9 @@ import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
 import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
 import com.nei.ichigo.feature.encyclopedia.items.navigation.items
 import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.RunesRoute
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.navigateToRunes
+import com.nei.ichigo.feature.encyclopedia.runes.navigation.runes
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
@@ -34,66 +39,70 @@ import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
 import com.nei.ichigo.feature.settings.navigation.encyclopediaSettings
 import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
-sealed class Screen(
+enum class Screen(
     val route: String,
     @StringRes
     val title: Int,
     val icon: ImageVector,
     val action: NavController.() -> Unit
 ) {
-    data object Champions : Screen(
+    Champions(
         route = ChampionsRoute.javaClass.name,
         title = R.string.champions,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Champion,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToChampions(navOptions)
         }
-    )
-
-    data object ProfileIcons : Screen(
+    ),
+    ProfileIcons(
         route = IconsRoute.javaClass.name,
         title = R.string.icons,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.ProfileIcons,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToIcons(navOptions)
         }
-    )
-
-
-    data object Items : Screen(
+    ),
+    Items(
         route = ItemsRoute.javaClass.name,
         title = R.string.items,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Item,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToItems(navOptions)
         }
-    )
-
-    data object Spells : Screen(
+    ),
+    Spells(
         route = SpellsRoute.javaClass.name,
         title = R.string.spells,
-        icon = Icons.Default.Circle,
+        icon = IchigoIcons.Spell,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToSpells(navOptions)
         }
-    )
-
-    data object Settings : Screen(
+    ),
+    Runes(
+        route = RunesRoute.javaClass.name,
+        title = R.string.runes,
+        icon = IchigoIcons.Rune,
+        action = {
+            val navOptions = topLevelDestinationNavOptions()
+            navigateToRunes(navOptions)
+        }
+    ),
+    Settings(
         route = EncyclopediaSettingsRoute.javaClass.name,
         title = R.string.settings,
-        icon = Icons.Default.Settings,
+        icon = IchigoIcons.Settings,
         action = {
             val navOptions = topLevelDestinationNavOptions()
             navigateToEncyclopediaSettings(navOptions)
         }
-    )
+    );
 
     companion object {
-        val allScreens = listOf(Champions, ProfileIcons, Items, Spells, Settings)
+        val allScreens = entries.toList()
     }
 }
 
@@ -107,10 +116,13 @@ private fun NavController.topLevelDestinationNavOptions() = navOptions {
 }
 
 @Composable
-fun IchigoNavHost(navController: NavHostController) {
+fun IchigoNavHost(
+    navController: NavHostController,
+    lastNavigationRoute: String?,
+) {
     NavHost(
         navController = navController,
-        startDestination = ChampionsRoute,
+        startDestination = resolveStartDestination(lastNavigationRoute),
     ) {
         if (SUPPORT_PANE_CHAMPION) {
             championsListDetail()
@@ -121,7 +133,15 @@ fun IchigoNavHost(navController: NavHostController) {
         icons()
         items()
         spells()
+        runes()
         encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
         licencesScreen(onBackPress = { navController.popBackStack() })
     }
+}
+
+fun resolveStartDestination(lastNavigationRoute: String?): String {
+    val screen = lastNavigationRoute?.let {
+        Screen.allScreens.find { it.name == lastNavigationRoute }
+    }
+    return screen?.route ?: Screen.allScreens.first().route
 }

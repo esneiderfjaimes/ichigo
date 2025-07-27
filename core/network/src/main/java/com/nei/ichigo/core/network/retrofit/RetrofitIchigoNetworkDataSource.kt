@@ -4,11 +4,14 @@ import androidx.tracing.trace
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.core.model.ChampionDetail
 import com.nei.ichigo.core.model.ProfileIcon
+import com.nei.ichigo.core.model.RuneBranch
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
+import com.nei.ichigo.core.network.model.BranchDto
 import com.nei.ichigo.core.network.model.ChampionResponseServer
 import com.nei.ichigo.core.network.model.ItemResponseServer
 import com.nei.ichigo.core.network.model.PageResponseServer
 import com.nei.ichigo.core.network.model.ProfileIconResponseServer
+import com.nei.ichigo.core.network.model.RunesDto
 import com.nei.ichigo.core.network.model.SummonerResponseServer
 import com.nei.ichigo.core.network.model.asExternalModel
 import com.nei.ichigo.core.network.model.asExternalModelDetail
@@ -30,9 +33,11 @@ private const val BASE_URL = "https://ddragon.leagueoflegends.com/"
  */
 private interface DataDragonApi {
 
+    @NonCacheable
     @GET("/cdn/languages.json")
     suspend fun languages(): List<String>
 
+    @NonCacheable
     @GET("/api/versions.json")
     suspend fun versions(): List<String>
 
@@ -66,6 +71,12 @@ private interface DataDragonApi {
         @Path("version") version: String,
         @Path("lang") lang: String
     ): PageResponseServer<SummonerResponseServer>
+
+    @GET("cdn/{version}/data/{lang}/runesReforged.json")
+    suspend fun runes(
+        @Path("version") version: String,
+        @Path("lang") lang: String
+    ): RunesDto
 }
 
 @Singleton
@@ -84,24 +95,18 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
             .create(DataDragonApi::class.java)
     }
 
-    override suspend fun getLanguages() = kotlin.runCatching {
-        withContext(Dispatchers.IO) {
-            networkApi.languages().also {
-                if (it.isEmpty()) {
-                    throw IllegalStateException("No languages found")
-                }
+    override suspend fun getLanguages() = withContext(Dispatchers.IO) {
+        networkApi.languages().also {
+            if (it.isEmpty()) {
+                throw IllegalStateException("No languages found")
             }
         }
     }
 
-    override suspend fun getVersions() = kotlin.runCatching {
-        withContext(Dispatchers.IO) {
-            networkApi.versions().filter { !it.contains("lolpatch") }.also {
-                if (it.isEmpty()) {
-                    throw IllegalStateException("No versions found")
-                }
-            }
-        }
+    override suspend fun getVersions() = withContext(Dispatchers.IO) {
+        networkApi.versions()
+            .filter { !it.contains("lolpatch") }
+            .ifEmpty { throw IllegalStateException("No versions found") }
     }
 
     override suspend fun getChampions(
@@ -110,6 +115,7 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
     ): List<Champion> = withContext(Dispatchers.IO) {
         networkApi.champions(version, lang)
             .data!!.values
+            .ifEmpty { throw IllegalStateException("No champions found") }
             .map(ChampionResponseServer::asExternalModel)
     }
 
@@ -130,12 +136,14 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
     ): List<ProfileIcon> = withContext(Dispatchers.IO) {
         networkApi.profileIcons(version, lang)
             .data!!.values
+            .ifEmpty { throw IllegalStateException("No profile icons found") }
             .map(ProfileIconResponseServer::asExternalModel)
     }
 
     override suspend fun getItems(version: String, lang: String) = withContext(Dispatchers.IO) {
         networkApi.items(version, lang)
             .data!!
+            .ifEmpty { throw IllegalStateException("No items found") }
             .map { (id, item) ->
                 item.asExternalModel(id)
             }
@@ -146,6 +154,16 @@ internal class RetrofitIchigoNetworkDataSource @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         networkApi.summonerSpells(version, lang)
             .data!!.values
+            .ifEmpty { throw IllegalStateException("No summoner spells found") }
             .map(SummonerResponseServer::asExternalModel)
+    }
+
+    override suspend fun getRunes(
+        version: String,
+        lang: String
+    ): List<RuneBranch> = withContext(Dispatchers.IO) {
+        networkApi.runes(version, lang)
+            .ifEmpty { throw IllegalStateException("No runes found") }
+            .map(BranchDto::asExternalModel)
     }
 }

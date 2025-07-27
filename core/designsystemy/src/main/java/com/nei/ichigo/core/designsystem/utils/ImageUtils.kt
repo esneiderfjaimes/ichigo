@@ -25,3 +25,7 @@ fun getItemImage(iconId: String, version: String): String =
 // https://ddragon.leagueoflegends.com/cdn/15.12.1/img/spell/SummonerFlash.png
 fun getSpellImage(iconId: String, version: String): String =
     "https://ddragon.leagueoflegends.com/cdn/$version/img/spell/$iconId"
+
+// https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/Electrocute/Electrocute.png
+fun getRuneImage(icon: String): String =
+    "https://ddragon.leagueoflegends.com/cdn/img/$icon"

@@ -18,23 +18,20 @@ class OfflineDataDragonPreferencesDataSource @Inject constructor(
     @DataStoreDataDragon
     private val preferences: DataStore<Preferences>,
 ) {
-    suspend fun versionsIsExpired() = isExpired(LAST_VERSIONS_UPDATE_KEY)
 
-    suspend fun getVersions() = getValue(VERSIONS_KEY)
+    suspend fun getVersions() = getStrings(VERSIONS_KEY, LAST_VERSIONS_UPDATE_KEY)
 
     suspend fun saveVersions(versions: List<String>) {
-        saveValue(VERSIONS_KEY, LAST_VERSIONS_UPDATE_KEY, versions)
+        saveStrings(VERSIONS_KEY, LAST_VERSIONS_UPDATE_KEY, versions)
     }
 
-    suspend fun languagesIsExpired() = isExpired(LAST_LANGUAGES_UPDATE_KEY)
-
-    suspend fun getLanguages() = getValue(LANGUAGES_KEY)
+    suspend fun getLanguages() = getStrings(LANGUAGES_KEY, LAST_LANGUAGES_UPDATE_KEY)
 
     suspend fun saveLanguages(languages: List<String>) {
-        saveValue(LANGUAGES_KEY, LAST_LANGUAGES_UPDATE_KEY, languages)
+        saveStrings(LANGUAGES_KEY, LAST_LANGUAGES_UPDATE_KEY, languages)
     }
 
-    private suspend fun saveValue(
+    private suspend fun saveStrings(
         valueKey: Preferences.Key<String>,
         lastUpdateKey: Preferences.Key<Long>,
         value: List<String>,
@@ -45,9 +42,15 @@ class OfflineDataDragonPreferencesDataSource @Inject constructor(
         }
     }
 
-    private suspend fun getValue(key: Preferences.Key<String>) = kotlin.runCatching {
-        preferences.data.map { preferences ->
+    private suspend fun getStrings(
+        key: Preferences.Key<String>,
+        lastUpdateKey: Preferences.Key<Long>
+    ): List<String> {
+        val isExpired = isExpired(lastUpdateKey)
+        if (isExpired) throw Exception("${key.name} is expired")
+        return preferences.data.map { preferences ->
             preferences[key]?.split(",")
+                ?.ifEmpty { throw IllegalStateException("No ${key.name} found") }
                 ?: throw IllegalStateException("No ${key.name} found")
         }.first()
     }
@@ -63,8 +66,8 @@ class OfflineDataDragonPreferencesDataSource @Inject constructor(
 
         fun dataStoreBy(context: Context) = context.dataStore
 
-        val VERSIONS_KEY = stringPreferencesKey("versions")
-        val LANGUAGES_KEY = stringPreferencesKey("languages")
+        private val VERSIONS_KEY = stringPreferencesKey("versions")
+        private val LANGUAGES_KEY = stringPreferencesKey("languages")
         private val LAST_VERSIONS_UPDATE_KEY = longPreferencesKey("last_versions_update")
         private val LAST_LANGUAGES_UPDATE_KEY = longPreferencesKey("last_languages_update")
         private val EXPIRATION_DURATION = Duration.ofDays(1)

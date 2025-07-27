@@ -1,34 +1,22 @@
 package com.nei.ichigo.core.domain
 
-import android.content.Context
-import com.nei.ichigo.core.data.model.ProfileIconsPage
 import com.nei.ichigo.core.data.model.asEntity
 import com.nei.ichigo.core.data.model.asExternalModel
-import com.nei.ichigo.core.data.repository.ChampionsRepository
+import com.nei.ichigo.core.data.repository.PagerHelper
 import com.nei.ichigo.core.database.dao.ProfileIconDao
 import com.nei.ichigo.core.database.model.ProfileIconEntity
-import com.nei.ichigo.core.datastore.IchigoPreferencesDataSource
 import com.nei.ichigo.core.network.BuildConfig
 import com.nei.ichigo.core.network.IchigoNetworkDataSource
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 private const val FORCE_FETCH_ICONS = true
 
 class GetProfileIconsUseCase @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val networkDataSource: IchigoNetworkDataSource,
     private val profileIconDao: ProfileIconDao,
-    championsRepository: ChampionsRepository,
-    ichigoPreferencesDataSource: IchigoPreferencesDataSource,
-) : PagerHelper<ProfileIconsPage>(
-    context,
-    championsRepository,
-    ichigoPreferencesDataSource
+    private val pagerHelper: PagerHelper
 ) {
-    operator fun invoke() = flow
-
-    override suspend fun fetchPage(version: String, lang: String) = kotlin.runCatching {
+    operator fun invoke() = pagerHelper.createListPage { version, lang ->
         val count = profileIconDao.countByVersionAndLang(version, lang)
         if (count <= 0 || (BuildConfig.DEBUG && FORCE_FETCH_ICONS)) {
             val allIcons = networkDataSource.getProfileIcons(version, lang)
@@ -36,13 +24,8 @@ class GetProfileIconsUseCase @Inject constructor(
             profileIconDao.insertAll(entities)
         }
 
-        val profileIcons = profileIconDao.getProfileIcons(version, lang)
-        ProfileIconsPage(
-            version = version,
-            lang = lang,
-            icons = profileIcons
-                .sortedByDescending { it.code.toInt() }
-                .map(ProfileIconEntity::asExternalModel),
-        )
+        profileIconDao.getProfileIcons(version, lang)
+            .sortedByDescending { it.code.toInt() }
+            .map(ProfileIconEntity::asExternalModel)
     }
 }

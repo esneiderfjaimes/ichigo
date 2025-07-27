@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ichigo</string>
+    <string name="app_name" translatable="false">ICHI.GO</string>
 
     <string name="all">All</string>
     <string name="filter_by_tag">Filter by tag</string>
@@ -68,4 +68,5 @@
     <string name="arena">Arena</string>
     <string name="swarm">Swarm</string>
     <string name="brawl">Brawl</string>
+    <string name="runes">Runes</string>
 </resources>

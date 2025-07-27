@@ -1,14 +1,17 @@
 package com.nei.ichigo.navigation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -48,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -59,7 +63,11 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
 
 @Composable
-fun IchigoNavSuite(navController: NavHostController, content: @Composable (() -> Unit)) {
+fun IchigoNavSuite(
+    navController: NavHostController,
+    updateLastNavigationRoute: (Screen) -> Unit,
+    content: @Composable (() -> Unit)
+) {
     val currentDestination by navController.currentBackStackEntryAsState()
     val navSuiteType = calculateFromAdaptiveInfo()
     var showMoreOptionsButton by rememberSaveable { mutableStateOf(false) }
@@ -68,8 +76,11 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
     val navScreen = allScreens.take(3)
     val moreOptions = allScreens.drop(3)
     NavigationSuiteScaffold2(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+        /* .navigationBarsPadding()*/,
         layoutType = navSuiteType,
+        showNavigation = allScreens.any { currentDestination?.destination?.route == it.route },
         navigationSuiteColors = NavigationSuiteDefaults.colors(navigationBarContainerColor = Color.Transparent),
         containerColor = Color.Transparent,
         navigationItems = {
@@ -82,9 +93,18 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
                             contentDescription = null
                         )
                     },
-                    label = { Text(stringResource(screen.title)) },
+                    label = {
+                        Text(
+                            text = stringResource(screen.title),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
                     selected = currentDestination?.destination?.route == screen.route,
-                    onClick = { screen.action(navController) }
+                    onClick = {
+                        screen.action(navController)
+                        updateLastNavigationRoute(screen)
+                    }
                 )
             }
 
@@ -97,7 +117,8 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
                     )
                 },
                 label = { Text(stringResource(R.string.more)) },
-                selected = showMoreOptionsButton,
+                selected = showMoreOptionsButton
+                        || moreOptions.any { currentDestination?.destination?.route == it.route },
                 onClick = {
                     showMoreOptionsButton = true
                 }
@@ -114,6 +135,7 @@ fun IchigoNavSuite(navController: NavHostController, content: @Composable (() ->
             MoreOptionsBottomSheet(moreOptions, currentDestination) { screen ->
                 showMoreOptionsButton = false
                 screen.action(navController)
+                updateLastNavigationRoute(screen)
             }
         }
     }
@@ -180,6 +202,7 @@ fun NavigationSuiteScaffold2(
     navigationItems: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     layoutType: NavigationSuiteType,
+    showNavigation: Boolean = true,
     navigationSuiteColors: NavigationSuiteColors = NavigationSuiteDefaults.colors(),
     containerColor: Color = NavigationSuiteScaffoldDefaults.containerColor,
     contentColor: Color = NavigationSuiteScaffoldDefaults.contentColor,
@@ -194,22 +217,39 @@ fun NavigationSuiteScaffold2(
     Surface(modifier = modifier, color = containerColor, contentColor = contentColor) {
         NavigationSuiteScaffoldLayout(
             navigationSuite = {
-                NavigationSuite(
-                    // fix window insets navigation suite
-                    modifier = Modifier.windowInsetsPadding(
-                        when (layoutType) {
-                            NavigationSuiteType.NavigationRail ->
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+                AnimatedContent(showNavigation) { show ->
+                    if (show) {
+                        NavigationSuite(
+                            // fix window insets navigation suite
+                            modifier = Modifier.windowInsetsPadding(
+                                when (layoutType) {
+                                    NavigationSuiteType.NavigationRail ->
+                                        WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
 
-                            else -> WindowInsets(0, 0, 0, 0)
-                        }
-                    ),
-                    navigationSuiteType = layoutType,
-                    colors = navigationSuiteColors,
-                    primaryActionContent = primaryActionContent,
-                    verticalArrangement = navigationItemVerticalArrangement,
-                    content = navigationItems
-                )
+                                    else -> WindowInsets(0, 0, 0, 0)
+                                }
+                            ),
+                            navigationSuiteType = layoutType,
+                            colors = navigationSuiteColors,
+                            primaryActionContent = primaryActionContent,
+                            verticalArrangement = navigationItemVerticalArrangement,
+                            content = navigationItems
+                        )
+                    } else {
+                        Spacer(
+                            modifier = Modifier
+                                .windowInsetsPadding(
+                                    when (layoutType) {
+                                        NavigationSuiteType.NavigationRail ->
+                                            WindowInsets.safeDrawing.only(WindowInsetsSides.Start)
+
+                                        else -> WindowInsets(0, 0, 0, 0)
+                                    }
+                                )
+                                .navigationBarsPadding()
+                        )
+                    }
+                }
             },
             navigationSuiteType = layoutType,
             state = state,
@@ -246,7 +286,13 @@ fun MoreOptionsBottomSheet(
                 selected = currentDestination?.destination?.route == screen.route,
                 onClick = { onClick(screen) },
                 icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                label = { Text(stringResource(screen.title)) },
+                label = {
+                    Text(
+                        text = stringResource(screen.title),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
             )
         }
     }
@@ -268,7 +314,7 @@ fun IchigoAppPreview() {
 @Composable
 private fun NavigationSuitePreview() {
     val navController = rememberNavController()
-    IchigoNavSuite(navController = navController) {
+    IchigoNavSuite(navController = navController, {}) {
         Box(Modifier.fillMaxSize()) {
             Box(
                 Modifier

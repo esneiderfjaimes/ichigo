@@ -1,41 +1,51 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.nei.ichigo.feature.settings
 
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.common.UiStateViewModel
-import com.nei.ichigo.core.data.repository.ChampionsRepository
+import com.nei.ichigo.core.data.model.ConfigValue
+import com.nei.ichigo.core.data.repository.AppConfigRepository
+import com.nei.ichigo.core.data.repository.DDragonRepository
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.feature.settings.SettingsViewmodel.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewmodel @Inject constructor(
-    repository: ChampionsRepository,
-    private val userSettingsRepository: UserSettingsRepository
+    private val dDragonRepository: DDragonRepository,
+    private val userSettingsRepository: UserSettingsRepository,
+    appConfigRepository: AppConfigRepository
 ) : UiStateViewModel<SettingsUiState>() {
 
     override val flow: Flow<SettingsUiState> = combine(
-        flow<Pair<List<String>, List<String>>> {
-            val versions = repository.getVersions()
-            val languages = repository.getLanguages()
-            emit(versions to languages)
-        },
+        appConfigRepository.config,
+        dDragonRepository.metaData,
         userSettingsRepository.userSettings
-    ) { props, userSettings ->
+    ) { config, metadata, userSettings ->
+        val (version, language) = config.getOrThrow()
+        val (versions, languages) = metadata.getOrThrow()
         SettingsUiState(
             darkThemeConfig = userSettings.darkThemeConfig,
             useDynamicColor = userSettings.useDynamicColor,
-            version = userSettings.versionSelected,
-            versions = props.first,
-            language = userSettings.langSelected,
-            languages = props.second
+            version = version,
+            versions = versions,
+            language = language,
+            languages = languages
         )
+    }
+
+    fun onRefresh() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dDragonRepository.forceUpdate()
+        }
     }
 
     fun onLanguageSelected(languageSelected: String?) {
@@ -65,9 +75,9 @@ class SettingsViewmodel @Inject constructor(
     data class SettingsUiState(
         val darkThemeConfig: DarkThemeConfig,
         val useDynamicColor: Boolean,
-        val version: String?,
+        val version: ConfigValue,
         val versions: List<String>,
-        val language: String?,
+        val language: ConfigValue,
         val languages: List<String>
     )
 }
