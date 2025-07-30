@@ -1,4 +1,5 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import io.github.esneiderfjaimes.modgraph.GenerateModGraphTask
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -13,9 +14,18 @@ plugins {
 
     // extras
     alias(libs.plugins.githooks)
+    alias(libs.plugins.modgraph)
     alias(libs.plugins.littlerobots.version.catalog.update) apply true
     alias(libs.plugins.benmanes.versions) apply true
     alias(libs.plugins.aboutlibraries) apply true
+}
+
+modGraph {
+
+}
+
+tasks.named<GenerateModGraphTask>("generateModuleDependencyGraph") {
+    provider.set("graphviz")
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
