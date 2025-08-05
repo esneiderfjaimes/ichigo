@@ -1,0 +1,38 @@
+<svg width="170px" height="173px" viewBox="0.00 0.00 170.00 173.00"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="graph0" class="graph" transform="scale(1.0 1.0) rotate(0.0) translate(4.0 168.5)">
+        <polygon fill="white" stroke="none" points="-4,4 -4,-168.5 166,-168.5 166,4 -4,4" />
+        <g id="clust1" class="cluster">
+            <title>cluster_core</title>
+            <g id="a_clust1">
+                <a xlink:title="core">
+                    <polygon fill="none" stroke="black"
+                        points="8,-8 8,-156.5 154,-156.5 154,-8 8,-8" />
+                    <text xml:space="preserve" text-anchor="middle" x="81" y="-139.2"
+                        font-family="Times New Roman,serif" font-size="14.00">core</text>
+                </a>
+            </g>
+        </g>
+        <!-- :core:datastore -->
+        <g id="node1" class="node">
+            <title>:core:datastore</title>
+            <ellipse fill="none" stroke="black" cx="81" cy="-106" rx="65.17" ry="18" />
+            <text xml:space="preserve" text-anchor="middle" x="81" y="-100.95"
+                font-family="Times New Roman,serif" font-size="14.00">:core:datastore</text>
+        </g>
+        <!-- :core:model -->
+        <g id="node2" class="node">
+            <title>:core:model</title>
+            <ellipse fill="none" stroke="black" cx="81" cy="-34" rx="55.45" ry="18" />
+            <text xml:space="preserve" text-anchor="middle" x="81" y="-28.95"
+                font-family="Times New Roman,serif" font-size="14.00">:core:model</text>
+        </g>
+        <!-- :core:datastore&#45;&gt;:core:model -->
+        <g id="edge1" class="edge">
+            <title>:core:datastore&#45;&gt;:core:model</title>
+            <path fill="none" stroke="black" d="M81,-87.7C81,-80.41 81,-71.73 81,-63.54" />
+            <polygon fill="black" stroke="black"
+                points="84.5,-63.62 81,-53.62 77.5,-63.62 84.5,-63.62" />
+        </g>
+    </g>
+</svg>
