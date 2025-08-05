@@ -20,12 +20,8 @@ plugins {
     alias(libs.plugins.aboutlibraries) apply true
 }
 
-modGraph {
-
-}
-
 tasks.named<GenerateModGraphTask>("generateModuleDependencyGraph") {
-    provider.set("graphviz")
+    // configure generation of module dependency graph
 }
 
 tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
