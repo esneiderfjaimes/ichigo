@@ -1,19 +1,23 @@
 package com.nei.ichigo.core.designsystem.component
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.ImageLoader
@@ -50,11 +54,18 @@ fun AsyncImage(
             }
         },
         loading = {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(Modifier.size(24.dp))
-            }
+            Spacer(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RectangleShape
+                    )
+                    .shimmerEffect(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RectangleShape,
+                        duration = 2000
+                    )
+            )
         }
     )
 }
@@ -101,5 +112,16 @@ fun loadImageLoaderFactory() {
                 logger(DebugLogger())
             }
         }.build()
+    }
+}
+
+@Preview
+@Composable
+private fun AsyncImagePreview() {
+    AsyncImagePreviewProvider {
+        AsyncImage(
+            model = "",
+            modifier = Modifier.size(75.dp)
+        )
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,14 +61,60 @@ fun IchigoItemImage(
 }
 
 @Composable
+fun IchigoItemShimmerImage(
+    modifier: Modifier = Modifier,
+    size: Dp = DEFAULT_ITEM_SIZE,
+    shape: Shape = DEFAULT_ITEM_SHAPE,
+) {
+    Spacer(
+        //model = model,
+        modifier = Modifier
+            // add background
+
+            // add other modifiers
+            .then(modifier)
+            // first limit image size
+            .size(size)
+            .shimmerEffect(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = shape,
+            ),
+        // add border
+        /*
+        .border(
+            width = borderWidth,
+            color = Gold,
+            shape = shape
+        )
+        */
+        // add padding to adjust content to border
+        // .padding(borderWidth),
+    )
+}
+
+@Composable
 fun IchigoItemLabel(modifier: Modifier = Modifier, text: String) {
     Text(
         text = text,
-        modifier = modifier
+        modifier = Modifier
+            .padding(2.dp)
+            .then(modifier)
             // .background(MaterialTheme.colorScheme.background, CircleShape)
-            .padding(top = 4.dp),
+            .padding(top = 2.dp),
         style = MaterialTheme.typography.bodySmall,
         textAlign = TextAlign.Center
+    )
+}
+
+
+@Composable
+fun IchigoItemShimmerLabel(text: String) {
+    IchigoItemLabel(
+        text = text,
+        modifier = Modifier
+            .shimmerEffect(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            ),
     )
 }
 
@@ -82,6 +129,11 @@ private fun IchigoImagePreview() {
                 model = "",
                 shape = MaterialTheme.shapes.small,
                 borderWidth = 20.dp,
+                size = 150.dp,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            IchigoItemShimmerImage(
+                shape = MaterialTheme.shapes.small,
                 size = 150.dp,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
