@@ -62,8 +62,7 @@ fun AsyncImage(
                     )
                     .shimmerEffect(
                         color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RectangleShape,
-                        duration = 2000
+                        shape = RectangleShape
                     )
             )
         }

@@ -61,7 +61,7 @@ fun IchigoItemImage(
 }
 
 @Composable
-fun IchigoItemShimmerImage(
+fun ShimmerScope.IchigoItemShimmerImage(
     modifier: Modifier = Modifier,
     size: Dp = DEFAULT_ITEM_SIZE,
     shape: Shape = DEFAULT_ITEM_SHAPE,
@@ -108,7 +108,7 @@ fun IchigoItemLabel(modifier: Modifier = Modifier, text: String) {
 
 
 @Composable
-fun IchigoItemShimmerLabel(text: String) {
+fun ShimmerScope.IchigoItemShimmerLabel(text: String) {
     IchigoItemLabel(
         text = text,
         modifier = Modifier
@@ -132,11 +132,13 @@ private fun IchigoImagePreview() {
                 size = 150.dp,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
-            IchigoItemShimmerImage(
-                shape = MaterialTheme.shapes.small,
-                size = 150.dp,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
+            ShimmerProvider {
+                IchigoItemShimmerImage(
+                    shape = MaterialTheme.shapes.small,
+                    size = 150.dp,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+            }
             Box(
                 Modifier
                     .padding(horizontal = 20.dp)

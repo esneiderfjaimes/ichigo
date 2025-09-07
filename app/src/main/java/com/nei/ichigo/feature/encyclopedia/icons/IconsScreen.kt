@@ -9,17 +9,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -40,12 +35,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,14 +48,19 @@ import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
+import com.nei.ichigo.common.layout.BaseShimmer
+import com.nei.ichigo.common.layout.Grid
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
+import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
 import com.nei.ichigo.core.designsystem.component.PageInfo
+import com.nei.ichigo.core.designsystem.component.ShimmerScope
+import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -98,7 +97,8 @@ private fun IconsScreen(
                         }
                     }
                 }
-            }
+            },
+            shimmerContent = { ShimmerContent(it) },
         ) { state, innerPadding ->
             SuccessContent(
                 innerPadding = innerPadding,
@@ -208,19 +208,9 @@ private fun SharedTransitionScope.SuccessContent(
     selectedProfileIcon: IconUi? = null,
     onSelect: (IconUi) -> Unit = {},
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val contentPadding = PaddingValues(
-        top = innerPadding.calculateTopPadding(),
-        bottom = innerPadding.calculateBottomPadding() + 8.dp,
-        start = innerPadding.calculateStartPadding(layoutDirection) + 32.dp,
-        end = innerPadding.calculateEndPadding(layoutDirection) + 32.dp
-    )
-
-    LazyVerticalGrid(
-        modifier = Modifier,
-        columns = GridCells.Adaptive(minSize = GRID_MIN_SIZE),
-        horizontalArrangement = Arrangement.SpaceAround,
-        contentPadding = contentPadding,
+    Grid(
+        minSize = GRID_MIN_SIZE,
+        innerPadding = innerPadding,
         content = {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
@@ -304,6 +294,31 @@ fun SharedTransitionScope.ProfileIconItem(
 }
 
 @Composable
+private fun ShimmerScope.ShimmerContent(
+    innerPadding: PaddingValues,
+) {
+    BaseShimmer(
+        minSize = GRID_MIN_SIZE,
+        idPlural = R.plurals.number_of_icons,
+        innerPadding = innerPadding,
+        sizeItems = 20,
+        itemContent = { ProfileIconShimmerItem(size = DEFAULT_ITEM_SIZE) }
+    )
+}
+
+@Composable
+fun ShimmerScope.ProfileIconShimmerItem(size: Dp) {
+    Column(
+        modifier = Modifier
+            .padding(DEFAULT_ITEM_PADDING),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IchigoItemShimmerImage(size = size)
+        IchigoItemShimmerLabel(text = "         ")
+    }
+}
+
+@Composable
 fun SharedTransitionScope.IconDetails(
     selectedProfileIcon: IconUi?,
     version: String,
@@ -329,10 +344,10 @@ fun SharedTransitionScope.IconDetails(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun IconsScreenPreview() {
-    AsyncImagePreviewProvider {
+    IchigoThemePreview {
         IconsScreen(
             state = UiState.Success(
                 content = IconsUiState(
@@ -352,11 +367,10 @@ fun IconsScreenPreview() {
     }
 }
 
-
-@Preview
+@PreviewLightDark
 @Composable
 fun IconsScreenPreview2() {
-    AsyncImagePreviewProvider {
+    IchigoThemePreview {
         IconsScreen(
             state = UiState.Success(
                 content = IconsUiState(
@@ -375,6 +389,16 @@ fun IconsScreenPreview2() {
                     version = "1.0.0"
                 )
             )
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun IconsScreenLoadingPreview() {
+    IchigoThemePreview {
+        IconsScreen(
+            state = UiState.Loading
         )
     }
 }

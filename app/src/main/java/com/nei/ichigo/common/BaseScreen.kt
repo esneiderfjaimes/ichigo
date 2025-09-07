@@ -18,6 +18,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
+import com.nei.ichigo.core.designsystem.component.ShimmerProvider
+import com.nei.ichigo.core.designsystem.component.ShimmerScope
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.appendTitle
 import com.nei.ichigo.core.designsystem.component.appendVersion
@@ -30,7 +32,7 @@ fun <T> BaseScreen(
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing.only(
         WindowInsetsSides.Vertical + WindowInsetsSides.End
     ),
-    shimmerContent: (@Composable (innerPadding: PaddingValues) -> Unit)? = null,
+    shimmerContent: (@Composable ShimmerScope.(innerPadding: PaddingValues) -> Unit)? = null,
     content: @Composable (state: T, innerPadding: PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -55,7 +57,9 @@ fun <T> BaseScreen(
                             .padding(innerPadding)
                     )
                 } else {
-                    shimmerContent(innerPadding)
+                    ShimmerProvider {
+                        shimmerContent(innerPadding)
+                    }
                 }
             }
 
