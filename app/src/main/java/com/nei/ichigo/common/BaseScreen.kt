@@ -30,6 +30,7 @@ fun <T> BaseScreen(
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing.only(
         WindowInsetsSides.Vertical + WindowInsetsSides.End
     ),
+    shimmerContent: (@Composable (innerPadding: PaddingValues) -> Unit)? = null,
     content: @Composable (state: T, innerPadding: PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -47,11 +48,15 @@ fun <T> BaseScreen(
             }
 
             UiState.Loading -> {
-                LoadingScreen(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                )
+                if (shimmerContent == null) {
+                    LoadingScreen(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    )
+                } else {
+                    shimmerContent(innerPadding)
+                }
             }
 
             is UiState.Success -> {

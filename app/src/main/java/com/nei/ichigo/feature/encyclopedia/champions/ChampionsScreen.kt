@@ -2,6 +2,7 @@ package com.nei.ichigo.feature.encyclopedia.champions
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -42,6 +43,9 @@ import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
+import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
+import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
+import com.nei.ichigo.core.designsystem.component.shimmerEffect
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
@@ -73,6 +77,9 @@ private fun ChampionsScreen(
                 onTagSelected = onTagSelected
             )
         },
+        shimmerContent = {
+            ChampionsShimmer(innerPadding = it)
+        }
     ) { state, innerPadding ->
         ChampionsSuccess(
             champions = state.champions,
@@ -158,6 +165,50 @@ private fun ChampionsSuccess(
 }
 
 @Composable
+private fun ChampionsShimmer(
+    innerPadding: PaddingValues,
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    val contentPadding = PaddingValues(
+        top = innerPadding.calculateTopPadding(),
+        bottom = innerPadding.calculateBottomPadding() + 8.dp,
+        start = innerPadding.calculateStartPadding(layoutDirection) + 32.dp,
+        end = innerPadding.calculateEndPadding(layoutDirection) + 32.dp
+    )
+    val items = (1..100).toList()
+    LazyVerticalGrid(
+        modifier = Modifier,
+        columns = GridCells.Adaptive(minSize = GRID_MIN_SIZE),
+        horizontalArrangement = Arrangement.SpaceAround,
+        contentPadding = contentPadding,
+        content = {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Box {
+                    Text(
+                        text = pluralStringResource(
+                            id = R.plurals.number_of_champions,
+                            count = items.size,
+                            items.size
+                        ).let { " ".repeat(it.length) },
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(8.dp)
+                            .shimmerEffect(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                            ),
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+            items(items, key = { it }, contentType = { it }) { champion ->
+                ChampionSkeletonItem()
+            }
+        }
+    )
+}
+
+@Composable
 fun ChampionItem(
     champion: Champion,
     version: String,
@@ -182,6 +233,20 @@ fun ChampionItem(
     }
 }
 
+@Composable
+fun ChampionSkeletonItem() {
+    Column(
+        modifier = Modifier
+            .padding(DEFAULT_ITEM_PADDING),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IchigoItemShimmerImage()
+        IchigoItemShimmerLabel(
+            text = "          ",
+        )
+    }
+}
+
 @Preview
 @Composable
 fun ChampionsScreenPreview() {
@@ -201,6 +266,16 @@ fun ChampionsScreenPreview() {
                     tags = emptyList()
                 )
             )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ChampionItemShimmerPreview() {
+    AsyncImagePreviewProvider {
+        ChampionsScreen(
+            state = UiState.Loading
         )
     }
 }
