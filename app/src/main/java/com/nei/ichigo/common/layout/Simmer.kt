@@ -32,6 +32,7 @@ fun ShimmerScope.BaseShimmer(
     Grid(
         minSize = minSize,
         innerPadding = innerPadding,
+        userScrollEnabled = false,
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Box {

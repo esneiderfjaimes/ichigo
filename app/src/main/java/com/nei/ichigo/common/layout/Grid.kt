@@ -21,6 +21,7 @@ fun Grid(
     state: LazyGridState = rememberLazyGridState(),
     minSize: Dp,
     innerPadding: PaddingValues,
+    userScrollEnabled: Boolean = true,
     content: LazyGridScope.() -> Unit
 ) {
     LazyVerticalGrid(
@@ -29,6 +30,7 @@ fun Grid(
         columns = GridCells.Adaptive(minSize = minSize),
         horizontalArrangement = Arrangement.SpaceAround,
         contentPadding = defaultPaddingValues(innerPadding),
+        userScrollEnabled = userScrollEnabled,
         content = content
     )
 }
