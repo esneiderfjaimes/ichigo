@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +36,7 @@ import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.common.layout.defaultPaddingValues
 import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
@@ -77,13 +75,7 @@ private fun RunesContent(
     state: RunesUiState,
     innerPadding: PaddingValues,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val contentPadding = PaddingValues(
-        top = innerPadding.calculateTopPadding(),
-        bottom = innerPadding.calculateBottomPadding() + 8.dp,
-        start = innerPadding.calculateStartPadding(layoutDirection) + 32.dp,
-        end = innerPadding.calculateEndPadding(layoutDirection) + 32.dp
-    )
+    val contentPadding = defaultPaddingValues(innerPadding)
     var currentItemId by rememberSaveable { mutableStateOf(state.branches.firstOrNull()?.id ?: "") }
     val currentBranch = state.branches.find { it.id == currentItemId }
     var currentRuneId by rememberSaveable { mutableStateOf<String?>(null) }

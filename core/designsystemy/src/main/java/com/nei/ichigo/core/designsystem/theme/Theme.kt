@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -287,6 +288,15 @@ fun IchigoTheme(
         motionScheme = if (NO_MOTION_SCHEME) noMotionScheme() else null,
         content = content
     )
+}
+
+@Composable
+fun IchigoThemePreview(content: @Composable() () -> Unit) {
+    IchigoTheme {
+        AsyncImagePreviewProvider {
+            content()
+        }
+    }
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
