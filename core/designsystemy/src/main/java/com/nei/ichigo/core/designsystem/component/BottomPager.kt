@@ -1,19 +1,17 @@
 package com.nei.ichigo.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,58 +47,55 @@ fun BottomPager(
             .padding(8.dp)
             .windowInsetsPadding(BottomAppBarDefaults.windowInsets)
     ) {
-        Surface(
+        HorizontalFloatingToolbar(
             modifier = Modifier.align(Alignment.BottomCenter),
-            tonalElevation = 8.dp,
-            shape = CircleShape,
+            expanded = true
         ) {
-            Row {
-                IconButton(
-                    onClick = {
-                        onSelectPage(pageInfo.pageIndex - 1)
-                    },
-                    enabled = pageInfo.pageIndex > 0
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                        contentDescription = null
-                    )
-                }
+            IconButton(
+                onClick = {
+                    onSelectPage(pageInfo.pageIndex - 1)
+                },
+                enabled = pageInfo.pageIndex > 0
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                    contentDescription = null
+                )
+            }
 
-                var showPageDialog by remember { mutableStateOf(false) }
-                TextButton(onClick = {
-                    showPageDialog = true
-                }) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.core_designsystemy_page_info,
-                            pageInfo.pageIndex + 1,
-                            pageInfo.totalPages
-                        )
+            var showPageDialog by remember { mutableStateOf(false) }
+            TextButton(onClick = {
+                showPageDialog = true
+            }) {
+                Text(
+                    text = stringResource(
+                        id = R.string.core_designsystemy_page_info,
+                        pageInfo.pageIndex + 1,
+                        pageInfo.totalPages
                     )
-                }
-                if (showPageDialog) {
-                    PagesDialog(
-                        pageInfo = pageInfo,
-                        title = title,
-                        columns = columns,
-                        onSelectPage = onSelectPage,
-                        itemLabel = itemLabel,
-                        onDismiss = { showPageDialog = false }
-                    )
-                }
+                )
+            }
+            if (showPageDialog) {
+                PagesDialog(
+                    pageInfo = pageInfo,
+                    title = title,
+                    columns = columns,
+                    onSelectPage = onSelectPage,
+                    itemLabel = itemLabel,
+                    onDismiss = { showPageDialog = false }
+                )
+            }
 
-                IconButton(
-                    onClick = {
-                        onSelectPage(pageInfo.pageIndex + 1)
-                    },
-                    enabled = pageInfo.pageIndex < pageInfo.totalPages - 1
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                        contentDescription = null
-                    )
-                }
+            IconButton(
+                onClick = {
+                    onSelectPage(pageInfo.pageIndex + 1)
+                },
+                enabled = pageInfo.pageIndex < pageInfo.totalPages - 1
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                    contentDescription = null
+                )
             }
         }
     }

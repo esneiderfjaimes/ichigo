@@ -1,15 +1,22 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.nei.ichigo.core.designsystem.theme
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -256,6 +263,8 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+const val NO_MOTION_SCHEME = false
+
 @Composable
 fun IchigoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -273,9 +282,10 @@ fun IchigoTheme(
         else -> lightScheme
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        motionScheme = if (NO_MOTION_SCHEME) noMotionScheme() else null,
         content = content
     )
 }
@@ -370,6 +380,8 @@ private fun BaseIchigoThemePreview() {
             outlineVariant to Color.Unspecified and "outlineVariant",
             inverseSurface to inverseOnSurface and "inverseSurface",
             inversePrimary to Color.Unspecified and "inversePrimary",
+            scrim to Color.Unspecified and "scrim",
+            surfaceTint to Color.Unspecified and "surfaceTint",
             surfaceDim to Color.Unspecified and "surfaceDim",
             surfaceBright to Color.Unspecified and "surfaceBright",
             surfaceContainerLowest to Color.Unspecified and "surfaceContainerLowest",
@@ -377,15 +389,34 @@ private fun BaseIchigoThemePreview() {
             surfaceContainer to Color.Unspecified and "surfaceContainer",
             surfaceContainerHigh to Color.Unspecified and "surfaceContainerHigh",
             surfaceContainerHighest to Color.Unspecified and "surfaceContainerHighest",
+            primaryFixed to onPrimaryFixed and "primaryFixed",
+            primaryFixedDim to onPrimaryFixedVariant and "primaryFixedDim",
+            secondaryFixed to onSecondaryFixed and "secondaryFixed",
+            secondaryFixedDim to onSecondaryFixedVariant and "secondaryFixedDim",
+            tertiaryFixed to onTertiaryFixed and "tertiaryFixed",
+            tertiaryFixedDim to onTertiaryFixedVariant and "tertiaryFixedDim",
         )
     }
+
+    val count = colors.sumOf { (color, onColor, _) ->
+        listOf(color, onColor).count { it != Color.Unspecified }
+    }
+
     FlowRow {
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Count: $count")
+        }
+
         colors.forEach { (color, onColor, name) ->
             // items(colors) { (color, onColor) ->
-            Box(
+            Column(
                 Modifier
-                    .size(100.dp)
-                    .background(color)
+                    .size(100.dp, 75.dp)
+                    .background(color),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (onColor != Color.Unspecified) {
                     Spacer(
@@ -393,16 +424,11 @@ private fun BaseIchigoThemePreview() {
                             .clip(CircleShape)
                             .background(onColor)
                             .size(50.dp)
-                            .align(Alignment.Center)
                     )
                 }
                 Text(
                     text = name.map { if (it.isUpperCase()) " ${it.lowercase()}" else it.toString() }
                         .joinToString(""),
-                    modifier = Modifier.align(
-                        if (onColor == Color.Unspecified) Alignment.Center
-                        else Alignment.BottomCenter
-                    ),
                     color = onColor,
                     fontSize = 10.sp,
                     textAlign = TextAlign.Center,

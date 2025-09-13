@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -178,6 +179,7 @@ fun ChampionContent(
                 text = champion.name,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .statusBarsPadding()
                     .fillMaxWidth()
                     .background(
                         Brush.verticalGradient(
