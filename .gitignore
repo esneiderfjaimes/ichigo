@@ -23,6 +23,7 @@ output.json
 # IntelliJ
 *.iml
 .idea/
+!.idea/icon.png
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
