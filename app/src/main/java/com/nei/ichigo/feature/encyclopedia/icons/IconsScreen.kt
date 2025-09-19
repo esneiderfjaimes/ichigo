@@ -314,7 +314,7 @@ fun ShimmerScope.ProfileIconShimmerItem(size: Dp) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemShimmerImage(size = size)
-        IchigoItemShimmerLabel(text = "         ")
+        IchigoItemShimmerLabel(text = "      ")
     }
 }
 

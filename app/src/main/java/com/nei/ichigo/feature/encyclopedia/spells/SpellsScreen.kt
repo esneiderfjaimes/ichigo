@@ -202,7 +202,7 @@ fun ShimmerScope.ItemSpellShimmer() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemShimmerImage(shape = ITEM_SHAPE)
-        IchigoItemShimmerLabel(text = "     ")
+        IchigoItemShimmerLabel(text = "      ")
     }
 }
 

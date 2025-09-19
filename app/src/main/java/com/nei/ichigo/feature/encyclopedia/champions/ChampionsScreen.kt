@@ -193,7 +193,7 @@ fun ShimmerScope.ChampionSkeletonItem() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemShimmerImage()
-        IchigoItemShimmerLabel(text = "          ")
+        IchigoItemShimmerLabel(text = "      ")
     }
 }
 

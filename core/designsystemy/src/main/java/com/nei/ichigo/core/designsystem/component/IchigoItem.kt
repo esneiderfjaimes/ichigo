@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -93,7 +94,7 @@ fun ShimmerScope.IchigoItemShimmerImage(
 }
 
 @Composable
-fun IchigoItemLabel(modifier: Modifier = Modifier, text: String) {
+fun IchigoItemLabel(modifier: Modifier = Modifier, text: String, fontFamily: FontFamily? = null) {
     Text(
         text = text,
         modifier = Modifier
@@ -102,7 +103,8 @@ fun IchigoItemLabel(modifier: Modifier = Modifier, text: String) {
             // .background(MaterialTheme.colorScheme.background, CircleShape)
             .padding(top = 2.dp),
         style = MaterialTheme.typography.bodySmall,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        fontFamily = fontFamily,
     )
 }
 
@@ -115,6 +117,7 @@ fun ShimmerScope.IchigoItemShimmerLabel(text: String) {
             .shimmerEffect(
                 color = MaterialTheme.colorScheme.surfaceVariant,
             ),
+        fontFamily = FontFamily.Monospace,
     )
 }
 
