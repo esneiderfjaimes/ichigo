@@ -18,6 +18,7 @@ package com.nei.ichigo.core.designsystem
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -26,7 +27,11 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -34,6 +39,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +49,7 @@ import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -52,8 +59,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -63,6 +72,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,21 +85,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.fontscaling.MathUtils
 import androidx.compose.ui.unit.sp
+import com.nei.ichigo.core.designsystem.utils.AnimatedLoaderBarConstants
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -716,4 +735,436 @@ fun ZoomableBox2(
     ) {
         content(Modifier.fillMaxSize())
     }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+@Preview
+fun AnimatedLine2(
+    isIntermittent: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+    rememberInfiniteTransition(label = "intermittent")
+
+    // Tamaño y posición del indicador
+    val indicatorWidth = 20.dp
+    val indicatorOffset = remember { Animatable(0f) }
+    val indicatorWidthAnim = remember { Animatable(indicatorWidth.value) }
+
+    val density = LocalDensity.current
+
+    LaunchedEffect(isIntermittent) {
+        if (isIntermittent) {
+            // Resetear ancho a 20dp y arrancar anim de ida y vuelta
+            indicatorWidthAnim.snapTo(indicatorWidth.value)
+            scope.launch {
+                while (true) {
+                    indicatorOffset.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(1000, easing = LinearEasing)
+                    )
+                    indicatorOffset.animateTo(
+                        targetValue = 0f,
+                        animationSpec = tween(1000, easing = LinearEasing)
+                    )
+                }
+            }
+        } else {
+            // Expandirse ocupando todo el ancho disponible en 5000ms
+            scope.launch {
+                indicatorWidthAnim.animateTo(
+                    targetValue = Float.POSITIVE_INFINITY, // se ajustará en draw
+                    animationSpec = tween(5000, easing = LinearEasing)
+                )
+            }
+        }
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+    ) {
+        val fullWidthPx = constraints.maxWidth.toFloat()
+        val indicatorWidthPx =
+            if (indicatorWidthAnim.value == Float.POSITIVE_INFINITY) fullWidthPx
+            else with(density) { indicatorWidthAnim.value.dp.toPx() }
+
+        val offsetPx = indicatorOffset.value * (fullWidthPx - indicatorWidthPx)
+
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(offsetPx.toInt(), 0) }
+                .width(with(density) { indicatorWidthPx.toDp() })
+                .fillMaxHeight()
+                .background(Color.Blue, RoundedCornerShape(10.dp))
+        )
+    }
+}
+
+@Composable
+@Preview
+fun IntermittentCircle24(
+    modifier: Modifier = Modifier,
+    circleSize: Dp = 50.dp,
+    durationMillis: Int = 1000
+) {
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(32.dp)
+            .height(20.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+    ) {
+        val maxWidthPx = with(LocalDensity.current) { this@BoxWithConstraints.maxWidth.toPx() }
+        with(LocalDensity.current) { circleSize.toPx() }
+
+        val x1 = remember { Animatable(0f) }
+
+        // Animación infinita: ida y vuelta
+        LaunchedEffect(Unit) {
+            while (true) {
+                x1.animateTo(
+                    targetValue = maxWidthPx,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+                x1.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+            }
+        }
+
+        // Dibujar círculo en posición X1
+        Box(
+            modifier = Modifier
+                .offset {
+                    IntOffset(x1.value.toInt(), 0)
+                }
+                .size(width = circleSize, height = 20.dp)
+                .background(Color.Blue, CircleShape)
+        )
+    }
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+fun IntermittentCircle23(
+    modifier: Modifier = Modifier,
+    circleSize: Dp = 50.dp,
+    durationMillis: Int = 1000
+) {
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(32.dp)
+            .height(20.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+    ) {
+        val maxWidthPx = with(LocalDensity.current) { this@BoxWithConstraints.maxWidth.toPx() }
+        val circleSizePx = with(LocalDensity.current) { circleSize.toPx() }
+
+        // Progreso normalizado [0f..1f]
+        val progress = remember { Animatable(0f) }
+
+        // Animación infinita: ida y vuelta
+        LaunchedEffect(Unit) {
+            while (true) {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+                progress.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+            }
+        }
+
+        // Calcular posición X usando lerp
+        val offsetX = MathUtils.lerp(
+            start = 0f,
+            stop = maxWidthPx - circleSizePx,
+            amount = progress.value
+        )
+
+        // Dibujar círculo en posición X con graphicsLayer
+        Box(
+            modifier = Modifier
+                .size(width = circleSize, height = 20.dp)
+                .graphicsLayer {
+                    translationX = offsetX
+                }
+                .background(Color.Blue, CircleShape)
+        )
+    }
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+fun IntermittentBar(
+    modifier: Modifier = Modifier,
+    circleWidthFraction: Float = 0.2f, // ancho relativo (20% del contenedor)
+    circleWidth: Dp = 20.dp,
+    durationMillis: Int = AnimatedLoaderBarConstants.INFINITY_DURATION_MILLIS,
+    isIntermittent: Boolean = true
+) {
+    val progress = remember { Animatable(0f) }
+    val scale = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = AnimatedLoaderBarConstants.INFINITY_DURATION_MILLIS,
+                    easing = AnimatedLoaderBarConstants.easing
+                ),
+                repeatMode = RepeatMode.Reverse
+            ),
+        )
+    }
+    LaunchedEffect(isIntermittent) {
+        scale.stop()
+        scale.animateTo(
+            targetValue = if (!isIntermittent) 1f else 0f,
+            animationSpec = tween(
+                durationMillis = AnimatedLoaderBarConstants.SCALE_DURATION_MILLIS,
+                easing = AnimatedLoaderBarConstants.easing
+            )
+        )
+    }
+
+    val circleWidthPx = with(LocalDensity.current) { circleWidth.toPx() }
+
+    Text(
+        text = "${progress.value}",
+        modifier = modifier
+    )
+
+    Text(
+        text = "${scale.value}",
+        modifier = modifier
+    )
+
+
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(8.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+    ) {
+        val p = progress.value
+        val w = size.width
+
+        fun getXs(): Pair<Float, Float> {
+            val wX1 = w - circleWidthPx
+
+            val x1 = MathUtils.lerp(0f, wX1, p)
+            val x2 = x1 + circleWidthPx
+
+            return x1 to x2
+        }
+
+
+        val (x1, x2) = if (isIntermittent) {
+            getXs()
+        } else {
+            val (x1Init, x2Init) = getXs()
+
+            val x1End = 0f
+            val x2End = w
+
+            val s = scale.value
+
+            val x1 = MathUtils.lerp(x1Init, x1End, s)
+            val x2 = MathUtils.lerp(x2Init, x2End, s)
+
+            x1 to x2
+        }
+
+        val startX = x1
+        val endX = x2
+
+        drawRoundRect(
+            color = Color.Blue,
+            topLeft = Offset(startX, 0f),
+            size = Size(endX - startX, size.height),
+            cornerRadius = CornerRadius(x = size.height / 2, y = size.height / 2)
+        )
+    }
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+fun IntermittentBar565(
+    modifier: Modifier = Modifier,
+    circleWidthFraction: Float = 0.2f, // ancho relativo (20% del contenedor)
+    circleWidth: Dp = 20.dp,
+    durationMillis: Int = AnimatedLoaderBarConstants.INFINITY_DURATION_MILLIS,
+    isIntermittent: Boolean = true
+) {
+    val progress = remember { Animatable(0f) }
+
+    LaunchedEffect(isIntermittent) {
+        progress.stop() // detener animaciones previas
+        if (isIntermittent) {
+            // Rebotando ida y vuelta (0f..1f)
+            while (true) {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis, easing = AnimatedLoaderBarConstants.easing)
+                )
+                progress.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis, easing = AnimatedLoaderBarConstants.easing)
+                )
+            }
+        } else {
+            // Expansión en 5000ms desde cualquier punto
+            launch {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis, easing = AnimatedLoaderBarConstants.easing)
+                )
+            }
+        }
+    }
+
+    val circleWidthPx = with(LocalDensity.current) { circleWidth.toPx() }
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(8.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+    ) {
+        val p = progress.value
+        val w = size.width
+
+
+        val (x1, x2) = if (isIntermittent) {
+            val wX1 = w - circleWidthPx
+
+            val x1 = MathUtils.lerp(0f, wX1, p)
+            val x2 = x1 + circleWidthPx
+
+            x1 to x2
+        } else {
+            val wX1 = w - circleWidthPx
+
+            val x1Init = MathUtils.lerp(0f, wX1, p)
+            val x2Init = x1Init + circleWidthPx
+
+            val x1End = 0f
+            val x2End = w
+
+            val x1 = MathUtils.lerp(x1Init, x1End, p)
+            val x2 = MathUtils.lerp(x2Init, x2End, p)
+
+            x1 to x2
+        }
+
+        val startX = x1
+        val endX = x2
+
+        drawRoundRect(
+            color = Color.Blue,
+            topLeft = Offset(startX, 0f),
+            size = Size(endX - startX, size.height),
+            cornerRadius = CornerRadius(x = size.height / 2, y = size.height / 2)
+        )
+    }
+}
+
+@SuppressLint("RestrictedApi")
+@Composable
+fun IntermittentBar3(
+    modifier: Modifier = Modifier,
+    circleWidthFraction: Float = 0.2f, // ancho relativo (20% del contenedor)
+    durationMillis: Int = 1000,
+    isIntermittent: Boolean = true
+) {
+    val progress = remember { Animatable(0f) }
+
+    LaunchedEffect(isIntermittent) {
+        progress.stop() // detener animaciones previas
+        if (isIntermittent) {
+            // Rebotando ida y vuelta (0f..1f)
+            while (true) {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+                progress.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis, easing = LinearEasing)
+                )
+            }
+        } else {
+            // Expansión en 5000ms desde cualquier punto
+            launch {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(5000, easing = LinearEasing)
+                )
+            }
+        }
+    }
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(30.dp)
+            .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+    ) {
+        val p = progress.value
+
+        val (x1, x2) = if (isIntermittent) {
+            // 🔹 En intermitente: mapea progreso [0..1] → X1 [0..1-circleWidth]
+            val start = MathUtils.lerp(0f, 1f - circleWidthFraction, p)
+            val end = start + circleWidthFraction
+            start to end
+        } else {
+            // 🔹 En expandido: mapea progreso [0..1] → X1 0→0, X2 0→1
+            val start = 0f
+            val end = p // crece hasta llenar
+            start to end
+        }
+
+        val startX = size.width * x1
+        val endX = size.width * x2
+
+        drawRoundRect(
+            color = Color.Blue,
+            topLeft = Offset(startX, 0f),
+            size = Size(endX - startX, size.height),
+            cornerRadius = CornerRadius(x = size.height / 2, y = size.height / 2)
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewIntermittentCircle() {
+    var isIntermittent by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IntermittentBar(isIntermittent = isIntermittent)
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = { isIntermittent = !isIntermittent }) {
+            Text(if (isIntermittent) "Expand" else "Intermittent")
+        }
+    }
+
 }
