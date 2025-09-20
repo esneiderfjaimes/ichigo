@@ -56,11 +56,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
+
+private const val ITEMS_PER_ROW = 3
+private val allScreens = Screen.allScreens
+private val navScreen = allScreens.take(ITEMS_PER_ROW)
+private val moreOptions = allScreens.drop(ITEMS_PER_ROW)
 
 @Composable
 fun IchigoNavSuite(
@@ -72,15 +78,12 @@ fun IchigoNavSuite(
     val navSuiteType = calculateFromAdaptiveInfo()
     var showMoreOptionsButton by rememberSaveable { mutableStateOf(false) }
 
-    val allScreens = Screen.allScreens
-    val navScreen = allScreens.take(3)
-    val moreOptions = allScreens.drop(3)
     NavigationSuiteScaffold2(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
         /* .navigationBarsPadding()*/,
         layoutType = navSuiteType,
-        showNavigation = allScreens.any { currentDestination?.destination?.route == it.route },
+        showNavigation = shouldShowNavigation(currentDestination?.destination),
         navigationSuiteColors = NavigationSuiteDefaults.colors(navigationBarContainerColor = Color.Transparent),
         containerColor = Color.Transparent,
         navigationItems = {
@@ -139,6 +142,14 @@ fun IchigoNavSuite(
             }
         }
     }
+}
+
+fun shouldShowNavigation(
+    currentDestination: NavDestination?,
+): Boolean {
+    // first show navigation
+    if (currentDestination == null) return true
+    return allScreens.any { it.route == currentDestination.route }
 }
 
 /**
