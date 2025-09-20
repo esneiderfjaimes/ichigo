@@ -18,6 +18,8 @@ plugins {
     alias(libs.plugins.littlerobots.version.catalog.update) apply true
     alias(libs.plugins.benmanes.versions) apply true
     alias(libs.plugins.aboutlibraries) apply true
+
+    alias(libs.plugins.roborazzi) apply false
 }
 
 tasks.named<GenerateModGraphTask>("generateModuleDependencyGraph") {

@@ -59,7 +59,7 @@ fun ChampionsScreen(
 }
 
 @Composable
-private fun ChampionsScreen(
+fun ChampionsScreen(
     state: UiState<out ChampionsUiState>,
     onTagSelected: (String?) -> Unit = {},
     onChampionClick: (String) -> Unit = {}
@@ -84,7 +84,7 @@ private fun ChampionsScreen(
 }
 
 @Composable
-private fun ChampionsTopAppBar(
+fun ChampionsTopAppBar(
     state: UiState<out ChampionsUiState>,
     onTagSelected: (String?) -> Unit
 ) {
