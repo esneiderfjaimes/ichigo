@@ -10,6 +10,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 
+val LocalEnableSharedTransition = staticCompositionLocalOf { true }
+
 val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> {
     error("No SharedTransitionScope provided")
 }
@@ -35,6 +37,21 @@ fun AnimatedContentScope.AnimatedContentScopeProvider(content: @Composable () ->
         LocalAnimatedContentScope provides this@AnimatedContentScopeProvider
     ) {
         content()
+    }
+}
+
+@Composable
+fun Modifier.withSharedTransitionScope(
+    scope: @Composable SharedTransitionScope.(modifier: Modifier) -> Modifier
+): Modifier {
+    val enableSharedTransition = LocalEnableSharedTransition.current
+    if (!enableSharedTransition) {
+        return this
+    }
+
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    return with(sharedTransitionScope) {
+        scope(this@withSharedTransitionScope)
     }
 }
 

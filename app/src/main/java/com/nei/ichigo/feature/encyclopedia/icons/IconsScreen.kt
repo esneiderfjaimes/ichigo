@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,8 +40,8 @@ import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.BaseShimmer
 import com.nei.ichigo.common.layout.Grid
 import com.nei.ichigo.common.utils.LocalAnimatedContentScope
-import com.nei.ichigo.common.utils.LocalSharedTransitionScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
+import com.nei.ichigo.common.utils.withSharedTransitionScope
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
@@ -214,15 +213,12 @@ private fun SuccessContent(
                 key = { it.id },
                 contentType = { it.id }
             ) { icon ->
-                val sharedTransitionScope = LocalSharedTransitionScope.current
-                with(sharedTransitionScope) {
-                    ProfileIconItem(
-                        icon = icon,
-                        size = DEFAULT_ITEM_SIZE,
-                        version = version
-                    ) {
-                        onSelect(icon)
-                    }
+                ProfileIconItem(
+                    icon = icon,
+                    size = DEFAULT_ITEM_SIZE,
+                    version = version
+                ) {
+                    onSelect(icon)
                 }
             }
         }
@@ -230,7 +226,7 @@ private fun SuccessContent(
 }
 
 @Composable
-fun SharedTransitionScope.ProfileIconItem(
+fun ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
@@ -240,10 +236,12 @@ fun SharedTransitionScope.ProfileIconItem(
     Column(
         modifier = Modifier
             .padding(DEFAULT_ITEM_PADDING)
-            .sharedBounds(
-                sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = animatedContentScope,
-            ),
+            .withSharedTransitionScope { modifier ->
+                modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
+                    animatedVisibilityScope = animatedContentScope,
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemImage(
@@ -256,20 +254,24 @@ fun SharedTransitionScope.ProfileIconItem(
                         Modifier
                     }
                 )
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
-                    animatedVisibilityScope = animatedContentScope,
-                    clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
-                ),
+                .withSharedTransitionScope { modifier ->
+                    modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
+                        animatedVisibilityScope = animatedContentScope,
+                        clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
+                    )
+                },
             size = size,
         )
         IchigoItemLabel(
             text = "#" + icon.id,
             modifier = Modifier
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = animatedContentScope,
-                )
+                .withSharedTransitionScope { modifier ->
+                    modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
+                        animatedVisibilityScope = animatedContentScope,
+                    )
+                }
         )
     }
 }

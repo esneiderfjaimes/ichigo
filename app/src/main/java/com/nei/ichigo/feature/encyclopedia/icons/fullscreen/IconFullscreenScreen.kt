@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.nei.ichigo.R
-import com.nei.ichigo.common.utils.LocalSharedTransitionScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
@@ -75,14 +74,11 @@ fun IconFullscreenScreen(
                 minZoom = 1f,
                 doubleTapZoom = 2f,
                 content = { modifier ->
-                    val sharedTransitionScope = LocalSharedTransitionScope.current
-                    with(sharedTransitionScope) {
-                        ProfileIconItem(
-                            icon = icon,
-                            version = version,
-                            size = DEFAULT_ITEM_SIZE * 2,
-                        )
-                    }
+                    ProfileIconItem(
+                        icon = icon,
+                        version = version,
+                        size = DEFAULT_ITEM_SIZE * 2,
+                    )
                 }
             )
         }
