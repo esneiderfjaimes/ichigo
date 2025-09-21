@@ -1,9 +1,6 @@
-package com.nei.ichigo.feature.encyclopedia.icons
+package com.nei.ichigo.feature.encyclopedia.icons.fullscreen
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,19 +19,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.nei.ichigo.R
+import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.ZoomableBox3
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
+import com.nei.ichigo.feature.encyclopedia.icons.IconUi
+import com.nei.ichigo.feature.encyclopedia.icons.ProfileIconItem
 
-context(_: AnimatedVisibilityScope)
 @Composable
-fun SharedTransitionScope.IconFullscreen(
+context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+fun IconFullscreenScreen(
     icon: IconUi,
     version: String,
-    requestClose: () -> Unit
+    onBackPress: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -55,7 +55,7 @@ fun SharedTransitionScope.IconFullscreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = requestClose) {
+                    IconButton(onClick = onBackPress) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBackIos,
                             contentDescription = "Close"
@@ -77,38 +77,35 @@ fun SharedTransitionScope.IconFullscreen(
                 minZoom = 1f,
                 doubleTapZoom = 2f,
                 content = { modifier ->
-                    ProfileIconItem(
-                        icon = icon,
-                        version = version,
-                        size = DEFAULT_ITEM_SIZE * 2,
-                    )
+                    with(sharedTransitionScope) {
+                        ProfileIconItem(
+                            icon = icon,
+                            version = version,
+                            size = DEFAULT_ITEM_SIZE * 2,
+                        )
+                    }
                 }
             )
         }
     }
-
-    BackHandler {
-        requestClose()
-    }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-private fun IconFullscreenPreview() {
-    AsyncImagePreviewProvider {
-        SharedTransitionLayout {
-            AnimatedContent(true) {
-                if (it) {
-                    IconFullscreen(
-                        icon = IconUi(
-                            id = "1",
-                            image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
-                        ),
-                        version = "13.19.1",
-                        requestClose = {}
-                    )
-                }
+fun IconFullscreenScreenPreview() {
+    IchigoThemePreview {
+        SharedTransitionPreviewProvider {
+            with(it) {
+                IconFullscreenScreen(
+                    icon = IconUi(
+                        id = "1",
+                        image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
+                    ),
+                    version = "13.19.1",
+                    onBackPress = {}
+                )
             }
         }
     }
+
 }

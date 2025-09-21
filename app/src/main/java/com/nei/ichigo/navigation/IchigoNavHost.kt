@@ -1,6 +1,7 @@
 package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -21,6 +22,8 @@ import com.nei.ichigo.feature.encyclopedia.champions.navigation.champions
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.navigateToChampions
 import com.nei.ichigo.feature.encyclopedia.champions2pane.SUPPORT_PANE_CHAMPION
 import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
+import com.nei.ichigo.feature.encyclopedia.icons.fullscreen.iconFullscreen
+import com.nei.ichigo.feature.encyclopedia.icons.fullscreen.navigateToIconFullscreen
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
@@ -120,22 +123,28 @@ fun IchigoNavHost(
     navController: NavHostController,
     lastNavigationRoute: String?,
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = resolveStartDestination(lastNavigationRoute),
-    ) {
-        if (SUPPORT_PANE_CHAMPION) {
-            championsListDetail()
-        } else {
-            champions(onChampionClick = { navController.navigateToChampion(it) })
-            champion(onBackPress = { navController.popBackStack() })
+    SharedTransitionScope { sharedTransitionModifier ->
+        NavHost(
+            modifier = sharedTransitionModifier,
+            navController = navController,
+            startDestination = resolveStartDestination(lastNavigationRoute),
+        ) {
+            if (SUPPORT_PANE_CHAMPION) {
+                championsListDetail()
+            } else {
+                champions(onChampionClick = { navController.navigateToChampion(it) })
+                champion(onBackPress = { navController.popBackStack() })
+            }
+            icons(onIconClick = { icon, version ->
+                navController.navigateToIconFullscreen(icon, version)
+            })
+            iconFullscreen(onBackPress = { navController.popBackStack() })
+            items()
+            spells()
+            runes()
+            encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
+            licencesScreen(onBackPress = { navController.popBackStack() })
         }
-        icons()
-        items()
-        spells()
-        runes()
-        encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
-        licencesScreen(onBackPress = { navController.popBackStack() })
     }
 }
 

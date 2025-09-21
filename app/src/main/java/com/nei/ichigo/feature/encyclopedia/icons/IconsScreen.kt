@@ -1,18 +1,10 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
@@ -31,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +41,7 @@ import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.BaseShimmer
 import com.nei.ichigo.common.layout.Grid
+import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
@@ -65,58 +57,51 @@ import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
 @Composable
-fun IconsScreen() {
+context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+fun IconsScreen(
+    onIconClick: (IconUi, String) -> Unit,
+) {
     val viewModel: IconsViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     IconsScreen(
         state = state,
+        onIconClick = onIconClick,
         onSelectPage = viewModel::onSelectPage,
         onPageSizeChange = viewModel::onPageSizeChange
     )
 }
 
 @Composable
+context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
 private fun IconsScreen(
     state: UiState<out IconsUiState>,
+    onIconClick: (IconUi, String) -> Unit = { _, _ -> },
     onSelectPage: (Int?) -> Unit = {},
     onPageSizeChange: (Int) -> Unit = {},
 ) {
-    SharedTransitionLayout(modifier = Modifier.fillMaxSize()) {
-        var selectedProfileIcon by rememberSaveable(stateSaver = IconUi.Saver) {
-            mutableStateOf(null)
-        }
-
-        BaseScreen(
-            state = state,
-            topBar = { IconsTopAppBar(state, onSelectPage, onPageSizeChange) },
-            bottomBar = {
-                if (state is UiState.Success) {
-                    state.content.pageInfo?.let { pageInfo ->
-                        BottomPager(pageInfo) {
-                            onSelectPage(it)
-                        }
+    BaseScreen(
+        state = state,
+        topBar = { IconsTopAppBar(state, onSelectPage, onPageSizeChange) },
+        bottomBar = {
+            if (state is UiState.Success) {
+                state.content.pageInfo?.let { pageInfo ->
+                    BottomPager(pageInfo) {
+                        onSelectPage(it)
                     }
                 }
-            },
-            shimmerContent = { ShimmerContent(it) },
-        ) { state, innerPadding ->
-            SuccessContent(
-                innerPadding = innerPadding,
-                icons = state.icons,
-                total = state.totalIcons,
-                version = state.version,
-                selectedProfileIcon = selectedProfileIcon,
-                onSelect = { selectedProfileIcon = it }
-            )
-        }
-
-        if (state is UiState.Success) {
-            IconDetails(
-                selectedProfileIcon = selectedProfileIcon,
-                version = state.content.version,
-                requestClose = { selectedProfileIcon = null }
-            )
-        }
+            }
+        },
+        shimmerContent = { ShimmerContent(it) },
+    ) { state, innerPadding ->
+        SuccessContent(
+            innerPadding = innerPadding,
+            icons = state.icons,
+            total = state.totalIcons,
+            version = state.version,
+            onSelect = {
+                onIconClick(it, state.version)
+            }
+        )
     }
 }
 
@@ -200,12 +185,12 @@ private fun IconsTopAppBar(
 private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
 @Composable
-private fun SharedTransitionScope.SuccessContent(
+context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+private fun SuccessContent(
     innerPadding: PaddingValues,
     icons: List<IconUi>,
     total: Int,
     version: String,
-    selectedProfileIcon: IconUi? = null,
     onSelect: (IconUi) -> Unit = {},
 ) {
     Grid(
@@ -229,12 +214,9 @@ private fun SharedTransitionScope.SuccessContent(
             items(
                 items = icons,
                 key = { it.id },
-                contentType = { it.id + it.id != selectedProfileIcon?.id }
+                contentType = { it.id }
             ) { icon ->
-                AnimatedVisibility(
-                    visible = icon.id != selectedProfileIcon?.id,
-                    modifier = Modifier.animateItem()
-                ) {
+                with(sharedTransitionScope) {
                     ProfileIconItem(
                         icon = icon,
                         size = DEFAULT_ITEM_SIZE,
@@ -248,8 +230,8 @@ private fun SharedTransitionScope.SuccessContent(
     )
 }
 
-context(visibilityScope: AnimatedVisibilityScope)
 @Composable
+context(animatedContentScope: AnimatedContentScope)
 fun SharedTransitionScope.ProfileIconItem(
     icon: IconUi,
     size: Dp,
@@ -261,7 +243,7 @@ fun SharedTransitionScope.ProfileIconItem(
             .padding(DEFAULT_ITEM_PADDING)
             .sharedBounds(
                 sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = visibilityScope,
+                animatedVisibilityScope = animatedContentScope,
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -277,7 +259,7 @@ fun SharedTransitionScope.ProfileIconItem(
                 )
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
-                    animatedVisibilityScope = visibilityScope,
+                    animatedVisibilityScope = animatedContentScope,
                     clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                 ),
             size = size,
@@ -287,7 +269,7 @@ fun SharedTransitionScope.ProfileIconItem(
             modifier = Modifier
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = visibilityScope,
+                    animatedVisibilityScope = animatedContentScope,
                 )
         )
     }
@@ -318,26 +300,27 @@ fun ShimmerScope.ProfileIconShimmerItem(size: Dp) {
     }
 }
 
+@PreviewLightDark
 @Composable
-fun SharedTransitionScope.IconDetails(
-    selectedProfileIcon: IconUi?,
-    version: String,
-    requestClose: () -> Unit
-) {
-    AnimatedContent(
-        targetState = selectedProfileIcon,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
-        label = "IconDetails"
-    ) { icon ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-        ) {
-            if (icon != null) {
-                IconFullscreen(
-                    icon = icon,
-                    version = version,
-                    requestClose = requestClose
+fun IconsScreenPreview() {
+    IchigoThemePreview {
+        SharedTransitionPreviewProvider {
+            with(it) {
+                IconsScreen(
+                    state = UiState.Success(
+                        content = IconsUiState(
+                            icons = (1..100).map {
+                                IconUi(
+                                    id = it.toString(),
+                                    image = ""
+                                )
+                            },
+                            totalIcons = 100,
+                            pageInfo = null,
+                            pageSize = 20,
+                            version = "1.0.0"
+                        )
+                    )
                 )
             }
         }
@@ -346,50 +329,31 @@ fun SharedTransitionScope.IconDetails(
 
 @PreviewLightDark
 @Composable
-fun IconsScreenPreview() {
-    IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Success(
-                content = IconsUiState(
-                    icons = (1..100).map {
-                        IconUi(
-                            id = it.toString(),
-                            image = ""
-                        )
-                    },
-                    totalIcons = 100,
-                    pageInfo = null,
-                    pageSize = 20,
-                    version = "1.0.0"
-                )
-            )
-        )
-    }
-}
-
-@PreviewLightDark
-@Composable
 fun IconsScreenPreview2() {
     IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Success(
-                content = IconsUiState(
-                    icons = (1..100).map {
-                        IconUi(
-                            id = it.toString(),
-                            image = ""
+        SharedTransitionPreviewProvider {
+            with(it) {
+                IconsScreen(
+                    state = UiState.Success(
+                        content = IconsUiState(
+                            icons = (1..100).map {
+                                IconUi(
+                                    id = it.toString(),
+                                    image = ""
+                                )
+                            },
+                            totalIcons = 100,
+                            pageInfo = PageInfo(
+                                pageIndex = 0,
+                                totalPages = 10
+                            ),
+                            pageSize = 20,
+                            version = "1.0.0"
                         )
-                    },
-                    totalIcons = 100,
-                    pageInfo = PageInfo(
-                        pageIndex = 0,
-                        totalPages = 10
-                    ),
-                    pageSize = 20,
-                    version = "1.0.0"
+                    )
                 )
-            )
-        )
+            }
+        }
     }
 }
 
@@ -397,8 +361,12 @@ fun IconsScreenPreview2() {
 @Composable
 fun IconsScreenLoadingPreview() {
     IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Loading
-        )
+        SharedTransitionPreviewProvider {
+            with(it) {
+                IconsScreen(
+                    state = UiState.Loading
+                )
+            }
+        }
     }
 }
