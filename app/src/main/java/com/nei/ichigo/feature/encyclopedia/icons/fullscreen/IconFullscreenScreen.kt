@@ -1,7 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.icons.fullscreen
 
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.nei.ichigo.R
+import com.nei.ichigo.common.utils.LocalSharedTransitionScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
@@ -30,7 +30,7 @@ import com.nei.ichigo.feature.encyclopedia.icons.IconUi
 import com.nei.ichigo.feature.encyclopedia.icons.ProfileIconItem
 
 @Composable
-context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+context(animatedContentScope: AnimatedContentScope)
 fun IconFullscreenScreen(
     icon: IconUi,
     version: String,
@@ -77,6 +77,7 @@ fun IconFullscreenScreen(
                 minZoom = 1f,
                 doubleTapZoom = 2f,
                 content = { modifier ->
+                    val sharedTransitionScope = LocalSharedTransitionScope.current
                     with(sharedTransitionScope) {
                         ProfileIconItem(
                             icon = icon,
@@ -95,17 +96,14 @@ fun IconFullscreenScreen(
 fun IconFullscreenScreenPreview() {
     IchigoThemePreview {
         SharedTransitionPreviewProvider {
-            with(it) {
-                IconFullscreenScreen(
-                    icon = IconUi(
-                        id = "1",
-                        image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
-                    ),
-                    version = "13.19.1",
-                    onBackPress = {}
-                )
-            }
+            IconFullscreenScreen(
+                icon = IconUi(
+                    id = "1",
+                    image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
+                ),
+                version = "13.19.1",
+                onBackPress = {}
+            )
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons.fullscreen
 
-import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -16,7 +15,6 @@ fun NavController.navigateToIconFullscreen(
     version: String,
 ) = navigate(route = IconScreenshotRoute(id = icon.id, image = icon.image, version = version))
 
-context(sharedTransitionScope: SharedTransitionScope)
 fun NavGraphBuilder.iconFullscreen(onBackPress: () -> Unit) {
     composable<IconScreenshotRoute> { entry ->
         val route = entry.toRoute<IconScreenshotRoute>()

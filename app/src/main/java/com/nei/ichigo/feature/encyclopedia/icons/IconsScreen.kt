@@ -41,6 +41,7 @@ import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.BaseShimmer
 import com.nei.ichigo.common.layout.Grid
+import com.nei.ichigo.common.utils.LocalSharedTransitionScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
@@ -57,7 +58,7 @@ import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
 @Composable
-context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+context(animatedContentScope: AnimatedContentScope)
 fun IconsScreen(
     onIconClick: (IconUi, String) -> Unit,
 ) {
@@ -72,7 +73,7 @@ fun IconsScreen(
 }
 
 @Composable
-context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+context(animatedContentScope: AnimatedContentScope)
 private fun IconsScreen(
     state: UiState<out IconsUiState>,
     onIconClick: (IconUi, String) -> Unit = { _, _ -> },
@@ -185,7 +186,7 @@ private fun IconsTopAppBar(
 private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
 @Composable
-context(sharedTransitionScope: SharedTransitionScope, animatedContentScope: AnimatedContentScope)
+context(animatedContentScope: AnimatedContentScope)
 private fun SuccessContent(
     innerPadding: PaddingValues,
     icons: List<IconUi>,
@@ -216,6 +217,7 @@ private fun SuccessContent(
                 key = { it.id },
                 contentType = { it.id }
             ) { icon ->
+                val sharedTransitionScope = LocalSharedTransitionScope.current
                 with(sharedTransitionScope) {
                     ProfileIconItem(
                         icon = icon,
@@ -305,24 +307,22 @@ fun ShimmerScope.ProfileIconShimmerItem(size: Dp) {
 fun IconsScreenPreview() {
     IchigoThemePreview {
         SharedTransitionPreviewProvider {
-            with(it) {
-                IconsScreen(
-                    state = UiState.Success(
-                        content = IconsUiState(
-                            icons = (1..100).map {
-                                IconUi(
-                                    id = it.toString(),
-                                    image = ""
-                                )
-                            },
-                            totalIcons = 100,
-                            pageInfo = null,
-                            pageSize = 20,
-                            version = "1.0.0"
-                        )
+            IconsScreen(
+                state = UiState.Success(
+                    content = IconsUiState(
+                        icons = (1..100).map {
+                            IconUi(
+                                id = it.toString(),
+                                image = ""
+                            )
+                        },
+                        totalIcons = 100,
+                        pageInfo = null,
+                        pageSize = 20,
+                        version = "1.0.0"
                     )
                 )
-            }
+            )
         }
     }
 }
@@ -332,27 +332,25 @@ fun IconsScreenPreview() {
 fun IconsScreenPreview2() {
     IchigoThemePreview {
         SharedTransitionPreviewProvider {
-            with(it) {
-                IconsScreen(
-                    state = UiState.Success(
-                        content = IconsUiState(
-                            icons = (1..100).map {
-                                IconUi(
-                                    id = it.toString(),
-                                    image = ""
-                                )
-                            },
-                            totalIcons = 100,
-                            pageInfo = PageInfo(
-                                pageIndex = 0,
-                                totalPages = 10
-                            ),
-                            pageSize = 20,
-                            version = "1.0.0"
-                        )
+            IconsScreen(
+                state = UiState.Success(
+                    content = IconsUiState(
+                        icons = (1..100).map {
+                            IconUi(
+                                id = it.toString(),
+                                image = ""
+                            )
+                        },
+                        totalIcons = 100,
+                        pageInfo = PageInfo(
+                            pageIndex = 0,
+                            totalPages = 10
+                        ),
+                        pageSize = 20,
+                        version = "1.0.0"
                     )
                 )
-            }
+            )
         }
     }
 }
@@ -362,11 +360,9 @@ fun IconsScreenPreview2() {
 fun IconsScreenLoadingPreview() {
     IchigoThemePreview {
         SharedTransitionPreviewProvider {
-            with(it) {
-                IconsScreen(
-                    state = UiState.Loading
-                )
-            }
+            IconsScreen(
+                state = UiState.Loading
+            )
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons.navigation
 
-import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -14,7 +13,6 @@ data object IconsRoute
 
 fun NavController.navigateToIcons(navOptions: NavOptions) = navigate(route = IconsRoute, navOptions)
 
-context(sharedTransitionScope: SharedTransitionScope)
 fun NavGraphBuilder.icons(
     onIconClick: (IconUi, String) -> Unit,
 ) {

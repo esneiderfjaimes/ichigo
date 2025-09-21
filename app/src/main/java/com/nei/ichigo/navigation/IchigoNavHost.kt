@@ -1,7 +1,6 @@
 package com.nei.ichigo.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -10,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.nei.ichigo.R
+import com.nei.ichigo.common.utils.SharedTransitionProvider
 import com.nei.ichigo.core.designsystem.icon.Champion
 import com.nei.ichigo.core.designsystem.icon.IchigoIcons
 import com.nei.ichigo.core.designsystem.icon.Item
@@ -123,7 +123,7 @@ fun IchigoNavHost(
     navController: NavHostController,
     lastNavigationRoute: String?,
 ) {
-    SharedTransitionScope { sharedTransitionModifier ->
+    SharedTransitionProvider { sharedTransitionModifier ->
         NavHost(
             modifier = sharedTransitionModifier,
             navController = navController,
