@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.nei.ichigo.common.utils.AnimatedContentScopeProvider
 import com.nei.ichigo.feature.encyclopedia.icons.IconUi
 import com.nei.ichigo.feature.encyclopedia.icons.IconsScreen
 import kotlinx.serialization.Serializable
@@ -17,8 +18,10 @@ fun NavGraphBuilder.icons(
     onIconClick: (IconUi, String) -> Unit,
 ) {
     composable<IconsRoute> {
-        IconsScreen(
-            onIconClick = onIconClick,
-        )
+        AnimatedContentScopeProvider {
+            IconsScreen(
+                onIconClick = onIconClick,
+            )
+        }
     }
 }

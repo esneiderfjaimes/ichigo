@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.nei.ichigo.common.utils.AnimatedContentScopeProvider
 import com.nei.ichigo.feature.encyclopedia.icons.IconUi
 import kotlinx.serialization.Serializable
 
@@ -19,10 +20,12 @@ fun NavGraphBuilder.iconFullscreen(onBackPress: () -> Unit) {
     composable<IconScreenshotRoute> { entry ->
         val route = entry.toRoute<IconScreenshotRoute>()
         val icon = IconUi(id = route.id, image = route.image)
-        IconFullscreenScreen(
-            icon = icon,
-            version = route.version,
-            onBackPress = onBackPress
-        )
+        AnimatedContentScopeProvider {
+            IconFullscreenScreen(
+                icon = icon,
+                version = route.version,
+                onBackPress = onBackPress
+            )
+        }
     }
 }

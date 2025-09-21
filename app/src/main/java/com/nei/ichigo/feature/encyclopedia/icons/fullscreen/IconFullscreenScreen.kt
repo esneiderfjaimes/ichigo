@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons.fullscreen
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import com.nei.ichigo.feature.encyclopedia.icons.IconUi
 import com.nei.ichigo.feature.encyclopedia.icons.ProfileIconItem
 
 @Composable
-context(animatedContentScope: AnimatedContentScope)
 fun IconFullscreenScreen(
     icon: IconUi,
     version: String,

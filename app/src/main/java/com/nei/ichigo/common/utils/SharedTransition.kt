@@ -14,6 +14,10 @@ val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope>
     error("No SharedTransitionScope provided")
 }
 
+val LocalAnimatedContentScope = staticCompositionLocalOf<AnimatedContentScope> {
+    error("No AnimatedContentScope provided")
+}
+
 @Composable
 fun SharedTransitionProvider(content: @Composable SharedTransitionScope.(Modifier) -> Unit) {
     SharedTransitionScope { sharedTransitionModifier ->
@@ -25,16 +29,25 @@ fun SharedTransitionProvider(content: @Composable SharedTransitionScope.(Modifie
     }
 }
 
+@Composable
+fun AnimatedContentScope.AnimatedContentScopeProvider(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalAnimatedContentScope provides this@AnimatedContentScopeProvider
+    ) {
+        content()
+    }
+}
+
 @SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
-fun SharedTransitionPreviewProvider(content: @Composable AnimatedContentScope.() -> Unit) {
+fun SharedTransitionPreviewProvider(content: @Composable () -> Unit) {
     SharedTransitionLayout {
         AnimatedContent(true) {
             CompositionLocalProvider(
-                LocalSharedTransitionScope provides this@SharedTransitionLayout
-            ) {
-                content(this)
-            }
+                LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                LocalAnimatedContentScope provides this,
+                content = content
+            )
         }
     }
 }

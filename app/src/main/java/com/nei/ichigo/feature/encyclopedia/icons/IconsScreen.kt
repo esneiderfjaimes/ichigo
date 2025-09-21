@@ -1,6 +1,5 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.BaseShimmer
 import com.nei.ichigo.common.layout.Grid
+import com.nei.ichigo.common.utils.LocalAnimatedContentScope
 import com.nei.ichigo.common.utils.LocalSharedTransitionScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
@@ -58,7 +58,6 @@ import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
 @Composable
-context(animatedContentScope: AnimatedContentScope)
 fun IconsScreen(
     onIconClick: (IconUi, String) -> Unit,
 ) {
@@ -73,7 +72,6 @@ fun IconsScreen(
 }
 
 @Composable
-context(animatedContentScope: AnimatedContentScope)
 private fun IconsScreen(
     state: UiState<out IconsUiState>,
     onIconClick: (IconUi, String) -> Unit = { _, _ -> },
@@ -186,7 +184,6 @@ private fun IconsTopAppBar(
 private val GRID_MIN_SIZE = DEFAULT_ITEM_SIZE + (DEFAULT_ITEM_PADDING * 2)
 
 @Composable
-context(animatedContentScope: AnimatedContentScope)
 private fun SuccessContent(
     innerPadding: PaddingValues,
     icons: List<IconUi>,
@@ -233,13 +230,13 @@ private fun SuccessContent(
 }
 
 @Composable
-context(animatedContentScope: AnimatedContentScope)
 fun SharedTransitionScope.ProfileIconItem(
     icon: IconUi,
     size: Dp,
     version: String,
     onClick: (() -> Unit)? = null
 ) {
+    val animatedContentScope = LocalAnimatedContentScope.current
     Column(
         modifier = Modifier
             .padding(DEFAULT_ITEM_PADDING)
