@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.nei.ichigo.R
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.core.designsystem.ZoomableBox3
+import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
@@ -89,15 +90,17 @@ fun IconFullscreenScreen(
 @Composable
 fun IconFullscreenScreenPreview() {
     IchigoThemePreview {
-        SharedTransitionPreviewProvider {
-            IconFullscreenScreen(
-                icon = IconUi(
-                    id = "1",
-                    image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
-                ),
-                version = "13.19.1",
-                onBackPress = {}
-            )
+        AsyncImagePreviewProvider {
+            SharedTransitionPreviewProvider {
+                IconFullscreenScreen(
+                    icon = IconUi(
+                        id = "1",
+                        image = "h_103,w_103"
+                    ),
+                    version = "13.19.1",
+                    onBackPress = {}
+                )
+            }
         }
     }
 }

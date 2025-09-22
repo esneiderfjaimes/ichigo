@@ -39,9 +39,10 @@ import com.nei.ichigo.common.BaseTopAppBar
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.BaseShimmer
 import com.nei.ichigo.common.layout.Grid
-import com.nei.ichigo.common.utils.LocalAnimatedContentScope
+import com.nei.ichigo.common.utils.LocalAnimatedVisibilityScope
 import com.nei.ichigo.common.utils.SharedTransitionPreviewProvider
 import com.nei.ichigo.common.utils.withSharedTransitionScope
+import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SHAPE
@@ -232,14 +233,14 @@ fun ProfileIconItem(
     version: String,
     onClick: (() -> Unit)? = null
 ) {
-    val animatedContentScope = LocalAnimatedContentScope.current
+    val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
     Column(
         modifier = Modifier
             .padding(DEFAULT_ITEM_PADDING)
             .withSharedTransitionScope { modifier ->
                 modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                    animatedVisibilityScope = animatedContentScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
                 )
             },
         horizontalAlignment = Alignment.CenterHorizontally
@@ -257,7 +258,7 @@ fun ProfileIconItem(
                 .withSharedTransitionScope { modifier ->
                     modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
-                        animatedVisibilityScope = animatedContentScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                     )
                 },
@@ -269,7 +270,7 @@ fun ProfileIconItem(
                 .withSharedTransitionScope { modifier ->
                     modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                        animatedVisibilityScope = animatedContentScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
                     )
                 }
         )
@@ -305,23 +306,25 @@ fun ShimmerScope.ProfileIconShimmerItem(size: Dp) {
 @Composable
 fun IconsScreenPreview() {
     IchigoThemePreview {
-        SharedTransitionPreviewProvider {
-            IconsScreen(
-                state = UiState.Success(
-                    content = IconsUiState(
-                        icons = (1..100).map {
-                            IconUi(
-                                id = it.toString(),
-                                image = ""
-                            )
-                        },
-                        totalIcons = 100,
-                        pageInfo = null,
-                        pageSize = 20,
-                        version = "1.0.0"
+        AsyncImagePreviewProvider {
+            SharedTransitionPreviewProvider {
+                IconsScreen(
+                    state = UiState.Success(
+                        content = IconsUiState(
+                            icons = (1..100).map {
+                                IconUi(
+                                    id = it.toString(),
+                                    image = "h_103,w_103"
+                                )
+                            },
+                            totalIcons = 100,
+                            pageInfo = null,
+                            pageSize = 20,
+                            version = "1.0.0"
+                        )
                     )
                 )
-            )
+            }
         }
     }
 }
@@ -330,26 +333,28 @@ fun IconsScreenPreview() {
 @Composable
 fun IconsScreenPreview2() {
     IchigoThemePreview {
-        SharedTransitionPreviewProvider {
-            IconsScreen(
-                state = UiState.Success(
-                    content = IconsUiState(
-                        icons = (1..100).map {
-                            IconUi(
-                                id = it.toString(),
-                                image = ""
-                            )
-                        },
-                        totalIcons = 100,
-                        pageInfo = PageInfo(
-                            pageIndex = 0,
-                            totalPages = 10
-                        ),
-                        pageSize = 20,
-                        version = "1.0.0"
+        AsyncImagePreviewProvider {
+            SharedTransitionPreviewProvider {
+                IconsScreen(
+                    state = UiState.Success(
+                        content = IconsUiState(
+                            icons = (1..100).map {
+                                IconUi(
+                                    id = it.toString(),
+                                    image = "h_103,w_103"
+                                )
+                            },
+                            totalIcons = 100,
+                            pageInfo = PageInfo(
+                                pageIndex = 0,
+                                totalPages = 10
+                            ),
+                            pageSize = 20,
+                            version = "1.0.0"
+                        )
                     )
                 )
-            )
+            }
         }
     }
 }
@@ -358,10 +363,12 @@ fun IconsScreenPreview2() {
 @Composable
 fun IconsScreenLoadingPreview() {
     IchigoThemePreview {
-        SharedTransitionPreviewProvider {
-            IconsScreen(
-                state = UiState.Loading
-            )
+        AsyncImagePreviewProvider {
+            SharedTransitionPreviewProvider {
+                IconsScreen(
+                    state = UiState.Loading
+                )
+            }
         }
     }
 }

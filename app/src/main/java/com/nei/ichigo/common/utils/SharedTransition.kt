@@ -1,8 +1,8 @@
 package com.nei.ichigo.common.utils
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
@@ -16,8 +16,8 @@ val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope>
     error("No SharedTransitionScope provided")
 }
 
-val LocalAnimatedContentScope = staticCompositionLocalOf<AnimatedContentScope> {
-    error("No AnimatedContentScope provided")
+val LocalAnimatedVisibilityScope = staticCompositionLocalOf<AnimatedVisibilityScope> {
+    error("No AnimatedVisibilityScope provided")
 }
 
 @Composable
@@ -32,9 +32,9 @@ fun SharedTransitionProvider(content: @Composable SharedTransitionScope.(Modifie
 }
 
 @Composable
-fun AnimatedContentScope.AnimatedContentScopeProvider(content: @Composable () -> Unit) {
+fun AnimatedVisibilityScope.AnimatedVisibilityScopeProvider(content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalAnimatedContentScope provides this@AnimatedContentScopeProvider
+        LocalAnimatedVisibilityScope provides this@AnimatedVisibilityScopeProvider
     ) {
         content()
     }
@@ -59,10 +59,10 @@ fun Modifier.withSharedTransitionScope(
 @Composable
 fun SharedTransitionPreviewProvider(content: @Composable () -> Unit) {
     SharedTransitionLayout {
-        AnimatedContent(true) {
+        AnimatedVisibility(true) {
             CompositionLocalProvider(
                 LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                LocalAnimatedContentScope provides this,
+                LocalAnimatedVisibilityScope provides this,
                 content = content
             )
         }
