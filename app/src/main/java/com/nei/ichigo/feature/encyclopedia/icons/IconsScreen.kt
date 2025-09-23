@@ -24,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -236,17 +238,12 @@ fun ProfileIconItem(
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
     Column(
         modifier = Modifier
-            .padding(DEFAULT_ITEM_PADDING)
-            .withSharedTransitionScope { modifier ->
-                modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                )
-            },
+            .padding(DEFAULT_ITEM_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemImage(
             model = getProfileIconImage(icon.image, version),
+            backgroundColor = Color.Transparent,
             modifier = Modifier
                 .then(
                     other = if (onClick != null) {
@@ -259,20 +256,14 @@ fun ProfileIconItem(
                     modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
                         animatedVisibilityScope = animatedVisibilityScope,
-                        clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
                     )
-                },
+                }
+                // requiered for shared transition
+                .clip(DEFAULT_ITEM_SHAPE),
             size = size,
         )
         IchigoItemLabel(
             text = "#" + icon.id,
-            modifier = Modifier
-                .withSharedTransitionScope { modifier ->
-                    modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                }
         )
     }
 }

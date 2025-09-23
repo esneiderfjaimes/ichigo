@@ -33,6 +33,19 @@ import com.nei.ichigo.core.designsystem.BuildConfig
 fun AsyncImage(
     model: Any?,
     modifier: Modifier = Modifier,
+    loading: @Composable () -> Unit = {
+        Spacer(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RectangleShape
+                )
+                .shimmerEffect(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RectangleShape
+                )
+        )
+    },
     contentScale: ContentScale = ContentScale.Fit
 ) {
     SubcomposeAsyncImage(
@@ -54,17 +67,7 @@ fun AsyncImage(
             }
         },
         loading = {
-            Spacer(
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = RectangleShape
-                    )
-                    .shimmerEffect(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RectangleShape
-                    )
-            )
+            loading()
         }
     )
 }

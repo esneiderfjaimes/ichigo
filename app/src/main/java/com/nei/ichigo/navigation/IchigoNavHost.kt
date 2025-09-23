@@ -33,6 +33,8 @@ import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.RunesRoute
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.navigateToRunes
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.runes
+import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.navigateToSkinFullscreen
+import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.skinFullscreen
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
@@ -130,14 +132,24 @@ fun IchigoNavHost(
             startDestination = resolveStartDestination(lastNavigationRoute),
         ) {
             if (SUPPORT_PANE_CHAMPION) {
-                championsListDetail()
+                championsListDetail(
+                    navToSkinFullscreen = { championId, selectedSkin ->
+                        navController.navigateToSkinFullscreen(championId, selectedSkin)
+                    }
+                )
             } else {
                 champions(onChampionClick = { navController.navigateToChampion(it) })
-                champion(onBackPress = { navController.popBackStack() })
+                champion(
+                    onBackPress = { navController.popBackStack() },
+                    navToSkinFullscreen = { championId, selectedSkin ->
+                        navController.navigateToSkinFullscreen(championId, selectedSkin)
+                    }
+                )
             }
             icons(onIconClick = { icon, version ->
                 navController.navigateToIconFullscreen(icon, version)
             })
+            skinFullscreen(onBackPress = { navController.popBackStack() })
             iconFullscreen(onBackPress = { navController.popBackStack() })
             items()
             spells()
