@@ -56,6 +56,7 @@ import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.component.AsyncImage
+import com.nei.ichigo.core.designsystem.component.AsyncImageDefaults
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
@@ -234,6 +235,7 @@ fun Header(
                 .aspectRatio(1215f / 717f)
                 .then(modifier),
             model = getChampionSkinImage(champion.id, 0),
+            loading = AsyncImageDefaults.LoadingCircleProgress,
             contentScale = ContentScale.FillHeight
         )
 

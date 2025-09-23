@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
@@ -39,6 +36,7 @@ import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImage
+import com.nei.ichigo.core.designsystem.component.AsyncImageDefaults
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.PageInfo
@@ -135,13 +133,7 @@ fun SkinFullscreenScreen(
                                 state.championId,
                                 skin.num
                             ),
-                            loading = {
-                                Box(
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(Modifier.size(24.dp))
-                                }
-                            }
+                            loading = AsyncImageDefaults.LoadingCircleProgress,
                         )
                     }
                 )

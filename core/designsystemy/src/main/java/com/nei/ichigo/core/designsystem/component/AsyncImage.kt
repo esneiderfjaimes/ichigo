@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -29,11 +30,17 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import com.nei.ichigo.core.designsystem.BuildConfig
 
-@Composable
-fun AsyncImage(
-    model: Any?,
-    modifier: Modifier = Modifier,
-    loading: @Composable () -> Unit = {
+object AsyncImageDefaults {
+
+    val LoadingCircleProgress = @Composable {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(Modifier.size(24.dp))
+        }
+    }
+
+    val LoadingShimmer = @Composable {
         Spacer(
             modifier = Modifier
                 .background(
@@ -45,7 +52,14 @@ fun AsyncImage(
                     shape = RectangleShape
                 )
         )
-    },
+    }
+}
+
+@Composable
+fun AsyncImage(
+    model: Any?,
+    modifier: Modifier = Modifier,
+    loading: @Composable () -> Unit = AsyncImageDefaults.LoadingShimmer,
     contentScale: ContentScale = ContentScale.Fit
 ) {
     SubcomposeAsyncImage(
