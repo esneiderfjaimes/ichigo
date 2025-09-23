@@ -35,6 +35,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -233,6 +235,8 @@ private fun SharedTransitionScope.SuccessContent(
             ) { icon ->
                 AnimatedVisibility(
                     visible = icon.id != selectedProfileIcon?.id,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
                     modifier = Modifier.animateItem()
                 ) {
                     ProfileIconItem(
@@ -258,15 +262,12 @@ fun SharedTransitionScope.ProfileIconItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(DEFAULT_ITEM_PADDING)
-            .sharedBounds(
-                sharedContentState = rememberSharedContentState(key = "${icon.id}-bounds"),
-                animatedVisibilityScope = visibilityScope,
-            ),
+            .padding(DEFAULT_ITEM_PADDING),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IchigoItemImage(
             model = getProfileIconImage(icon.image, version),
+            backgroundColor = Color.Transparent,
             modifier = Modifier
                 .then(
                     other = if (onClick != null) {
@@ -278,17 +279,13 @@ fun SharedTransitionScope.ProfileIconItem(
                 .sharedBounds(
                     sharedContentState = rememberSharedContentState(key = "${icon.id}-image"),
                     animatedVisibilityScope = visibilityScope,
-                    clipInOverlayDuringTransition = OverlayClip(DEFAULT_ITEM_SHAPE)
-                ),
+                )
+                // requiered for shared transition
+                .clip(DEFAULT_ITEM_SHAPE),
             size = size,
         )
         IchigoItemLabel(
             text = "#" + icon.id,
-            modifier = Modifier
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = "${icon.id}-label"),
-                    animatedVisibilityScope = visibilityScope,
-                )
         )
     }
 }

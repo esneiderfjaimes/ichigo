@@ -36,6 +36,7 @@ val DEFAULT_ITEM_BORDER_WIDTH = 0.75.dp
 fun IchigoItemImage(
     model: Any?,
     modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     size: Dp = DEFAULT_ITEM_SIZE,
     shape: Shape = DEFAULT_ITEM_SHAPE,
     borderWidth: Dp = DEFAULT_ITEM_BORDER_WIDTH,
@@ -45,7 +46,7 @@ fun IchigoItemImage(
         modifier = Modifier
             // add background
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(backgroundColor)
             // add other modifiers
             .then(modifier)
             // first limit image size
