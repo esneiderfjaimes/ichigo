@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.champion.fullscreen
+package com.nei.ichigo.feature.encyclopedia.skin.fullscreen
 
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel

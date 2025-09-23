@@ -9,42 +9,28 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
 
 @HiltViewModel(assistedFactory = ChampionViewModel.Factory::class)
 class ChampionViewModel @AssistedInject constructor(
     getChampionUseCase: GetChampionUseCase,
     @Assisted val championId: String,
 ) : UiStateViewModel<ChampionUiState>() {
-
-    private val _selectedSkin = MutableStateFlow<Int?>(null)
-
-    override val flow = combine(
-        flow = getChampionUseCase(championId),
-        flow2 = _selectedSkin
-    ) { result, selectedSkin ->
+    override val flow = getChampionUseCase(championId).map { result ->
         val page = result.getOrThrow()
         ChampionUiState(
             champion = page.data,
-            selectedSkin = selectedSkin,
             version = page.version,
         )
     }
 
-    fun updateSelectedSkin(skinId: Int?) {
-        _selectedSkin.update { skinId }
-    }
-
     data class ChampionUiState(
         val champion: ChampionDetail,
-        val selectedSkin: Int? = null,
         override val version: String,
     ) : PageUiState
 
     @AssistedFactory
     interface Factory {
-        fun create(topicId: String): ChampionViewModel
+        fun create(championId: String): ChampionViewModel
     }
 }

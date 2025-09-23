@@ -1,10 +1,10 @@
-package com.nei.ichigo.feature.encyclopedia.champion.fullscreen.navigation
+package com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.SkinFullscreenScreen
+import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.SkinFullscreenScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

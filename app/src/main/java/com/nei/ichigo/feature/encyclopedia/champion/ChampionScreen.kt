@@ -152,7 +152,7 @@ fun ChampionContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Header(
-            modifier = Modifier.parallaxLayoutModifier(scrollState, 2),
+            modifier = Modifier.parallaxLayoutModifier(scrollState, 1.5),
             champion = champion,
         )
 

@@ -1,4 +1,4 @@
-package com.nei.ichigo.feature.encyclopedia.champion.fullscreen
+package com.nei.ichigo.feature.encyclopedia.skin.fullscreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -44,7 +45,6 @@ import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.model.Skin
-import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.SkinFullscreenViewModel.SkinFullscreenUiState
 
 @Composable
 fun SkinFullscreenScreen(
@@ -67,15 +67,14 @@ fun SkinFullscreenScreen(
 
 @Composable
 fun SkinFullscreenScreen(
-    state: UiState<out SkinFullscreenUiState>,
+    state: UiState<out SkinFullscreenViewModel.SkinFullscreenUiState>,
     onSelectSkin: (Int) -> Unit = {},
     onBackPress: () -> Unit = {}
 ) {
-
     BaseScreen(
         state = state,
         topBar = {
-            if (state is UiState.Success<SkinFullscreenUiState>) {
+            if (state is UiState.Success<SkinFullscreenViewModel.SkinFullscreenUiState>) {
                 SkinFullscreenTopAppBar(
                     skin = state.content.skin,
                     onCloseClick = onBackPress
@@ -83,7 +82,7 @@ fun SkinFullscreenScreen(
             }
         },
         bottomBar = {
-            if (state is UiState.Success<SkinFullscreenUiState>) {
+            if (state is UiState.Success<SkinFullscreenViewModel.SkinFullscreenUiState>) {
                 BottomPager(
                     pageInfo = PageInfo(
                         state.content.selectedSkinIndex,
@@ -100,7 +99,6 @@ fun SkinFullscreenScreen(
             }
         },
     ) { state, innerPadding ->
-
         AnimatedContent(
             modifier = Modifier
                 .fillMaxSize()
@@ -161,7 +159,9 @@ fun SkinFullscreenTopAppBar(
     TransparentTopAppBar(
         title = {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Below
+                ),
                 tooltip = { PlainTooltip { Text(skin.name) } },
                 state = rememberTooltipState()
             ) {
@@ -195,7 +195,7 @@ fun SkinFullscreenTopAppBar(
 fun SkinFullscreenPreview() {
     AsyncImagePreviewProvider {
         SkinFullscreenScreen(
-            state = SkinFullscreenUiState(
+            state = SkinFullscreenViewModel.SkinFullscreenUiState(
                 championId = "1",
                 skin = Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
                 skins = listOf(

@@ -14,8 +14,6 @@ import com.nei.ichigo.core.designsystem.icon.IchigoIcons
 import com.nei.ichigo.core.designsystem.icon.Item
 import com.nei.ichigo.core.designsystem.icon.Rune
 import com.nei.ichigo.core.designsystem.icon.Spell
-import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.navigation.navigateToSkinFullscreen
-import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.navigation.skinFullscreen
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -32,6 +30,8 @@ import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.RunesRoute
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.navigateToRunes
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.runes
+import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.navigateToSkinFullscreen
+import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.skinFullscreen
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
