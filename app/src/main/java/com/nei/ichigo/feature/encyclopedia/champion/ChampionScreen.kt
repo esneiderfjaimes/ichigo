@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +35,7 @@ import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,19 +47,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
 import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.UiState
+import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.component.parallaxLayoutModifier
 import com.nei.ichigo.core.designsystem.theme.Gold
+import com.nei.ichigo.core.designsystem.theme.IchigoTheme
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.designsystem.utils.roleToString
@@ -69,27 +73,18 @@ import com.nei.ichigo.feature.encyclopedia.champion.ChampionViewModel.ChampionUi
 @Composable
 fun ChampionScreen(
     championId: String,
-    onBackPress: () -> Unit,
-) {
-    ChampionScreen(
-        viewModel = hiltViewModel<ChampionViewModel, ChampionViewModel.Factory>(
-            key = championId,
-        ) { factory ->
-            factory.create(championId)
-        },
-        onBackPress = onBackPress
-    )
-}
-
-@Composable
-fun ChampionScreen(
-    viewModel: ChampionViewModel,
+    navToSkinFullscreen: (String?) -> Unit,
     onBackPress: () -> Unit
 ) {
+    val viewModel = hiltViewModel<ChampionViewModel, ChampionViewModel.Factory>(
+        key = championId,
+    ) { factory ->
+        factory.create(championId)
+    }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     ChampionScreen(
         state = state,
-        updateSelectedSkin = viewModel::updateSelectedSkin,
+        navToSkinFullscreen = navToSkinFullscreen,
         onBackPress = onBackPress
     )
 }
@@ -100,7 +95,7 @@ private val BORDER_SIZE = 2.dp
 @Composable
 private fun ChampionScreen(
     state: UiState<out ChampionUiState>,
-    updateSelectedSkin: (Int?) -> Unit = {},
+    navToSkinFullscreen: (String?) -> Unit = {},
     onBackPress: () -> Unit = {}
 ) {
     BaseScreen(
@@ -119,7 +114,6 @@ private fun ChampionScreen(
             )
         },
     ) { state, innerPadding ->
-
         val champion = state.champion
         val version = state.version
         val layoutDirection = LocalLayoutDirection.current
@@ -135,180 +129,237 @@ private fun ChampionScreen(
                 .padding(contentPadding),
             champion = champion,
             version = version,
-            onSkinClick = { indexSkin ->
-                updateSelectedSkin(indexSkin)
-            }
-        )
-    }
-
-    if (state is UiState.Success) {
-        SkinFullscreen(
-            championId = state.content.champion.id,
-            skins = state.content.champion.skins,
-            selectedSkin = state.content.selectedSkin,
-            onSelectSkin = updateSelectedSkin
+            onSkinClick = navToSkinFullscreen
         )
     }
 }
+
+private val MAX_WIDTH = 800.dp
+// = Dp.Unspecified
 
 @Composable
 fun ChampionContent(
     modifier: Modifier,
     champion: ChampionDetail,
     version: String,
-    onSkinClick: (Int) -> Unit = {}
+    onSkinClick: (String?) -> Unit = {}
 ) {
+    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
+        modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            modifier = Modifier
-                .animateContentSize(),
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sizeIn(maxWidth = 600.dp)
-                    .padding(bottom = 16.dp)
-                    .align(Alignment.Center),
-                model = getChampionSkinImage(champion.id, 0),
-                contentScale = ContentScale.FillWidth
-            )
-            Text(
-                text = champion.name,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .statusBarsPadding()
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.background,
-                                MaterialTheme.colorScheme.background,
-                            )
-                        ),
-                    ),
-                style = MaterialTheme.typography.headlineLarge
-                    .copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center,
-                color = Gold
-            )
-        }
-        HorizontalDivider(
-            Modifier
-                .sizeIn(maxWidth = 600.dp)
-                .padding(horizontal = 32.dp)
-                .align(Alignment.CenterHorizontally),
-            color = Gold,
-            thickness = BORDER_SIZE
+        Header(
+            modifier = Modifier.parallaxLayoutModifier(scrollState, 2),
+            champion = champion,
         )
-        Text(
-            text = champion.title.uppercase(),
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(4.dp)
-        )
-        Spacer(Modifier.height(16.dp))
-        IchigoItemImage(
-            model = getChampionImage(champion.image, version),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            size = ITEM_SIZE,
-            shape = CircleShape,
-            borderWidth = BORDER_SIZE
-        )
-        Spacer(Modifier.height(16.dp))
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            champion.tags.forEach { tag ->
-                IchigoFilterChip(
-                    text = roleToString(tag),
-                    selected = false,
-                    onClick = {}
-                )
-            }
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HorizontalDivider(
+                Modifier
+                    .sizeIn(maxWidth = MAX_WIDTH)
+                    .padding(horizontal = 32.dp),
+                color = Gold,
+                thickness = BORDER_SIZE
+            )
+
+            Text(
+                text = champion.title.uppercase(),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .sizeIn(maxWidth = MAX_WIDTH)
+                    .padding(4.dp)
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            IchigoItemImage(
+                model = getChampionImage(champion.image, version),
+                modifier = Modifier.sizeIn(maxWidth = MAX_WIDTH),
+                size = ITEM_SIZE,
+                shape = CircleShape,
+                borderWidth = BORDER_SIZE
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            TagsSection(
+                modifier = Modifier.sizeIn(maxWidth = MAX_WIDTH),
+                tags = champion.tags,
+                extraTag = champion.parType
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            AboutSection(
+                modifier = Modifier.sizeIn(maxWidth = MAX_WIDTH),
+                text = champion.lore
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            SkinsSection(
+                modifier = Modifier.sizeIn(maxWidth = MAX_WIDTH),
+                skins = champion.skins,
+                championId = champion.id,
+                onSkinClick = onSkinClick
+            )
+
+            Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+fun Header(
+    modifier: Modifier = Modifier,
+    champion: ChampionDetail
+) {
+    Box(
+        modifier = Modifier,
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                //  .sizeIn(maxWidth = 600.dp, maxHeight = 600.dp)
+                .padding(bottom = 16.dp)
+                .aspectRatio(1215f / 717f)
+                .then(modifier),
+            model = getChampionSkinImage(champion.id, 0),
+            contentScale = ContentScale.FillHeight
+        )
+
+        Text(
+            text = champion.name,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .statusBarsPadding()
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.background,
+                        )
+                    ),
+                ),
+            style = MaterialTheme.typography.headlineLarge
+                .copy(fontWeight = FontWeight.Bold),
+            textAlign = TextAlign.Center,
+            color = Gold
+        )
+    }
+}
+
+@Composable
+fun TagsSection(modifier: Modifier = Modifier, tags: List<String>, extraTag: String) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        tags.forEach { tag ->
             IchigoFilterChip(
-                text = champion.parType,
+                text = roleToString(tag),
                 selected = false,
                 onClick = {}
             )
         }
-        Spacer(Modifier.height(16.dp))
-        var expanded by remember { mutableStateOf(false) }
-        Surface(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            onClick = { expanded = !expanded },
-            shape = MaterialTheme.shapes.extraLarge
-        ) {
-            Column(
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.about),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = champion.lore,
-                    maxLines = if (expanded) Int.MAX_VALUE else 3,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
 
-        Spacer(Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(R.string.skins),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 32.dp)
+        IchigoFilterChip(
+            text = extraTag,
+            selected = false,
+            onClick = {}
         )
-
-        HorizontalMultiBrowseCarousel(
-            state = rememberCarouselState { champion.skins.count() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            preferredItemWidth = 250.dp,
-            itemSpacing = 8.dp,
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp),
-        ) { index ->
-            val skin = champion.skins.getOrNull(index)
-                ?: return@HorizontalMultiBrowseCarousel
-            AsyncImage(
-                modifier = Modifier
-                    .maskClip(MaterialTheme.shapes.extraLarge)
-                    .clickable { onSkinClick(index) },
-                model = getChampionSkinImage(champion.id, skin.num),
-            )
-        }
-        Spacer(Modifier.height(16.dp))
     }
 }
 
-@Preview
+@Composable
+fun AboutSection(modifier: Modifier = Modifier, text: String) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    Surface(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        onClick = { expanded = !expanded },
+        shape = MaterialTheme.shapes.extraLarge
+    ) {
+        Column(
+            modifier = Modifier
+                .animateContentSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.about),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = text,
+                maxLines = if (expanded) Int.MAX_VALUE else 3,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun SkinsSection(
+    modifier: Modifier = Modifier,
+    skins: List<Skin>, championId: String, onSkinClick: (String) -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.skins),
+            style = MaterialTheme.typography.titleLarge,
+        )
+    }
+    HorizontalMultiBrowseCarousel(
+        state = rememberCarouselState { skins.count() },
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        preferredItemWidth = 250.dp,
+        itemSpacing = 8.dp,
+        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp),
+    ) { index ->
+        val skin = skins.getOrNull(index)
+            ?: return@HorizontalMultiBrowseCarousel
+        AsyncImage(
+            modifier = Modifier
+                .maskClip(MaterialTheme.shapes.extraLarge)
+                .clickable {
+                    onSkinClick(skin.id)
+                },
+            model = getChampionSkinImage(championId, skin.num),
+        )
+    }
+}
+
+@PreviewLightDark
 @Composable
 fun ChampionScreenPreview() {
-    AsyncImagePreviewProvider(
-        width = 1215 / 2,
-        height = 717 / 2
-    ) {
-        ChampionScreen(
-            state = UiState.Success(
-                ChampionUiState(
+    IchigoTheme {
+        AsyncImagePreviewProvider(
+            width = 1215 / 2,
+            height = 717 / 2
+        ) {
+            ChampionScreen(
+                state = ChampionUiState(
                     champion = ChampionDetail(
                         id = "Aatrox",
                         name = "Aatrox",
@@ -326,8 +377,8 @@ fun ChampionScreenPreview() {
                         enemyTips = listOf(),
                     ),
                     version = "1.0.0",
-                )
-            ),
-        )
+                ).toSuccessUiState()
+            )
+        }
     }
 }

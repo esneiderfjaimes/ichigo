@@ -19,14 +19,20 @@ import kotlinx.coroutines.launch
 
 const val SUPPORT_PANE_CHAMPION = false
 
-fun NavGraphBuilder.championsListDetail() {
+fun NavGraphBuilder.championsListDetail(
+    navToSkinFullscreen: (String, String?) -> Unit
+) {
     composable<ChampionsRoute> {
-        Champions2PaneScreen()
+        Champions2PaneScreen(
+            navToSkinFullscreen = navToSkinFullscreen
+        )
     }
 }
 
 @Composable
-fun Champions2PaneScreen() {
+fun Champions2PaneScreen(
+    navToSkinFullscreen: (String, String?) -> Unit
+) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator<String>()
     val scope = rememberCoroutineScope()
 
@@ -66,6 +72,9 @@ fun Champions2PaneScreen() {
                             scope.launch(Dispatchers.IO) {
                                 scaffoldNavigator.navigateBack()
                             }
+                        },
+                        navToSkinFullscreen = { selectedSkin ->
+                            navToSkinFullscreen(championId, selectedSkin)
                         }
                     )
                 } else {

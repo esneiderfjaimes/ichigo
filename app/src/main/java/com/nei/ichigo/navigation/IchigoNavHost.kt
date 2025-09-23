@@ -14,6 +14,8 @@ import com.nei.ichigo.core.designsystem.icon.IchigoIcons
 import com.nei.ichigo.core.designsystem.icon.Item
 import com.nei.ichigo.core.designsystem.icon.Rune
 import com.nei.ichigo.core.designsystem.icon.Spell
+import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.navigation.navigateToSkinFullscreen
+import com.nei.ichigo.feature.encyclopedia.champion.fullscreen.navigation.skinFullscreen
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
@@ -125,11 +127,21 @@ fun IchigoNavHost(
         startDestination = resolveStartDestination(lastNavigationRoute),
     ) {
         if (SUPPORT_PANE_CHAMPION) {
-            championsListDetail()
+            championsListDetail(
+                navToSkinFullscreen = { championId, selectedSkin ->
+                    navController.navigateToSkinFullscreen(championId, selectedSkin)
+                }
+            )
         } else {
             champions(onChampionClick = { navController.navigateToChampion(it) })
-            champion(onBackPress = { navController.popBackStack() })
+            champion(
+                onBackPress = { navController.popBackStack() },
+                navToSkinFullscreen = { championId, selectedSkin ->
+                    navController.navigateToSkinFullscreen(championId, selectedSkin)
+                }
+            )
         }
+        skinFullscreen(onBackPress = { navController.popBackStack() })
         icons()
         items()
         spells()
