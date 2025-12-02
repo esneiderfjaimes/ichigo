@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
@@ -22,7 +22,7 @@ import com.nei.ichigo.core.designsystem.theme.IchigoTheme
 fun LicencesScreen(
     onBackPress: () -> Unit = {},
 ) {
-    val libraries by rememberLibraries(R.raw.aboutlibraries)
+    val libraries by produceLibraries(R.raw.aboutlibraries)
     Scaffold(
         topBar = { LicencesTopBar(onBackPress) }
     ) { innerPadding ->
