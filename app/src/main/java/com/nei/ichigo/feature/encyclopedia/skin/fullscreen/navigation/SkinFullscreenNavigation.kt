@@ -1,24 +1,22 @@
 package com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.SkinFullscreenScreen
+import com.nei.ichigo.navigation.Navigator
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SkinFullscreenRoute(val championId: String, val selectedSkinId: String?)
+data class SkinFullscreenRoute(val championId: String, val selectedSkinId: String?) : NavKey
 
-fun NavController.navigateToSkinFullscreen(championId: String, selectedSkinId: String?) =
+fun Navigator.navigateToSkinFullscreen(championId: String, selectedSkinId: String?) =
     navigate(route = SkinFullscreenRoute(championId, selectedSkinId))
 
-fun NavGraphBuilder.skinFullscreen(onBackPress: () -> Unit) {
-    composable<SkinFullscreenRoute> { entry ->
-        val championRoute = entry.toRoute<SkinFullscreenRoute>()
+fun EntryProviderScope<NavKey>.skinFullscreen(onBackPress: () -> Unit) {
+    entry<SkinFullscreenRoute> { skinFullscreenRoute ->
         SkinFullscreenScreen(
-            championId = championRoute.championId,
-            selectedSkinId = championRoute.selectedSkinId,
+            championId = skinFullscreenRoute.championId,
+            selectedSkinId = skinFullscreenRoute.selectedSkinId,
             onBackPress = onBackPress
         )
     }

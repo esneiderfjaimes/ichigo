@@ -55,26 +55,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
+import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
 
 private const val ITEMS_PER_ROW = 3
-private val allScreens = Screen.allScreens
-private val navScreen = allScreens.take(ITEMS_PER_ROW)
-private val moreOptions = allScreens.drop(ITEMS_PER_ROW)
+private val navScreen = TOP_LEVEL_ROUTES_LIST.take(ITEMS_PER_ROW)
+private val moreOptions = TOP_LEVEL_ROUTES_LIST.drop(ITEMS_PER_ROW)
 
 @Composable
 fun IchigoNavSuite(
-    navController: NavHostController,
-    updateLastNavigationRoute: (Screen) -> Unit,
+    navigationState: NavigationState,
+    // topLevelRoutes: Map<NavKey, NavBarItem>,
+    updateLastNavigationRoute: (NavKey) -> Unit,
     content: @Composable (() -> Unit)
 ) {
-    val currentDestination by navController.currentBackStackEntryAsState()
+    val currentDestination = navigationState.backStacks[navigationState.topLevelRoute]?.last()
     val navSuiteType = calculateFromAdaptiveInfo()
     var showMoreOptionsButton by rememberSaveable { mutableStateOf(false) }
 
@@ -83,11 +80,13 @@ fun IchigoNavSuite(
             .background(MaterialTheme.colorScheme.background)
         /* .navigationBarsPadding()*/,
         layoutType = navSuiteType,
-        showNavigation = shouldShowNavigation(currentDestination?.destination),
+        /*
+        showNavigation = shouldShowNavigation(currentDestination),
+       */
         navigationSuiteColors = NavigationSuiteDefaults.colors(navigationBarContainerColor = Color.Transparent),
         containerColor = Color.Transparent,
         navigationItems = {
-            navScreen.forEach { screen ->
+            navScreen.forEach { (route, screen) ->
                 NavigationSuiteItem(
                     navigationSuiteType = navSuiteType,
                     icon = {
@@ -103,14 +102,17 @@ fun IchigoNavSuite(
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    selected = currentDestination?.destination?.route == screen.route,
+                    selected = currentDestination == route,
                     onClick = {
-                        screen.action(navController)
-                        updateLastNavigationRoute(screen)
+                        //  screen.action(navController)
+                        updateLastNavigationRoute(route)
                     }
                 )
             }
 
+            if (moreOptions.isEmpty()) {
+                return@NavigationSuiteScaffold2
+            }
             NavigationSuiteItem(
                 navigationSuiteType = navSuiteType,
                 icon = {
@@ -120,8 +122,7 @@ fun IchigoNavSuite(
                     )
                 },
                 label = { Text(stringResource(R.string.more)) },
-                selected = showMoreOptionsButton
-                        || moreOptions.any { currentDestination?.destination?.route == it.route },
+                selected = showMoreOptionsButton || moreOptions.any { navigationState.topLevelRoute == it.first },
                 onClick = {
                     showMoreOptionsButton = true
                 }
@@ -137,7 +138,7 @@ fun IchigoNavSuite(
         ) {
             MoreOptionsBottomSheet(moreOptions, currentDestination) { screen ->
                 showMoreOptionsButton = false
-                screen.action(navController)
+                //  screen.action(navController)
                 updateLastNavigationRoute(screen)
             }
         }
@@ -145,11 +146,11 @@ fun IchigoNavSuite(
 }
 
 fun shouldShowNavigation(
-    currentDestination: NavDestination?,
+    currentDestination: NavKey?,
 ): Boolean {
     // first show navigation
     if (currentDestination == null) return true
-    return allScreens.any { it.route == currentDestination.route }
+    return TOP_LEVEL_ROUTES_LIST.any { it.first == currentDestination }
 }
 
 /**
@@ -169,6 +170,8 @@ fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     }
 }
 
+private val NoWindowInsets = WindowInsets(0, 0, 0, 0)
+
 /**
  * check [androidx.compose.material3.adaptive.navigationsuite.navigationSuiteScaffoldConsumeWindowInsets]
  */
@@ -179,7 +182,7 @@ private fun Modifier.navigationSuiteScaffoldConsumeWindowInsets(
 ): Modifier =
     consumeWindowInsets(
         if (state.currentValue == NavigationSuiteScaffoldValue.Hidden && !state.isAnimating) {
-            WindowInsets(0, 0, 0, 0)
+            NoWindowInsets
         } else {
             when (navigationSuiteType) {
                 NavigationSuiteType.ShortNavigationBarCompact,
@@ -200,7 +203,7 @@ private fun Modifier.navigationSuiteScaffoldConsumeWindowInsets(
                 NavigationSuiteType.NavigationDrawer ->
                     DrawerDefaults.windowInsets.only(WindowInsetsSides.Start)
 
-                else -> WindowInsets(0, 0, 0, 0)
+                else -> NoWindowInsets
             }
         }
     )
@@ -279,9 +282,9 @@ fun NavigationSuiteScaffold2(
 
 @Composable
 fun MoreOptionsBottomSheet(
-    moreOptions: List<Screen>,
-    currentDestination: NavBackStackEntry?,
-    onClick: (Screen) -> Unit
+    moreOptions: List<Pair<NavKey, NavBarItem>>,
+    currentDestination: NavKey?,
+    onClick: (NavKey) -> Unit
 ) {
     FlowRow(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -289,17 +292,17 @@ fun MoreOptionsBottomSheet(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        moreOptions.forEach { screen ->
+        moreOptions.forEach { (screen, navBarItem) ->
             NavigationBarItem(
                 modifier = Modifier
                     .sizeIn(maxWidth = 100.dp)
                     .width(75.dp),
-                selected = currentDestination?.destination?.route == screen.route,
+                selected = currentDestination == screen,
                 onClick = { onClick(screen) },
-                icon = { Icon(imageVector = screen.icon, contentDescription = null) },
+                icon = { Icon(imageVector = navBarItem.icon, contentDescription = null) },
                 label = {
                     Text(
-                        text = stringResource(screen.title),
+                        text = stringResource(navBarItem.title),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -314,7 +317,7 @@ fun MoreOptionsBottomSheet(
 fun IchigoAppPreview() {
     Surface(Modifier.width(175.dp)) {
         MoreOptionsBottomSheet(
-            moreOptions = Screen.allScreens,
+            moreOptions = moreOptions,
             currentDestination = null,
             onClick = {}
         )
@@ -324,8 +327,12 @@ fun IchigoAppPreview() {
 @PreviewScreenSizes
 @Composable
 private fun NavigationSuitePreview() {
-    val navController = rememberNavController()
-    IchigoNavSuite(navController = navController, {}) {
+    val navigationState = rememberNavigationState(
+        startRoute = ChampionsRoute,
+        topLevelRoutes = setOf(ChampionsRoute)
+    )
+
+    IchigoNavSuite(navigationState, {}) {
         Box(Modifier.fillMaxSize()) {
             Box(
                 Modifier

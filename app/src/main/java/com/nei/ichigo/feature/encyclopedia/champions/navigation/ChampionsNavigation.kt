@@ -1,20 +1,18 @@
 package com.nei.ichigo.feature.encyclopedia.champions.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsScreen
+import com.nei.ichigo.navigation.ListDetailScene
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ChampionsRoute
+data object ChampionsRoute : NavKey
 
-fun NavController.navigateToChampions(navOptions: NavOptions) =
-    navigate(route = ChampionsRoute, navOptions)
-
-fun NavGraphBuilder.champions(onChampionClick: (String) -> Unit) {
-    composable<ChampionsRoute> {
+fun EntryProviderScope<NavKey>.champions(onChampionClick: (String) -> Unit) {
+    entry<ChampionsRoute>(
+        metadata = ListDetailScene.listPane()
+    ) {
         ChampionsScreen(onChampionClick)
     }
 }

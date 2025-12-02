@@ -62,7 +62,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // navigation
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.bundles.nav3)
 
     // hilt
     implementation(libs.hilt.navigation.compose)

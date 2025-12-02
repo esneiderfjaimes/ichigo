@@ -18,7 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nei.ichigo.R
-import com.nei.ichigo.navigation.Screen
+import com.nei.ichigo.core.designsystem.icon.Champion
+import com.nei.ichigo.core.designsystem.icon.IchigoIcons
 
 @Composable
 fun IconsScreenPlaceholder(onClick: () -> Unit = {}) {
@@ -37,7 +38,7 @@ fun IconsScreenPlaceholder(onClick: () -> Unit = {}) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    imageVector = Screen.Champions.icon,
+                    imageVector = IchigoIcons.Champion,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp)
                 )

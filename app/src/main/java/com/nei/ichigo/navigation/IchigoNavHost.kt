@@ -3,11 +3,10 @@ package com.nei.ichigo.navigation
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.navOptions
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.SinglePaneSceneStrategy
+import androidx.navigation3.ui.NavDisplay
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.icon.Champion
 import com.nei.ichigo.core.designsystem.icon.IchigoIcons
@@ -18,142 +17,87 @@ import com.nei.ichigo.feature.encyclopedia.champion.navigation.champion
 import com.nei.ichigo.feature.encyclopedia.champion.navigation.navigateToChampion
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.ChampionsRoute
 import com.nei.ichigo.feature.encyclopedia.champions.navigation.champions
-import com.nei.ichigo.feature.encyclopedia.champions.navigation.navigateToChampions
-import com.nei.ichigo.feature.encyclopedia.champions2pane.SUPPORT_PANE_CHAMPION
-import com.nei.ichigo.feature.encyclopedia.champions2pane.championsListDetail
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.IconsRoute
 import com.nei.ichigo.feature.encyclopedia.icons.navigation.icons
-import com.nei.ichigo.feature.encyclopedia.icons.navigation.navigateToIcons
 import com.nei.ichigo.feature.encyclopedia.items.navigation.ItemsRoute
 import com.nei.ichigo.feature.encyclopedia.items.navigation.items
-import com.nei.ichigo.feature.encyclopedia.items.navigation.navigateToItems
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.RunesRoute
-import com.nei.ichigo.feature.encyclopedia.runes.navigation.navigateToRunes
 import com.nei.ichigo.feature.encyclopedia.runes.navigation.runes
 import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.navigateToSkinFullscreen
 import com.nei.ichigo.feature.encyclopedia.skin.fullscreen.navigation.skinFullscreen
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.SpellsRoute
-import com.nei.ichigo.feature.encyclopedia.spells.navigation.navigateToSpells
 import com.nei.ichigo.feature.encyclopedia.spells.navigation.spells
-import com.nei.ichigo.feature.licenses.navigation.licencesScreen
+import com.nei.ichigo.feature.licenses.navigation.licences
 import com.nei.ichigo.feature.licenses.navigation.navigateToLicences
 import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
 import com.nei.ichigo.feature.settings.navigation.encyclopediaSettings
-import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
-enum class Screen(
-    val route: String,
+data class NavBarItem(
     @StringRes
     val title: Int,
     val icon: ImageVector,
-    val action: NavController.() -> Unit
-) {
-    Champions(
-        route = ChampionsRoute.javaClass.name,
+)
+
+val TOP_LEVEL_ROUTES_LIST = listOf(
+    ChampionsRoute to NavBarItem(
         title = R.string.champions,
         icon = IchigoIcons.Champion,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToChampions(navOptions)
-        }
     ),
-    ProfileIcons(
-        route = IconsRoute.javaClass.name,
+    IconsRoute to NavBarItem(
         title = R.string.icons,
         icon = IchigoIcons.ProfileIcons,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToIcons(navOptions)
-        }
     ),
-    Items(
-        route = ItemsRoute.javaClass.name,
+    ItemsRoute to NavBarItem(
         title = R.string.items,
         icon = IchigoIcons.Item,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToItems(navOptions)
-        }
     ),
-    Spells(
-        route = SpellsRoute.javaClass.name,
+    SpellsRoute to NavBarItem(
         title = R.string.spells,
         icon = IchigoIcons.Spell,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToSpells(navOptions)
-        }
     ),
-    Runes(
-        route = RunesRoute.javaClass.name,
+    RunesRoute to NavBarItem(
         title = R.string.runes,
         icon = IchigoIcons.Rune,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToRunes(navOptions)
-        }
     ),
-    Settings(
-        route = EncyclopediaSettingsRoute.javaClass.name,
+    EncyclopediaSettingsRoute to NavBarItem(
         title = R.string.settings,
         icon = IchigoIcons.Settings,
-        action = {
-            val navOptions = topLevelDestinationNavOptions()
-            navigateToEncyclopediaSettings(navOptions)
-        }
-    );
+    ),
+)
 
-    companion object {
-        val allScreens = entries.toList()
-    }
-}
+val TOP_LEVEL_ROUTES: Map<NavKey, NavBarItem> = TOP_LEVEL_ROUTES_LIST.toMap()
 
-private fun NavController.topLevelDestinationNavOptions() = navOptions {
-    popUpTo(graph.findStartDestination().id) {
-        saveState = true
-    }
-
-    launchSingleTop = true
-    restoreState = true
-}
+const val LIST_DETAIL_SCENE_MODE = true
 
 @Composable
 fun IchigoNavHost(
-    navController: NavHostController,
-    lastNavigationRoute: String?,
+    navigationState: NavigationState,
+    navigator: Navigator
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = resolveStartDestination(lastNavigationRoute),
-    ) {
-        if (SUPPORT_PANE_CHAMPION) {
-            championsListDetail(
-                navToSkinFullscreen = { championId, selectedSkin ->
-                    navController.navigateToSkinFullscreen(championId, selectedSkin)
-                }
-            )
-        } else {
-            champions(onChampionClick = { navController.navigateToChampion(it) })
-            champion(
-                onBackPress = { navController.popBackStack() },
-                navToSkinFullscreen = { championId, selectedSkin ->
-                    navController.navigateToSkinFullscreen(championId, selectedSkin)
-                }
-            )
-        }
-        skinFullscreen(onBackPress = { navController.popBackStack() })
+    val entryProvider = entryProvider {
+        champions(onChampionClick = navigator::navigateToChampion)
+        champion(
+            onBackPress = navigator::goBack,
+            navToSkinFullscreen = navigator::navigateToSkinFullscreen
+        )
+        skinFullscreen(onBackPress = navigator::goBack)
         icons()
         items()
         spells()
         runes()
-        encyclopediaSettings(onLicenseClick = { navController.navigateToLicences() })
-        licencesScreen(onBackPress = { navController.popBackStack() })
+        encyclopediaSettings(onLicenseClick = navigator::navigateToLicences)
+        licences(onBackPress = navigator::goBack)
     }
-}
 
-fun resolveStartDestination(lastNavigationRoute: String?): String {
-    val screen = lastNavigationRoute?.let {
-        Screen.allScreens.find { it.name == lastNavigationRoute }
+    val sceneStrategy = if (LIST_DETAIL_SCENE_MODE) {
+        rememberListDetailSceneStrategy<NavKey>()
+    } else {
+        SinglePaneSceneStrategy()
     }
-    return screen?.route ?: Screen.allScreens.first().route
+
+    NavDisplay(
+        entries = navigationState.toEntries(entryProvider),
+        onBack = navigator::goBack,
+        sceneStrategy = sceneStrategy
+    )
 }

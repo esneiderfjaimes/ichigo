@@ -1,19 +1,15 @@
 package com.nei.ichigo.feature.encyclopedia.items.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.encyclopedia.items.ItemsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ItemsRoute
+data object ItemsRoute : NavKey
 
-fun NavController.navigateToItems(navOptions: NavOptions) = navigate(route = ItemsRoute, navOptions)
-
-fun NavGraphBuilder.items() {
-    composable<ItemsRoute> {
+fun EntryProviderScope<NavKey>.items() {
+    entry<ItemsRoute> {
         ItemsScreen()
     }
 }

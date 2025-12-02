@@ -1,20 +1,15 @@
 package com.nei.ichigo.feature.encyclopedia.runes.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.encyclopedia.runes.RunesScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object RunesRoute
+data object RunesRoute : NavKey
 
-fun NavController.navigateToRunes(navOptions: NavOptions) =
-    navigate(route = RunesRoute, navOptions)
-
-fun NavGraphBuilder.runes() {
-    composable<RunesRoute> {
+fun EntryProviderScope<NavKey>.runes() {
+    entry<RunesRoute> {
         RunesScreen()
     }
 }

@@ -1,18 +1,20 @@
 package com.nei.ichigo.feature.licenses.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.licenses.LicencesScreen
+import com.nei.ichigo.navigation.Navigator
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object LicencesNavigation
+data object LicencesNavigation : NavKey
 
-fun NavController.navigateToLicences() = navigate(route = LicencesNavigation)
+fun Navigator.navigateToLicences() {
+    navigate(LicencesNavigation)
+}
 
-fun NavGraphBuilder.licencesScreen(onBackPress: () -> Unit) {
-    composable<LicencesNavigation> {
+fun EntryProviderScope<NavKey>.licences(onBackPress: () -> Unit) {
+    entry<LicencesNavigation> {
         LicencesScreen(onBackPress)
     }
 }

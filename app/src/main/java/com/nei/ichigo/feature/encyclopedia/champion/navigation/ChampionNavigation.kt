@@ -1,24 +1,25 @@
 package com.nei.ichigo.feature.encyclopedia.champion.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.feature.encyclopedia.champion.ChampionScreen
+import com.nei.ichigo.navigation.ListDetailScene
+import com.nei.ichigo.navigation.Navigator
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChampionRoute(val championId: String)
+data class ChampionRoute(val championId: String) : NavKey
 
-fun NavController.navigateToChampion(championId: String) =
+fun Navigator.navigateToChampion(championId: String) =
     navigate(route = ChampionRoute(championId))
 
-fun NavGraphBuilder.champion(
+fun EntryProviderScope<NavKey>.champion(
     onBackPress: () -> Unit,
     navToSkinFullscreen: (String, String?) -> Unit
 ) {
-    composable<ChampionRoute> { entry ->
-        val championRoute = entry.toRoute<ChampionRoute>()
+    entry<ChampionRoute>(
+        metadata = ListDetailScene.detailPane()
+    ) { championRoute ->
         ChampionScreen(
             championId = championRoute.championId,
             navToSkinFullscreen = { navToSkinFullscreen(championRoute.championId, it) },

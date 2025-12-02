@@ -2,12 +2,13 @@ package com.nei.ichigo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import com.nei.ichigo.MainUiState.Loading
 import com.nei.ichigo.MainUiState.Success
 import com.nei.ichigo.core.data.repository.UserSettingsRepository
 import com.nei.ichigo.core.model.DarkThemeConfig
 import com.nei.ichigo.core.model.UserSettings
-import com.nei.ichigo.navigation.Screen
+import com.nei.ichigo.feature.settings.navigation.EncyclopediaSettingsRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,11 +34,12 @@ class MainViewModel @Inject constructor(
     suspend fun getLastNavigationRoute() =
         userSettingsRepository.userSettings.first().lastNavigationRoute
 
-    fun updateLastNavigationRoute(route: Screen) {
+    fun updateLastNavigationRoute(navKey: NavKey) {
         viewModelScope.launch(Dispatchers.IO) {
             // We don't want to update the last navigation route when the user is on the settings screen
-            if (route == Screen.Settings) return@launch
-            userSettingsRepository.updateLastNavigationRoute(route.name)
+            if (navKey == EncyclopediaSettingsRoute) return@launch
+            // TODO: Update the last navigation route
+            // userSettingsRepository.updateLastNavigationRoute(route.name)
         }
     }
 }
