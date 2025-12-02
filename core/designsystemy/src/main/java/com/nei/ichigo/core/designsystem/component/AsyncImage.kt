@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -36,7 +36,7 @@ object AsyncImageDefaults {
         Box(
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(Modifier.size(24.dp))
+            LoadingIndicator(Modifier.size(24.dp))
         }
     }
 

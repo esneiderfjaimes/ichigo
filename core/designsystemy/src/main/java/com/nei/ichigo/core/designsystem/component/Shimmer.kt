@@ -19,6 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -39,10 +41,16 @@ fun Modifier.shimmerEffect(
         colors = shimmerColors,
         duration = duration
     )
+    clip(shape = shape)
+        .drawBehind {
+            drawRect(brush)
+        }
+    /*
     this.background(
         brush = brush,
         shape = shape
     )
+    */
 }
 
 @Composable
@@ -80,10 +88,15 @@ private fun Modifier.shimmerEffectSync(
     val brush = createShimmerSyncBrush(
         colors = shimmerColors,
     )
-    return this.background(
-        brush = brush,
-        shape = shape
-    )
+    return clip(shape = shape).drawBehind {
+        drawRect(brush)
+    }
+    /*
+     return this.background(
+         brush = brush,
+         shape = shape
+     )
+     */
 }
 
 @Composable
@@ -91,9 +104,19 @@ private fun Modifier.shimmerEffectSync2(
     color: Color,
     shape: Shape
 ): Modifier = composed {
-    val progress = LocalShimmerProgress.current
     val shimmerColors = createShimmerColors(color)
-
+    val progress = LocalShimmerProgress.current
+    this
+        .clip(shape = shape)
+        .drawBehind {
+            val brush = Brush.linearGradient(
+                colors = shimmerColors,
+                start = Offset(SHIMMER_START_OFFSET, SHIMMER_START_OFFSET),
+                end = Offset(progress, progress)
+            )
+            drawRect(brush)
+        }
+    /*
     this.background(
         brush = Brush.linearGradient(
             colors = shimmerColors,
@@ -102,6 +125,7 @@ private fun Modifier.shimmerEffectSync2(
         ),
         shape = shape
     )
+    */
 }
 
 @Composable
