@@ -86,8 +86,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -554,7 +556,7 @@ fun ZoomableBox(
     val scale = remember { Animatable(1f) }
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val coroutineScope = rememberCoroutineScope()
-    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+    val transformableState = rememberTransformableState { _, zoomChange, offsetChange, _ ->
         coroutineScope.launch {
             val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
             scale.snapTo(newScale)
@@ -615,7 +617,7 @@ fun ZoomableBox3(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+    val transformableState = rememberTransformableState { _, zoomChange, offsetChange, _ ->
         coroutineScope.launch {
             val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
             scale.snapTo(newScale)
@@ -681,7 +683,7 @@ fun ZoomableBox2(
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     val transformableState =
-        rememberTransformableState { zoomChange, offsetChange, _ ->
+        rememberTransformableState { _, zoomChange, offsetChange, _ ->
             val newScale = (scale * zoomChange).coerceIn(minZoom, maxZoom)
             scale = newScale
             offset += offsetChange

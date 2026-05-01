@@ -60,7 +60,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.nei.ichigo.R
 
 private const val ITEMS_PER_ROW = 3
@@ -161,9 +160,9 @@ fun calculateFromAdaptiveInfo(): NavigationSuiteType {
     val adaptiveInfo = currentWindowAdaptiveInfo()
     return with(adaptiveInfo) {
         when (windowSizeClass.windowWidthSizeClass) {
-            WindowWidthSizeClass.COMPACT -> NavigationSuiteType.NavigationBar
-            WindowWidthSizeClass.MEDIUM -> NavigationSuiteType.WideNavigationRailCollapsed
-            WindowWidthSizeClass.EXPANDED -> NavigationSuiteType.WideNavigationRailExpanded
+            androidx.window.core.layout.WindowWidthSizeClass.COMPACT -> NavigationSuiteType.NavigationBar
+            androidx.window.core.layout.WindowWidthSizeClass.MEDIUM -> NavigationSuiteType.WideNavigationRailCollapsed
+            androidx.window.core.layout.WindowWidthSizeClass.EXPANDED -> NavigationSuiteType.WideNavigationRailExpanded
             else -> NavigationSuiteType.NavigationRail
         }
     }

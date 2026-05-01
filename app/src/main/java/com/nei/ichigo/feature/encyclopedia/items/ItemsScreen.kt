@@ -148,7 +148,7 @@ private fun SuccessScreen(state: ItemsUiState, innerPadding: PaddingValues) {
                     onClick = { currentItemId = it },
                     onLongClick = { currentItemId = it },
                     onDismissRequest = { currentItemId = null },
-                    scrollToItem = scrollToItem@{ it ->
+                    scrollToItem = scrollToItem@{
                         val index = state.itemsOrder.indexOf(it)
                         if (index == -1) return@scrollToItem
                         currentItemId = it
