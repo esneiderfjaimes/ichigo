@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 
 class IchigoPreferencesDataSource @Inject constructor(
-    @DataStoreUserSettings
+    @param:DataStoreUserSettings
     private val preferences: DataStore<Preferences>,
 ) {
     val userSettings = preferences.data.map { preferences ->

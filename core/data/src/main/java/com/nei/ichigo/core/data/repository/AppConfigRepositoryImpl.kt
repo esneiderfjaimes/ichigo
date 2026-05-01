@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 class AppConfigRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val ichigoPreferencesDataSource: IchigoPreferencesDataSource,
     private val dragonRepository: DDragonRepository,
 ) : AppConfigRepository {
