@@ -5,12 +5,6 @@ plugins {
 
 android {
     namespace = "com.nei.ichigo.core.data"
-    kotlin {
-        compilerOptions {
-            // https://youtrack.jetbrains.com/issue/KT-73255
-            freeCompilerArgs.add("-Xannotation-default-target=first-only")
-        }
-    }
 }
 
 dependencies {

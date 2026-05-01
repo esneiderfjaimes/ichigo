@@ -26,19 +26,19 @@ android {
             )
         }
     }
-    kotlin {
-        compilerOptions {
-            optIn.addAll(
-                "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
-            )
-            freeCompilerArgs.addAll(
-                "-Xcontext-parameters",
-                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
-            )
-        }
-    }
     buildFeatures {
         buildConfig = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+        )
+        freeCompilerArgs.addAll(
+            "-Xcontext-parameters",
+        )
     }
 }
 

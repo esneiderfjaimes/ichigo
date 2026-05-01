@@ -23,7 +23,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
@@ -245,7 +245,7 @@ fun DetailView(
                         .sharedElement(
                             rememberSharedContentState(key = selected.id),
                             scope,
-                            placeHolderSize = animatedSize
+                            placeholderSize = PlaceholderSize.AnimatedSize
                         )
                         .fillMaxHeight()
                         .aspectRatio(1f)
@@ -333,7 +333,7 @@ fun KittyItem(kitty: Kitty) {
                     .sharedElement(
                         rememberSharedContentState(key = kitty.id),
                         scope,
-                        placeHolderSize = animatedSize
+                        placeholderSize = PlaceholderSize.AnimatedSize
                     )
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(20.dp))
@@ -554,7 +554,7 @@ fun ZoomableBox(
     val scale = remember { Animatable(1f) }
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val coroutineScope = rememberCoroutineScope()
-    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+    val transformableState = rememberTransformableState { _, zoomChange, offsetChange, _ ->
         coroutineScope.launch {
             val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
             scale.snapTo(newScale)
@@ -615,7 +615,7 @@ fun ZoomableBox3(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
+    val transformableState = rememberTransformableState { _, zoomChange, offsetChange, _ ->
         coroutineScope.launch {
             val newScale = (scale.value * zoomChange).coerceIn(minZoom, maxZoom)
             scale.snapTo(newScale)
@@ -681,7 +681,7 @@ fun ZoomableBox2(
     var offset by remember { mutableStateOf(Offset.Zero) }
 
     val transformableState =
-        rememberTransformableState { zoomChange, offsetChange, _ ->
+        rememberTransformableState { _, zoomChange, offsetChange, _ ->
             val newScale = (scale * zoomChange).coerceIn(minZoom, maxZoom)
             scale = newScale
             offset += offsetChange

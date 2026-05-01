@@ -43,7 +43,7 @@ import com.nei.ichigo.feature.settings.navigation.navigateToEncyclopediaSettings
 
 enum class Screen(
     val route: String,
-    @StringRes
+    @param:StringRes
     val title: Int,
     val icon: ImageVector,
     val action: NavController.() -> Unit

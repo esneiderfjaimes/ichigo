@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Qualifier
 
 class OfflineDataDragonPreferencesDataSource @Inject constructor(
-    @DataStoreDataDragon
+    @param:DataStoreDataDragon
     private val preferences: DataStore<Preferences>,
 ) {
 

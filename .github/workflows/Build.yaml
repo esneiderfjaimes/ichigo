@@ -37,6 +37,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Validate wrapper
+        run: ./gradlew --version
+
       - name: Build project
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 

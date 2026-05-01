@@ -62,7 +62,7 @@ class JsonDiskCacheInterceptor(
 
         // If the response is successful, write the body to the cache file
         if (response.isSuccessful) {
-            val rawBody = response.body?.string() ?: ""
+            val rawBody = response.body.string()
             cacheFile.writeText(rawBody)
 
             // return the original response
