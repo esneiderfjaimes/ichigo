@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +51,8 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
 import com.nei.ichigo.core.designsystem.component.ShimmerScope
-import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getItemImage
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState
 import com.nei.ichigo.feature.encyclopedia.items.ItemsViewModel.ItemsUiState.ItemUi
@@ -250,35 +251,33 @@ fun genItemPreview(
     into = into,
 )
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun ItemsScreenPreview() {
-    IchigoThemePreview {
-        ItemsScreen(
-            state = UiState.Success(
-                ItemsUiState(
-                    itemsOrder = List(15) { it.toString() },
-                    itemsMap = List(15) { index ->
-                        genItemPreview(
-                            index.toString(),
-                            listOf("1", "2", "3"),
-                        )
-                    }.associateBy { it.id },
-                    maps = emptyList(),
-                    version = "1.0.0",
-                    mapsFilter = null,
-                )
+    ItemsScreen(
+        state = UiState.Success(
+            ItemsUiState(
+                itemsOrder = List(15) { it.toString() },
+                itemsMap = List(15) { index ->
+                    genItemPreview(
+                        index.toString(),
+                        listOf("1", "2", "3"),
+                    )
+                }.associateBy { it.id },
+                maps = emptyList(),
+                version = "1.0.0",
+                mapsFilter = null,
             )
         )
-    }
+    )
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun ItemsScreenShimmerPreview() {
-    IchigoThemePreview {
-        ItemsScreen(
-            state = UiState.Loading
-        )
-    }
+    ItemsScreen(
+        state = UiState.Loading
+    )
 }

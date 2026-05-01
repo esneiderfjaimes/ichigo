@@ -22,12 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.ZoomableBox3
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_SIZE
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 
 context(_: AnimatedVisibilityScope)
 @Composable
@@ -92,22 +93,21 @@ fun SharedTransitionScope.IconFullscreen(
     }
 }
 
-@Preview
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun IconFullscreenPreview() {
-    AsyncImagePreviewProvider {
-        SharedTransitionLayout {
-            AnimatedContent(true) {
-                if (it) {
-                    IconFullscreen(
-                        icon = IconUi(
-                            id = "1",
-                            image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
-                        ),
-                        version = "13.19.1",
-                        requestClose = {}
-                    )
-                }
+    SharedTransitionLayout {
+        AnimatedContent(true) {
+            if (it) {
+                IconFullscreen(
+                    icon = IconUi(
+                        id = "1",
+                        image = "https://ddragon.leagueoflegends.com/cdn/13.19.1/img/profileicon/1.png"
+                    ),
+                    version = "13.19.1",
+                    requestClose = {}
+                )
             }
         }
     }

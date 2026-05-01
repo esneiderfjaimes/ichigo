@@ -11,12 +11,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.nei.ichigo.R
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
-import com.nei.ichigo.core.designsystem.theme.IchigoTheme
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 
 @Composable
 fun LicencesScreen(
@@ -56,10 +57,9 @@ private fun LicencesTopBar(onBackPress: () -> Unit) {
     )
 }
 
-@Preview
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun LicencesScreenPreview() {
-    IchigoTheme {
-        LicencesScreen()
-    }
+    LicencesScreen()
 }

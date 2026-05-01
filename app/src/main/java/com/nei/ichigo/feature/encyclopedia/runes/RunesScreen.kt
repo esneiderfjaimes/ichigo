@@ -28,7 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,10 +39,11 @@ import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.layout.defaultPaddingValues
 import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.component.AsyncImage
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.DEFAULT_ITEM_PADDING
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getRuneImage
 import com.nei.ichigo.core.model.Rune
 import com.nei.ichigo.core.model.RuneBranch
@@ -208,36 +209,35 @@ fun RunesTopAppBar(
     BaseTopAppBar(uiState, R.string.runes)
 }
 
-@Preview
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun SpellsScreenPreview() {
-    AsyncImagePreviewProvider {
-        RunesScreen(
-            state = RunesUiState(
-                branches = List(5) {
-                    RuneBranch(
-                        id = it.toString(),
-                        name = "test $it",
-                        icon = "test $it",
-                        slots = List(4) {
-                            RuneSlot(
-                                runes = List(3) {
-                                    Rune(
-                                        id = it.toString(),
-                                        name = "test $it",
-                                        icon = "test $it",
-                                        key = it.toString(),
-                                        shortDesc = "test $it",
-                                        longDesc = "test $it",
-                                    )
-                                }
-                            )
-                        },
-                        key = it.toString()
-                    )
-                },
-                version = "1.0.0",
-            ).toSuccessUiState()
-        )
-    }
+    RunesScreen(
+        state = RunesUiState(
+            branches = List(5) {
+                RuneBranch(
+                    id = it.toString(),
+                    name = "test $it",
+                    icon = "test $it",
+                    slots = List(4) {
+                        RuneSlot(
+                            runes = List(3) {
+                                Rune(
+                                    id = it.toString(),
+                                    name = "test $it",
+                                    icon = "test $it",
+                                    key = it.toString(),
+                                    shortDesc = "test $it",
+                                    longDesc = "test $it",
+                                )
+                            }
+                        )
+                    },
+                    key = it.toString()
+                )
+            },
+            version = "1.0.0",
+        ).toSuccessUiState()
+    )
 }
