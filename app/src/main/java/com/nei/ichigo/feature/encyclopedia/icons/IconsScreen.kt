@@ -41,7 +41,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -62,7 +62,8 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.ShimmerScope
-import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getProfileIconImage
 import com.nei.ichigo.feature.encyclopedia.icons.IconsViewModel.IconsUiState
 
@@ -341,61 +342,60 @@ fun SharedTransitionScope.IconDetails(
     }
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun IconsScreenPreview() {
-    IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Success(
-                content = IconsUiState(
-                    icons = (1..100).map {
-                        IconUi(
-                            id = it.toString(),
-                            image = ""
-                        )
-                    },
-                    totalIcons = 100,
-                    pageInfo = null,
-                    pageSize = 20,
-                    version = "1.0.0"
-                )
+    IconsScreen(
+        state = UiState.Success(
+            content = IconsUiState(
+                icons = (1..100).map {
+                    IconUi(
+                        id = it.toString(),
+                        image = ""
+                    )
+                },
+                totalIcons = 100,
+                pageInfo = null,
+                pageSize = 20,
+                version = "1.0.0"
             )
         )
-    }
+    )
+
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun IconsScreenPreview2() {
-    IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Success(
-                content = IconsUiState(
-                    icons = (1..100).map {
-                        IconUi(
-                            id = it.toString(),
-                            image = ""
-                        )
-                    },
-                    totalIcons = 100,
-                    pageInfo = PageInfo(
-                        pageIndex = 0,
-                        totalPages = 10
-                    ),
-                    pageSize = 20,
-                    version = "1.0.0"
-                )
+    IconsScreen(
+        state = UiState.Success(
+            content = IconsUiState(
+                icons = (1..100).map {
+                    IconUi(
+                        id = it.toString(),
+                        image = ""
+                    )
+                },
+                totalIcons = 100,
+                pageInfo = PageInfo(
+                    pageIndex = 0,
+                    totalPages = 10
+                ),
+                pageSize = 20,
+                version = "1.0.0"
             )
         )
-    }
+    )
+
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun IconsScreenLoadingPreview() {
-    IchigoThemePreview {
-        IconsScreen(
-            state = UiState.Loading
-        )
-    }
+    IconsScreen(
+        state = UiState.Loading
+    )
 }

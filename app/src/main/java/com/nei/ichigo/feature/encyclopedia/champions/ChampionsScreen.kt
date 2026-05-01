@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,7 +40,8 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
 import com.nei.ichigo.core.designsystem.component.ShimmerScope
-import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
@@ -197,35 +198,33 @@ fun ShimmerScope.ChampionSkeletonItem() {
     }
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun ChampionsScreenPreview() {
-    IchigoThemePreview {
-        ChampionsScreen(
-            state = UiState.Success(
-                ChampionsUiState(
-                    version = "1.0.0",
-                    champions = (1..100).map {
-                        Champion(
-                            id = it.toString(),
-                            name = "Champ $it",
-                            image = "",
-                            tags = emptyList()
-                        )
-                    },
-                    tags = emptyList()
-                )
+    ChampionsScreen(
+        state = UiState.Success(
+            ChampionsUiState(
+                version = "1.0.0",
+                champions = (1..100).map {
+                    Champion(
+                        id = it.toString(),
+                        name = "Champ $it",
+                        image = "",
+                        tags = emptyList()
+                    )
+                },
+                tags = emptyList()
             )
         )
-    }
+    )
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun ChampionItemShimmerPreview() {
-    IchigoThemePreview {
-        ChampionsScreen(
-            state = UiState.Loading
-        )
-    }
+    ChampionsScreen(
+        state = UiState.Loading
+    )
 }

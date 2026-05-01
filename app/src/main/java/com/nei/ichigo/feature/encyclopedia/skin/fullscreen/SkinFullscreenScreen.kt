@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nei.ichigo.R
@@ -37,10 +37,11 @@ import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.ZoomableBox3
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImageDefaults
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.BottomPager
 import com.nei.ichigo.core.designsystem.component.PageInfo
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.model.Skin
 
@@ -182,22 +183,21 @@ fun SkinFullscreenTopAppBar(
     )
 }
 
-@Preview
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun SkinFullscreenPreview() {
-    AsyncImagePreviewProvider {
-        SkinFullscreenScreen(
-            state = SkinFullscreenViewModel.SkinFullscreenUiState(
-                championId = "1",
-                skin = Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
-                skins = listOf(
-                    Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
-                    Skin(id = "2", num = 2, name = "Aatrox", chromas = false),
-                    Skin(id = "3", num = 3, name = "Aatrox", chromas = false),
-                ),
-                selectedSkinIndex = 0,
-                version = "1.0.0"
-            ).toSuccessUiState()
-        )
-    }
+    SkinFullscreenScreen(
+        state = SkinFullscreenViewModel.SkinFullscreenUiState(
+            championId = "1",
+            skin = Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
+            skins = listOf(
+                Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
+                Skin(id = "2", num = 2, name = "Aatrox", chromas = false),
+                Skin(id = "3", num = 3, name = "Aatrox", chromas = false),
+            ),
+            selectedSkinIndex = 0,
+            version = "1.0.0"
+        ).toSuccessUiState()
+    )
 }

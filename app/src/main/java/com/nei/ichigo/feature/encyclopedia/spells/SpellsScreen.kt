@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,7 +43,8 @@ import com.nei.ichigo.core.designsystem.component.IchigoItemLabel
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerImage
 import com.nei.ichigo.core.designsystem.component.IchigoItemShimmerLabel
 import com.nei.ichigo.core.designsystem.component.ShimmerScope
-import com.nei.ichigo.core.designsystem.theme.IchigoThemePreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getSpellImage
 import com.nei.ichigo.core.model.Spell
 import com.nei.ichigo.feature.encyclopedia.spells.SpellsViewModel.SpellsUiState
@@ -206,40 +207,38 @@ fun ShimmerScope.ItemSpellShimmer() {
     }
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun SpellsScreenPreview() {
-    IchigoThemePreview {
-        SpellsScreen(
-            state = UiState.Success(
-                SpellsUiState(
-                    spells = List(10) {
-                        Spell(
-                            id = "$it",
-                            name = "Spell $it",
-                            description = "",
-                            tooltip = "",
-                            image = "",
-                            summonerLevel = 0,
-                            cooldown = 0.0,
-                            modes = emptyList()
-                        )
-                    },
-                    version = "1.0",
-                    filteredModes = emptySet(),
-                    modesAvailable = emptyList(),
-                )
+    SpellsScreen(
+        state = UiState.Success(
+            SpellsUiState(
+                spells = List(10) {
+                    Spell(
+                        id = "$it",
+                        name = "Spell $it",
+                        description = "",
+                        tooltip = "",
+                        image = "",
+                        summonerLevel = 0,
+                        cooldown = 0.0,
+                        modes = emptyList()
+                    )
+                },
+                version = "1.0",
+                filteredModes = emptySet(),
+                modesAvailable = emptyList(),
             )
         )
-    }
+    )
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 private fun SpellsScreenShimmerPreview() {
-    IchigoThemePreview {
-        SpellsScreen(
-            state = UiState.Loading
-        )
-    }
+    SpellsScreen(
+        state = UiState.Loading
+    )
 }

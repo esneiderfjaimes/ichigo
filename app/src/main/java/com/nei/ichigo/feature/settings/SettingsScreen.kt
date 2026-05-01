@@ -42,6 +42,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +52,8 @@ import com.nei.ichigo.common.BaseScreen
 import com.nei.ichigo.common.UiState
 import com.nei.ichigo.core.data.model.ConfigValue
 import com.nei.ichigo.core.designsystem.component.appendTitle
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.theme.supportsDynamicTheming
 import com.nei.ichigo.core.designsystem.utils.languageCodeToString
 import com.nei.ichigo.core.model.DarkThemeConfig
@@ -334,7 +337,8 @@ fun Item(
     }
 }
 
-@Preview
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun ChampionsSettingsDialogContentPreview() {
     SettingsScreen(

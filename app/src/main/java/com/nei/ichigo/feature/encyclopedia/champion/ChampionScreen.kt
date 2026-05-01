@@ -47,7 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,13 +57,13 @@ import com.nei.ichigo.common.UiState
 import com.nei.ichigo.common.toSuccessUiState
 import com.nei.ichigo.core.designsystem.component.AsyncImage
 import com.nei.ichigo.core.designsystem.component.AsyncImageDefaults
-import com.nei.ichigo.core.designsystem.component.AsyncImagePreviewProvider
 import com.nei.ichigo.core.designsystem.component.IchigoFilterChip
 import com.nei.ichigo.core.designsystem.component.IchigoItemImage
 import com.nei.ichigo.core.designsystem.component.TransparentTopAppBar
 import com.nei.ichigo.core.designsystem.component.parallaxLayoutModifier
 import com.nei.ichigo.core.designsystem.theme.Gold
-import com.nei.ichigo.core.designsystem.theme.IchigoTheme
+import com.nei.ichigo.core.designsystem.theme.IchigoPreview
+import com.nei.ichigo.core.designsystem.theme.IchigoPreviewWrapper
 import com.nei.ichigo.core.designsystem.utils.getChampionImage
 import com.nei.ichigo.core.designsystem.utils.getChampionSkinImage
 import com.nei.ichigo.core.designsystem.utils.roleToString
@@ -352,35 +352,29 @@ fun SkinsSection(
     }
 }
 
-@PreviewLightDark
+@PreviewWrapper(IchigoPreviewWrapper::class)
+@IchigoPreview
 @Composable
 fun ChampionScreenPreview() {
-    IchigoTheme {
-        AsyncImagePreviewProvider(
-            width = 1215 / 2,
-            height = 717 / 2
-        ) {
-            ChampionScreen(
-                state = ChampionUiState(
-                    champion = ChampionDetail(
-                        id = "Aatrox",
-                        name = "Aatrox",
-                        skins = listOf(
-                            Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
-                            Skin(id = "2", num = 2, name = "Aatrox", chromas = false),
-                            Skin(id = "3", num = 3, name = "Aatrox", chromas = false),
-                        ),
-                        image = "",
-                        tags = listOf("Assassin", "Fighter"),
-                        title = "Title",
-                        parType = "Mana",
-                        lore = "Lore",
-                        allyTips = listOf(),
-                        enemyTips = listOf(),
-                    ),
-                    version = "1.0.0",
-                ).toSuccessUiState()
-            )
-        }
-    }
+    ChampionScreen(
+        state = ChampionUiState(
+            champion = ChampionDetail(
+                id = "Aatrox",
+                name = "Aatrox",
+                skins = listOf(
+                    Skin(id = "1", num = 1, name = "Aatrox", chromas = false),
+                    Skin(id = "2", num = 2, name = "Aatrox", chromas = false),
+                    Skin(id = "3", num = 3, name = "Aatrox", chromas = false),
+                ),
+                image = "",
+                tags = listOf("Assassin", "Fighter"),
+                title = "Title",
+                parType = "Mana",
+                lore = "Lore",
+                allyTips = listOf(),
+                enemyTips = listOf(),
+            ),
+            version = "1.0.0",
+        ).toSuccessUiState()
+    )
 }
