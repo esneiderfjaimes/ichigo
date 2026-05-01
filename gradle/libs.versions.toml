@@ -1,33 +1,33 @@
 [versions]
 agp = "9.2.0"
-kotlin = "2.2.21"
-ksp = "2.3.3"
-coreKtx = "1.16.0"
-lifecycleRuntimeKtx = "2.9.1"
-activityCompose = "1.10.1"
-composeBom = "2025.06.01"
-material3 = "1.5.0-alpha04"
-androidxCoreSplashscreen = "1.0.1"
-hilt = "2.57.2"
-hilt-navigation-compose = "1.2.0"
-hiltExt = "1.2.0"
-androidxNavigation = "2.9.0"
-room = "2.7.2"
-datastorePreferences = "1.1.7"
+kotlin = "2.3.21"
+ksp = "2.3.7"
+coreKtx = "1.18.0"
+lifecycleRuntimeKtx = "2.10.0"
+activityCompose = "1.13.0"
+composeBom = "2026.04.01"
+material3 = "1.5.0-alpha18"
+androidxCoreSplashscreen = "1.2.0"
+hilt = "2.59.2"
+hilt-navigation-compose = "1.3.0"
+hiltExt = "1.3.0"
+androidxNavigation = "2.9.8"
+room = "2.8.4"
+datastorePreferences = "1.2.1"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-coil = "3.2.0"
-okhttp = "4.12.0"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+coil = "3.4.0"
+okhttp = "5.3.2"
 retrofit = "3.0.0"
-kotlinxSerializationJson = "1.9.0"
+kotlinxSerializationJson = "1.11.0"
 androidDesugarJdkLibs = "2.1.5"
 androidxTracing = "1.3.0"
-versions = "0.52.0"
-versionCatalogUpdate = "1.0.1"
+versions = "0.54.0"
+versionCatalogUpdate = "1.1.0"
 githooks = "0.0.3"
 modgraph = "0.0.4"
-aboutLibraries = "13.1.0"
+aboutLibraries = "14.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +48,8 @@ compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+# animation
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
 # material
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
@@ -156,6 +158,7 @@ compose = [
     "compose-ui",
     "compose-ui-graphics",
     "compose-ui-tooling-preview",
+    "compose-animation",
 ]
 compose-adaptive = [
     "compose-adaptive",

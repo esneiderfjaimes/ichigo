@@ -23,7 +23,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
+import androidx.compose.animation.SharedTransitionScope.PlaceholderSize
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
@@ -245,7 +245,7 @@ fun DetailView(
                         .sharedElement(
                             rememberSharedContentState(key = selected.id),
                             scope,
-                            placeHolderSize = animatedSize
+                            placeholderSize = PlaceholderSize.AnimatedSize
                         )
                         .fillMaxHeight()
                         .aspectRatio(1f)
@@ -333,7 +333,7 @@ fun KittyItem(kitty: Kitty) {
                     .sharedElement(
                         rememberSharedContentState(key = kitty.id),
                         scope,
-                        placeHolderSize = animatedSize
+                        placeholderSize = PlaceholderSize.AnimatedSize
                     )
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(20.dp))
