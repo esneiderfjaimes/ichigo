@@ -11,6 +11,15 @@ class TestConventionPlugin : Plugin<Project> {
             libs.findLibrary("junit").ifPresent {
                 "testImplementation"(it)
             }
+            libs.findLibrary("kotlinx-coroutines-test").ifPresent {
+                "testImplementation"(it)
+            }
+            libs.findLibrary("turbine").ifPresent {
+                "testImplementation"(it)
+            }
+            libs.findLibrary("mockk").ifPresent {
+                "testImplementation"(it)
+            }
             libs.findLibrary("androidx.junit").ifPresent {
                 "androidTestImplementation"(it)
             }

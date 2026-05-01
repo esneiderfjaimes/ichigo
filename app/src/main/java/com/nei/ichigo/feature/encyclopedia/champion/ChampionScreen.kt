@@ -99,7 +99,8 @@ private fun ChampionScreen(
     navToSkinFullscreen: (String?) -> Unit = {},
     onBackPress: () -> Unit = {}
 ) {
-    BaseScreen(
+    //Grid()
+        BaseScreen(
         state = state,
         topBar = {
             TransparentTopAppBar(

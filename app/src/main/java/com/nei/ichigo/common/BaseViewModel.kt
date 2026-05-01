@@ -3,6 +3,7 @@ package com.nei.ichigo.common
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nei.ichigo.common.refresh.Refresh
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,36 +13,49 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-abstract class BaseViewModel<T, UiStateType>() : ViewModel() {
-    init {
-        Log.d("BaseViewModel", "init")
-    }
+abstract class UiStateViewModel2<UiStateType> : ViewModel() {
 
-    abstract val flow: Flow<T>
+    abstract val flow: Flow<UiStateType>
 
-    abstract fun mapper(data: T): UiStateType
+    open val dispatcher = Dispatchers.IO
+    open val sharingStarted = SharingStarted.WhileSubscribed(5_000)
 
     val uiState: StateFlow<UiState<out UiStateType>> by lazy {
         flow
-            .map<T, UiState<out UiStateType>> { data: T ->
-                val uiState = mapper(data)
+            .map<UiStateType, UiState<out UiStateType>> { uiState: UiStateType ->
                 Log.d("BaseViewModel", "uiState: $uiState")
                 UiState.Success(uiState)
-            }.catch {
-                it.printStackTrace()
-                UiState.Error
+            }.catch { e ->
+                emit(UiState.Error(0))
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(dispatcher)
             .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
+                viewModelScope,
+                sharingStarted,
                 UiState.Loading
             )
     }
 }
 
-abstract class UiStateViewModel<UiStateType>() : BaseViewModel<UiStateType, UiStateType>() {
+abstract class UiStateViewModel<UiStateType> : ViewModel() {
 
-    override fun mapper(data: UiStateType) = data
+    abstract val flow: Flow<UiStateType>
 
+    open val dispatcher = Dispatchers.IO
+    open val sharingStarted = SharingStarted.WhileSubscribed(5_000)
+
+    val refresh = Refresh(
+        errorMapper = { 0 },
+        upstream = { flow }
+    )
+
+    val uiState: StateFlow<UiState<UiStateType>> by lazy {
+        refresh.flow
+            .flowOn(dispatcher)
+            .stateIn(
+                viewModelScope,
+                sharingStarted,
+                UiState.Loading
+            )
+    }
 }

@@ -1,9 +1,28 @@
 package com.nei.ichigo.common
 
-sealed interface UiState<T> {
-    data object Loading : UiState<Nothing>
-    data class Success<T>(val content: T) : UiState<T>
-    data object Error : UiState<Nothing>
+import androidx.annotation.StringRes
+/*
+
+sealed class UiState<T>(open val isRefreshing: Boolean) {
+    data object Loading : UiState<Nothing>(false)
+    data class Success<T>(val content: T, override val isRefreshing: Boolean = false) : UiState<T>(isRefreshing)
+    data class Error(override val isRefreshing: Boolean = false) : UiState<Nothing>(isRefreshing)
+}
+*/
+
+sealed class UiState<out T>(open val isRefreshing: Boolean) {
+    data object Loading : UiState<Nothing>(false)
+
+    data class Success<T>(
+        val content: T,
+        override val isRefreshing: Boolean = false
+    ) : UiState<T>(isRefreshing)
+
+    data class Error(
+        @param:StringRes val messageRes: Int,
+        val throwable: Throwable? = null,
+        override val isRefreshing: Boolean = false
+    ) : UiState<Nothing>(isRefreshing)
 }
 
 inline fun <T> UiState<T>.onSuccess(action: (T) -> Unit): UiState<T> =

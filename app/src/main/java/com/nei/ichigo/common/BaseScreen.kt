@@ -41,7 +41,7 @@ fun <T> BaseScreen(
         contentWindowInsets = contentWindowInsets
     ) { innerPadding ->
         when (state) {
-            UiState.Error -> {
+            is UiState.Error -> {
                 ErrorScreen(
                     Modifier
                         .fillMaxSize()
@@ -105,7 +105,7 @@ private fun BaseScreenLoadingPreview() {
 @Preview
 @Composable
 private fun BaseScreenErrorPreview() {
-    BaseScreen(UiState.Error) { _, _ ->
+    BaseScreen(UiState.Error(0)) { _, _ ->
     }
 }
 
