@@ -68,9 +68,9 @@ class SkinFullscreenViewModel @AssistedInject constructor(
         ): SkinFullscreenViewModel
 
         data class Args(
-            @Named("championId")
+            @param:Named("championId")
             val championId: String,
-            @Named("selectedSkinId")
+            @param:Named("selectedSkinId")
             val selectedSkinId: String?
         )
     }

@@ -38,7 +38,6 @@ kotlin {
         )
         freeCompilerArgs.addAll(
             "-Xcontext-parameters",
-            "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"
         )
     }
 }
