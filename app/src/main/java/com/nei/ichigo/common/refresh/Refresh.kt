@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -43,23 +44,6 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlin.random.Random
 
-/*
-sealed class UiState<out T>(open val isRefreshing: Boolean) {
-    data object Loading : UiState<Nothing>(false)
-
-    data class Success<T>(
-        val content: T,
-        override val isRefreshing: Boolean = false
-    ) : UiState<T>(isRefreshing)
-
-    data class Error(
-        @param:StringRes val messageRes: Int,
-        val throwable: Throwable? = null,
-        override val isRefreshing: Boolean = false
-    ) : UiState<Nothing>(isRefreshing)
-}
-*/
-
 class Refresh<T>(
     private val errorMapper: (Throwable) -> Int,
     private val upstream: () -> Flow<T>
@@ -68,12 +52,19 @@ class Refresh<T>(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val flow: Flow<UiState<T>> = refreshTrigger
-        .onStart { emit(Unit) }
+        .onStart {
+            Log.d("Refresh", "onStart")
+            emit(Unit)
+        }
         .flatMapLatest {
             flow {
+                Log.d("Refresh", "RefreshSignal.Refreshing")
                 emit(RefreshSignal.Refreshing)
                 try {
-                    upstream().collect { emit(RefreshSignal.Success(it)) }
+                    upstream()
+                        .collect {
+                            emit(RefreshSignal.Success(it))
+                        }
                 } catch (e: Exception) {
                     if (e is CancellationException) throw e
                     emit(
@@ -86,7 +77,8 @@ class Refresh<T>(
             }
         }
         .scan<RefreshSignal<T>, UiState<T>>(UiState.Loading) { prev, signal ->
-            Log.e("Refresh", "Signal: $signal, prev: $prev")
+            Log.e("Refresh", "prev: $prev")
+            Log.e("Refresh", "signal: $signal")
             when (signal) {
                 is RefreshSignal.Success -> UiState.Success(signal.data)
                 is RefreshSignal.Error -> UiState.Error(signal.messageRes, signal.throwable)
@@ -102,9 +94,11 @@ class Refresh<T>(
             Log.e("Refresh", "Error: ${it.message}")
             delay(1000)
             true
-        }.onEach {
+        }.distinctUntilChanged()
+        .onEach {
             Log.e("Refresh", "State: $it")
         }
+
 
     fun refresh() {
         refreshTrigger.tryEmit(Unit)
@@ -223,15 +217,14 @@ abstract class UiStateViewModel2<UiStateType> : ViewModel() {
 }
 
 class DemoViewModel2 : UiStateViewModel2<String>() {
-    override val flow: Flow<String>
-        get() = flow {
-            delay(2000)
-            if (Random.nextBoolean()) {
-                emit("Dato desde VM: ${Random.nextInt(100)}")
-            } else {
-                throw RuntimeException("Error en VM")
-            }
+    override val flow: Flow<String> = flow {
+        delay(2000)
+        if (Random.nextBoolean()) {
+            emit("Dato desde VM: ${Random.nextInt(100)}")
+        } else {
+            throw RuntimeException("Error en VM")
         }
+    }
 
     fun refresh() {
         refresh.refresh()

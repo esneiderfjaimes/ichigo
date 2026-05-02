@@ -5,9 +5,9 @@ data class Config(
     val lang: ConfigValue
 )
 
-sealed class ConfigValue(val value: String) {
-    class SelectedByUser(value: String) : ConfigValue(value)
-    class AutomaticSelection(value: String) : ConfigValue(value)
+sealed class ConfigValue(open val value: String) {
+    data class SelectedByUser(override val value: String) : ConfigValue(value)
+    data class AutomaticSelection(override val value: String) : ConfigValue(value)
 
     val byUser: String?
         get() = when (this) {

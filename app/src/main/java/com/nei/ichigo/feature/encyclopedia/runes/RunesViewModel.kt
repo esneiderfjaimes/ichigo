@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.runes
 
+import androidx.compose.runtime.Immutable
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.data.model.ListPage
@@ -12,9 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RunesViewModel @Inject constructor(
-    getRunesUseCase: GetRunesUseCase,
+    private val getRunesUseCase: GetRunesUseCase,
 ) : UiStateViewModel<RunesUiState>() {
-    override val flow = getRunesUseCase().map { pageResult ->
+    override fun getFlow() = getRunesUseCase().map { pageResult ->
         val page: ListPage<RuneBranch> = pageResult.getOrThrow()
         val branches: List<RuneBranch> = page.data.sortedByIdOrder(RuneBranch::id, ORDER)
         val version: String = page.version
@@ -24,6 +25,7 @@ class RunesViewModel @Inject constructor(
         )
     }
 
+    @Immutable
     data class RunesUiState(
         val branches: List<RuneBranch>,
         override val version: String,

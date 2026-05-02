@@ -1,13 +1,19 @@
 package com.nei.ichigo.core.data.model
 
-open class Page<T>(
-    open val version: String,
-    open val lang: String,
-    open val data: T
-)
+interface Base<T> {
+    val version: String
+    val lang: String
+    val data: T
+}
+
+data class Page<T>(
+    override val version: String,
+    override val lang: String,
+    override val data: T
+) : Base<T>
 
 data class ListPage<T>(
     override val version: String,
     override val lang: String,
     override val data: List<T>
-) : Page<List<T>>(version, lang, data)
+) : Base<List<T>>

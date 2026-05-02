@@ -5,6 +5,7 @@ import com.nei.ichigo.core.data.model.ListPage
 import com.nei.ichigo.core.data.model.Page
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class PagerHelper @Inject constructor(
         .map { result ->
             val (version, lang) = result.getOrThrow()
             val data = fetchPage(version.value, lang.value)
+            Log.d("PagerHelper", "data: $data")
             Result.success(data)
         }
         .catch {

@@ -39,4 +39,6 @@
 
     <string name="core_designsystemy_select_page">Select Page</string>
     <string name="core_designsystemy_page_info">%1$d of %2$d</string>
+
+    <string name="core_designsystemy_generic_error">Something went wrong</string>
 </resources>

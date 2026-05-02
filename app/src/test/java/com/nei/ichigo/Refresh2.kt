@@ -42,7 +42,9 @@ class Refresh<T>(
             upstream()
                 .onStart { _isRefreshing.value = true } // Inicia el refresh
                 .onEach { _isRefreshing.value = false }  // Termina cuando llega el primer dato
-                .onCompletion { _isRefreshing.value = false } // Asegura reset si el flow termina o falla
+                .onCompletion {
+                    _isRefreshing.value = false
+                } // Asegura reset si el flow termina o falla
         }
 
     fun refresh() {
@@ -114,7 +116,7 @@ class RefreshTest {
         // Avanzamos el tiempo para que el flow emita
         testScheduler.advanceTimeBy(1001)
         testScheduler.runCurrent()
-        
+
         assertFalse("Ya no debería estar refrescando", refresh.isRefreshing.value)
         assertEquals(listOf(1), results)
 

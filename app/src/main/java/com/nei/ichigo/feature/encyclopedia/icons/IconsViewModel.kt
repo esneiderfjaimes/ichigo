@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.icons
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.viewModelScope
 import com.nei.ichigo.common.PageUiState
@@ -19,13 +20,13 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class IconsViewModel @Inject constructor(
-    getProfileIconsUseCase: GetProfileIconsUseCase
+    private val getProfileIconsUseCase: GetProfileIconsUseCase
 ) : UiStateViewModel<IconsUiState>() {
 
     private val pageIndex = MutableStateFlow<Int?>(0)
     private val pageSize = MutableStateFlow(PAGE_SIZE_DEFAULT)
 
-    override val flow = combine(
+    override fun getFlow() = combine(
         flow = getProfileIconsUseCase(),
         flow2 = pageIndex,
         flow3 = pageSize,
@@ -79,7 +80,7 @@ class IconsViewModel @Inject constructor(
         return itemPosition / newPageSize
     }
 
-    @Stable
+    @Immutable
     data class IconsUiState(
         val icons: List<IconUi>,
         val totalIcons: Int,

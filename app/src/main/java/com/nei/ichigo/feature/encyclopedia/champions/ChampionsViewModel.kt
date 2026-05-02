@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.champions
 
+import androidx.compose.runtime.Immutable
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.domain.GetChampionsUseCase
@@ -7,23 +8,24 @@ import com.nei.ichigo.core.model.Champion
 import com.nei.ichigo.feature.encyclopedia.champions.ChampionsViewModel.ChampionsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ChampionsViewModel @Inject constructor(
-    getChampionsUseCase: GetChampionsUseCase
+    private val getChampionsUseCase: GetChampionsUseCase
 ) : UiStateViewModel<ChampionsUiState>() {
 
     private val _tagSelected = MutableStateFlow<String?>(null)
 
-    override val flow = combine(
+    override fun getFlow(): Flow<ChampionsUiState> = combine(
         getChampionsUseCase(),
         _tagSelected
     ) { pageResult, tagSelected ->
         val page = pageResult.getOrThrow()
-        val (version, lang, champions) = page
+        val (version, _, champions) = page
         val sortedUniqueTags = champions
             .flatMap { it.tags }
             .distinct()
@@ -47,6 +49,7 @@ class ChampionsViewModel @Inject constructor(
         _tagSelected.update { tagSelected }
     }
 
+    @Immutable
     data class ChampionsUiState(
         override val version: String,
         val champions: List<Champion>,

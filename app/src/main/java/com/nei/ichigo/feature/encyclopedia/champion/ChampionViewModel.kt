@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.champion
 
+import androidx.compose.runtime.Immutable
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.domain.GetChampionUseCase
@@ -13,10 +14,11 @@ import kotlinx.coroutines.flow.map
 
 @HiltViewModel(assistedFactory = ChampionViewModel.Factory::class)
 class ChampionViewModel @AssistedInject constructor(
-    getChampionUseCase: GetChampionUseCase,
     @Assisted val championId: String,
+    private val getChampionUseCase: GetChampionUseCase,
 ) : UiStateViewModel<ChampionUiState>() {
-    override val flow = getChampionUseCase(championId).map { result ->
+
+    override fun getFlow() = getChampionUseCase(championId).map { result ->
         val page = result.getOrThrow()
         ChampionUiState(
             champion = page.data,
@@ -24,6 +26,7 @@ class ChampionViewModel @AssistedInject constructor(
         )
     }
 
+    @Immutable
     data class ChampionUiState(
         val champion: ChampionDetail,
         override val version: String,

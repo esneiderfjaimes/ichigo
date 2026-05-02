@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.skin.fullscreen
 
+import androidx.compose.runtime.Immutable
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.core.domain.GetChampionUseCase
@@ -16,15 +17,13 @@ import javax.inject.Named
 
 @HiltViewModel(assistedFactory = SkinFullscreenViewModel.Factory::class)
 class SkinFullscreenViewModel @AssistedInject constructor(
-    getChampionUseCase: GetChampionUseCase,
-    @Assisted args: Factory.Args
+    private val getChampionUseCase: GetChampionUseCase,
+    @Assisted private val args: Factory.Args
 ) : UiStateViewModel<SkinFullscreenViewModel.SkinFullscreenUiState>() {
 
-    private val _selectedSkin = MutableStateFlow(
-        DEFAULT_SELECTED_SKIN
-    )
+    private val _selectedSkin = MutableStateFlow(DEFAULT_SELECTED_SKIN)
 
-    override val flow = combine(
+    override fun getFlow() = combine(
         flow = getChampionUseCase(args.championId),
         flow2 = _selectedSkin
     ) { result, selectedSkin ->
@@ -53,6 +52,7 @@ class SkinFullscreenViewModel @AssistedInject constructor(
         _selectedSkin.update { skinId }
     }
 
+    @Immutable
     data class SkinFullscreenUiState(
         val skins: List<Skin>,
         val selectedSkinIndex: Int,

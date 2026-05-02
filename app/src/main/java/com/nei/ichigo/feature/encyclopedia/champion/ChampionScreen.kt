@@ -86,7 +86,8 @@ fun ChampionScreen(
     ChampionScreen(
         state = state,
         navToSkinFullscreen = navToSkinFullscreen,
-        onBackPress = onBackPress
+        onBackPress = onBackPress,
+        onRefresh = viewModel::onRefresh
     )
 }
 
@@ -95,12 +96,13 @@ private val BORDER_SIZE = 2.dp
 
 @Composable
 private fun ChampionScreen(
-    state: UiState<out ChampionUiState>,
+    state: UiState<ChampionUiState>,
+    onRefresh: () -> Unit = {},
     navToSkinFullscreen: (String?) -> Unit = {},
     onBackPress: () -> Unit = {}
 ) {
     //Grid()
-        BaseScreen(
+    BaseScreen(
         state = state,
         topBar = {
             TransparentTopAppBar(
@@ -115,6 +117,7 @@ private fun ChampionScreen(
                 alpha = 0f
             )
         },
+        onRefresh = onRefresh
     ) { state, innerPadding ->
         val champion = state.champion
         val version = state.version

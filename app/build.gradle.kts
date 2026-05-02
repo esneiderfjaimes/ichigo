@@ -48,6 +48,7 @@ dependencies {
     implementation(projects.core.designsystemy)
     implementation(projects.core.data)
     implementation(projects.core.model)
+    implementation(projects.core.network)
 
     // core
     implementation(libs.androidx.core.ktx)

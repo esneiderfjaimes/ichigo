@@ -39,4 +39,6 @@
 
     <string name="core_designsystemy_select_page">Seleccionar Página</string>
     <string name="core_designsystemy_page_info">%1$d de %2$d</string>
+
+    <string name="core_designsystemy_generic_error">Ups, Algo salió mal</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.items
 
+import androidx.compose.runtime.Immutable
 import androidx.core.text.HtmlCompat
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
@@ -15,12 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ItemsViewModel @Inject constructor(
-    getItemsUseCase: GetItemsUseCase
+    private val getItemsUseCase: GetItemsUseCase
 ) : UiStateViewModel<ItemsUiState>() {
 
     private val mapsFilter = MutableStateFlow<String?>("11")
 
-    override val flow = combine(
+    override fun getFlow() = combine(
         flow = getItemsUseCase(),
         flow2 = mapsFilter,
         transform = ::mapperResult
@@ -71,6 +72,7 @@ class ItemsViewModel @Inject constructor(
         mapsFilter.update { map }
     }
 
+    @Immutable
     data class ItemsUiState(
         val itemsOrder: List<String>,
         val itemsMap: Map<String, ItemUi>,

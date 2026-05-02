@@ -28,7 +28,9 @@ class GetChampionsUseCase @Inject constructor(
             if (championEntities.isEmpty()) {
                 throw IllegalStateException("No champions found")
             }
-            championEntities.map(ChampionEntity::asExternalModel)
+            championEntities.map(ChampionEntity::asExternalModel).also {
+                Log.d("OnlineChampions", "Champions: $it")
+            }
         }.getOrElse { throwable ->
             Log.e("OnlineChampions", "Error getting champions from database", throwable)
             networkDataSource.getChampions(version, lang).also { champions ->

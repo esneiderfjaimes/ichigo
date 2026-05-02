@@ -11,11 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.IndicatorMaxDistance
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import com.nei.ichigo.core.designsystem.R
 import com.nei.ichigo.core.designsystem.component.ErrorScreen
 import com.nei.ichigo.core.designsystem.component.LoadingScreen
 import com.nei.ichigo.core.designsystem.component.ShimmerProvider
@@ -33,8 +39,11 @@ fun <T> BaseScreen(
         WindowInsetsSides.Vertical + WindowInsetsSides.End
     ),
     shimmerContent: (@Composable ShimmerScope.(innerPadding: PaddingValues) -> Unit)? = null,
+    onRefresh: (() -> Unit)? = null,
     content: @Composable (state: T, innerPadding: PaddingValues) -> Unit
 ) {
+    val pullToRefreshState = rememberPullToRefreshState()
+
     Scaffold(
         topBar = topBar,
         bottomBar = bottomBar,
@@ -42,11 +51,23 @@ fun <T> BaseScreen(
     ) { innerPadding ->
         when (state) {
             is UiState.Error -> {
-                ErrorScreen(
-                    Modifier
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    enabled = onRefresh != null,
+                    onRefresh = {
+                        onRefresh?.invoke()
+                    },
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                )
+                ) {
+                    ErrorScreen(
+                        Modifier
+                            .fillMaxSize(),
+                        //  .padding(innerPadding),
+                        message = stringResource(state.messageRes)
+                    )
+                }
             }
 
             UiState.Loading -> {
@@ -64,7 +85,28 @@ fun <T> BaseScreen(
             }
 
             is UiState.Success -> {
-                content(state.content, innerPadding)
+                PullToRefreshBox(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = {
+                        onRefresh?.invoke()
+                    },
+                    enabled = onRefresh != null,
+                    indicator = {
+                        innerPadding.calculateTopPadding()
+
+                        Indicator(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter),
+                            isRefreshing = state.isRefreshing,
+                            state = pullToRefreshState,
+                            maxDistance = IndicatorMaxDistance// + topPadding
+                        )
+
+                    }
+                ) {
+                    content(state.content, innerPadding)
+                }
             }
         }
     }
@@ -105,7 +147,7 @@ private fun BaseScreenLoadingPreview() {
 @Preview
 @Composable
 private fun BaseScreenErrorPreview() {
-    BaseScreen(UiState.Error(0)) { _, _ ->
+    BaseScreen(UiState.Error(R.string.core_designsystemy_generic_error)) { _, _ ->
     }
 }
 

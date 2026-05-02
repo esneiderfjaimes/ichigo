@@ -34,7 +34,8 @@ fun LoadingScreen(
 
 @Composable
 fun ErrorScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    message: String
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -48,7 +49,7 @@ fun ErrorScreen(
             tint = MaterialTheme.colorScheme.error
         )
         Spacer(Modifier.height(4.dp))
-        Text("Error")
+        Text(message)
     }
 }
 
@@ -64,6 +65,6 @@ fun LoadingScreenPreview() {
 @Composable
 fun ErrorScreenPreview() {
     Surface {
-        ErrorScreen()
+        ErrorScreen(message = "Error")
     }
 }

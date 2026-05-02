@@ -1,5 +1,6 @@
 package com.nei.ichigo.feature.encyclopedia.spells
 
+import androidx.compose.runtime.Immutable
 import com.nei.ichigo.common.PageUiState
 import com.nei.ichigo.common.UiStateViewModel
 import com.nei.ichigo.common.utils.and
@@ -15,20 +16,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SpellsViewModel @Inject constructor(
-    getSpellsUseCase: GetSpellsUseCase,
+    private val getSpellsUseCase: GetSpellsUseCase,
 ) : UiStateViewModel<SpellsUiState>() {
 
     private val modes = MutableStateFlow(setOf("ARAM", "CLASSIC"))
 
-    override val flow = combine(
+    override fun getFlow() = combine(
         flow = getSpellsUseCase().map { pageResult ->
             val page = pageResult.getOrThrow()
             val spells = page.data.asSequence()
                 .sortedWith(compareBy<Spell> { it.summonerLevel }.thenBy { it.name })
 
-            val modesAvailable = spells
-                .map { it.modes }
-                .flatten()
+            val modesAvailable = spells.flatMap { it.modes }
                 .distinct()
                 .sorted()
 
@@ -59,6 +58,7 @@ class SpellsViewModel @Inject constructor(
         }
     }
 
+    @Immutable
     data class SpellsUiState(
         val spells: List<Spell>,
         val modesAvailable: List<String>,

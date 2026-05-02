@@ -58,7 +58,7 @@ class RefreshTest {
 
     @Test
     fun `isRefreshing should be true while upstream is loading`() = runTest(testDispatcher) {
-        val refresh = Refresh({0}) {
+        val refresh = Refresh({ 0 }) {
             flow {
                 delay(1000)
                 emit(1)
@@ -97,7 +97,7 @@ class RefreshTest {
 
     @Test
     fun `isRefreshing should be false if upstream fails`() = runTest(testDispatcher) {
-        val refresh = Refresh<Int>({0}) {
+        val refresh = Refresh<Int>({ 0 }) {
             flow {
                 delay(500)
                 throw RuntimeException("Failure")
@@ -126,7 +126,7 @@ class RefreshTest {
     @Test
     fun `should recover from error after refresh`() = runTest(testDispatcher) {
         var shouldFail = true
-        val refresh = Refresh({0}) {
+        val refresh = Refresh({ 0 }) {
             flow {
                 delay(100)
                 if (shouldFail) {

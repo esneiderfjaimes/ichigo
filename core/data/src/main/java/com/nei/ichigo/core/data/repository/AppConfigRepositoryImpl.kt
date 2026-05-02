@@ -1,6 +1,7 @@
 package com.nei.ichigo.core.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.nei.ichigo.core.data.R
 import com.nei.ichigo.core.data.model.Config
 import com.nei.ichigo.core.data.model.ConfigValue
@@ -9,26 +10,32 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AppConfigRepositoryImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val ichigoPreferencesDataSource: IchigoPreferencesDataSource,
-    private val dragonRepository: DDragonRepository,
+    ichigoPreferencesDataSource: IchigoPreferencesDataSource,
+    dragonRepository: DDragonRepository,
 ) : AppConfigRepository {
 
-    override val config: Flow<Result<Config>>
-        get() = combine(
-            ichigoPreferencesDataSource.userSettings,
-            dragonRepository.metaData
-        ) { userSettings, resultMetaData ->
-            runCatching {
-                val metaData = resultMetaData.getOrThrow()
-                val lang = getCurrentLang(userSettings.langSelected, metaData.languages)
-                val version = getCurrentVersion(userSettings.versionSelected, metaData.versions)
-                Config(version, lang)
-            }
-        }.distinctUntilChanged()
+    override val config: Flow<Result<Config>> = combine(
+        ichigoPreferencesDataSource.userSettings,
+        dragonRepository.metaData
+    ) { userSettings, resultMetaData ->
+        runCatching {
+            val metaData = resultMetaData.getOrThrow()
+            val lang = getCurrentLang(userSettings.langSelected, metaData.languages)
+            val version = getCurrentVersion(userSettings.versionSelected, metaData.versions)
+            Config(version, lang)
+        }
+    }
+        .distinctUntilChanged()
+        .onEach {
+            Log.d("AppConfigRepositoryImpl", "config: $it")
+        }
 
 
     private fun getCurrentVersion(
