@@ -5,11 +5,9 @@ import app.cash.turbine.test
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,6 +29,8 @@ class BaseViewModelTest {
         Dispatchers.setMain(testDispatcher)
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
     }
 
     @After
@@ -40,9 +40,12 @@ class BaseViewModelTest {
     }
 
     private class TestViewModel(
-        private val _flow: Flow<String>,
-        override val dispatcher: CoroutineDispatcher
-    ) : UiStateViewModel<String>() {
+        private val _flow: Flow<String>
+    ) : UiStateSplitViewModel<String>() {
+
+        override fun errorMapper(e: Throwable): Int {
+            return 0
+        }
 
         override fun getFlow(): Flow<String> {
             return _flow
@@ -50,15 +53,14 @@ class BaseViewModelTest {
 
         // We use Main (testDispatcher) to avoid multi-threading issues in unit tests
         //override val dispatcher = Dispatchers.Main
-        override val sharingStarted = SharingStarted.Eagerly
+        //    override val sharingStarted = SharingStarted.Eagerly
     }
 
     @Test
     fun `uiState emits Loading then Success when flow emits value`() = runTest {
         val expectedValue = "Success Value"
         val viewModel = TestViewModel(
-            flowOf(expectedValue),
-            dispatcher = testDispatcher
+            flowOf(expectedValue)
         )
 
         viewModel.uiState.test {
@@ -70,32 +72,34 @@ class BaseViewModelTest {
 
     @Test
     fun `uiState emits Loading then Error when flow throws exception`() = runTest {
+        val runtimeException = RuntimeException("Test Exception")
+
         val viewModel = TestViewModel(
-            flow { throw RuntimeException("Test Exception") },
-            dispatcher = testDispatcher
+            flow { throw runtimeException }
         )
 
         viewModel.uiState.test {
             assertEquals(UiState.Loading, awaitItem())
-            assertEquals(UiState.Error(0), awaitItem())
+            assertEquals(UiState.Error(0, runtimeException), awaitItem())
             expectNoEvents()
         }
     }
 
     @Test
     fun `uiState emits Success then Error when flow fails after emission`() = runTest {
+        val runtimeException = RuntimeException("boom")
+
         val viewModel = TestViewModel(
             _flow = flow {
                 emit("OK")
-                throw RuntimeException("boom")
-            },
-            dispatcher = testDispatcher
+                throw runtimeException
+            }
         )
 
         viewModel.uiState.test {
             assertEquals(UiState.Loading, awaitItem())
             assertEquals(UiState.Success("OK"), awaitItem())
-            assertEquals(UiState.Error(0), awaitItem())
+            assertEquals(UiState.Error(0, runtimeException), awaitItem())
             expectNoEvents()
         }
     }
