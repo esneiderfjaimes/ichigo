@@ -40,9 +40,14 @@ class BaseViewModelTest {
     }
 
     private class TestViewModel(
-        override val flow: Flow<String>,
+        private val _flow: Flow<String>,
         override val dispatcher: CoroutineDispatcher
     ) : UiStateViewModel<String>() {
+
+        override fun getFlow(): Flow<String> {
+            return _flow
+        }
+
         // We use Main (testDispatcher) to avoid multi-threading issues in unit tests
         //override val dispatcher = Dispatchers.Main
         override val sharingStarted = SharingStarted.Eagerly
@@ -80,7 +85,7 @@ class BaseViewModelTest {
     @Test
     fun `uiState emits Success then Error when flow fails after emission`() = runTest {
         val viewModel = TestViewModel(
-            flow = flow {
+            _flow = flow {
                 emit("OK")
                 throw RuntimeException("boom")
             },
